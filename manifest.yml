@@ -1,0 +1,12 @@
+applications:
+- path: ./Code #Path of the code folder
+  memory: 8192M
+  instances: 1
+  domain: mybluemix.net
+  name: bolotest
+  host: bolotest
+  disk_quota: 1024M
+  services:
+  - Pinecrest_Cloudant
+
+# Make sure the name above is the same name of the db you created on bluemix

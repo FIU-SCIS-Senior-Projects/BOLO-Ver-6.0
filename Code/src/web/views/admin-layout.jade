@@ -1,0 +1,30 @@
+extends ./layout.jade
+
+block jumbo
+    .jumbotron
+        .container
+            block jumbo-desc
+
+  block content
+    .row
+        .col-xl-3.col-lg-3.col-md-3.col-sm-3.col-xs-12
+            ul.nav.nav-pills.nav-stacked(role="nav")
+                li(class=( admin_nav === 'admin-index' ? 'active' : '' ))
+                    a(href="/admin") Dashboard
+                li(class=( admin_nav === 'admin-agency' ? 'active' : '' ))
+                  if(tier === 'ROOT' ||tier === 'ADMINISTRATOR')
+                    a(href="/admin/agency") Agency Management
+                li(class=( admin_nav === 'admin-dataAnalysis' ? 'active' : '' ))
+                  if(tier === 'ROOT')
+                    a(href="/admin/dataAnalysis") Data Analysis
+                li(class=( admin_nav === 'admin-dataSubscriber' ? 'active' : '' ))
+                  if(tier === 'ROOT')
+                    a(href="/admin/dataSubscriber") Data Subscribers
+                li(class=( admin_nav === 'admin-systemSetting' ? 'active' : '' ))
+                  if(tier === 'ROOT')
+                    a(href="/admin/systemSetting") System Setting
+                li(class=( admin_nav === 'admin-users' ? 'active' : '' ))
+                    a(href="/admin/users") User Management
+        .col-xl-9.col-lg-9.col-md-9.col-sm-9.col-xs-12
+            include ./partials/global-alerts.jade
+            block admin-content

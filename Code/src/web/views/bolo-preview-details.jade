@@ -1,0 +1,103 @@
+include includes/mixins
+extends layout
+
+
+block jumbo
+  .jumbotron
+    .container
+      div#wrapper.row
+          p BOLO Details Preview
+          a.btn.btn-default( type = "button" value = "back" onClick="history.go(-1);return true;") Back to Create BOLO
+
+block content
+    include ./partials/global-alerts.jade
+
+    div.container-fluid#boloPage
+        div.row
+            - var att_route = '/agency/' + bolo.data.agency + '/img';
+            div.col-xs-2.col-md-2
+              img#logo.img-fluid( src=att_route + '/logo' alt="", width=150, height=175 )
+            div.col-xs-8
+              p.text-danger.strong #{"UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE"}
+              p.strong #{agency_name} Police Department
+              p
+                em #{agency_address}
+              p
+                em #{agency_city}, #{agency_state}. #{agency_zip}
+              p
+                em #{agency_phone}
+            div.col-xs-2#badge
+              img#badge.img-fluid( src=att_route + '/shield' alt="", width=150, height=180)
+        div.text-center
+          h1.text-danger.strong #{bolo.data.category}
+        | &nbsp;
+        | &nbsp;
+        div.row
+            div.col-xs-4#featured
+                p.text-center.text-danger.strong #{bolo.data.status}
+                if(buffer)
+                  img#featured.img-fluid( src='data:image/jpg;base64,#{buffer}' width=400 )
+                else
+                  img#featured.img-fluid( src="/img/nopic.png" alt="", width=400 )
+                p.strong Created: #{bolo.data.createdOn}
+
+
+            div.col-xs-8#boloDetails
+                form.form-horizontal
+
+                +form_labels_row("Bolo ID", "XYZ000" )
+
+                if bolo.data.dateReported.length
+                  +form_labels_row("Date Reported", bolo.data.dateReported, bolo.data.dateReported?"":"hidden")
+                if bolo.data.timeReported.length
+                  +form_labels_row("Time Reported", bolo.data.timeReported, bolo.data.timeReported?"":"hidden")
+
+                if bolo.data.authorFName != null || bolo.data.authorLName != null
+                  +form_labels_row("Author", bolo.data.authorFName + " " +  bolo.data.authorLName )
+                if bolo.data.firstName.length || bolo.data.lastName.length
+                  +form_labels_row("Name", bolo.data.firstName + " " +  bolo.data.lastName)
+                if bolo.data.race != "Select an option..."
+                  +form_labels_row("Race", bolo.data.race, bolo.data.race?"":"hidden")
+                if bolo.data.dob.length
+                  +form_labels_row("DOB", bolo.data.dob, bolo.data.dob?"":"hidden")
+                if bolo.data.dlNumber.length
+                  +form_labels_row("License #", bolo.data.dlNumber, bolo.data.dlNumber?"":"hidden")
+                if bolo.data.address.length
+                  +form_labels_row("Address", bolo.data.address, bolo.data.address?"":"hidden")
+                if bolo.data.zipCode.length
+                  +form_labels_row("Zip Code", bolo.data.zipCode, bolo.data.zipCode?"":"hidden")
+                if bolo.data.height.length
+                  +form_labels_row("Height", bolo.data.height, bolo.data.height?"":"hidden")
+                if bolo.data.weight.length
+                  +form_labels_row("Weight", bolo.data.weight + "lbs", bolo.data.weight?"":"hidden")
+                if bolo.data.sex != "Select an option..."
+                  +form_labels_row("Sex", bolo.data.sex, bolo.data.sex?"":"hidden")
+                if bolo.data.hairColor != "Select an option..."
+                  +form_labels_row("Hair Color", bolo.data.hairColor, bolo.data.hairColor?"":"hidden")
+                if bolo.data.tattoos.length
+                  +form_labels_row("Tattoos/Scars", bolo.data.tattoos,bolo.data.tattoos?"":"hidden")
+            div.row
+              div.col-xs-8
+            div.row
+              div.col-xs-4
+            form.form-horizontal
+            | &nbsp;
+            p.strong Additional Info:
+            if bolo.data.additional.length
+              p #{bolo.data.additional}
+            else
+              | &nbsp;
+            | &nbsp;
+            if bolo.data.video_url.length
+              p.strong Video Link:
+              a(href=bolo.data.video_url) #{bolo.data.video_url}
+              p
+            | &nbsp;
+            p.strong Summary:
+            if bolo.data.summary.length
+              p #{bolo.data.summary}
+            else
+              | &nbsp;
+            if bolo.data.authorFName != null || bolo.data.authorLName != null
+                  p.strong This BOLO was created by #{sectunit}  #{ranktitle} #{bolo.data.authorFName} #{bolo.data.authorLName}.
+                  p.strong Please contact the agency should clarification be required.

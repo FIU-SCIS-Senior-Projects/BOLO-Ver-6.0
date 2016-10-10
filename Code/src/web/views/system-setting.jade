@@ -1,0 +1,25 @@
+extends ./admin-layout.jade
+include ./includes/mixins.jade
+
+//Author John Burke
+
+block jumbo-desc
+    p Admin Portal: System Settings
+
+block admin-content
+
+
+    if ( tier === 'ROOT' )
+        .col-xl-offset-2.col-xl-6.col-lg-offset-2.col-lg-6.col-md-offset-2.col-md-6
+          form( action=('/admin/systemSetting') enctype="multipart/form-data" method="post" )
+            p.lead Set the system settings
+            .form-group
+                label Brute Force Login (3 - 10) Attempts&nbsp;&nbsp;
+                input(type='number', name='loginAttempts', min='3', max='10', value=systemSettings.loginAttempts)
+            .form-group
+                button.btn.btn-primary( type="submit" value="submit" ) Submit
+
+
+    else
+        P where did you come from?
+    .row

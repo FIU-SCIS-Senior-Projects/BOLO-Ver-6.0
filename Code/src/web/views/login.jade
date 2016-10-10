@@ -1,0 +1,30 @@
+extends ./layout.jade
+include ./includes/mixins.jade
+
+block jumbo
+    .jumbotron
+      .container(style="display:flex; justify-content: center;")
+        div
+          div(style="display: flex; justify-content: center;")
+              img(src= "/img/chiefsofpolice.png", style="height:200px;")
+            h1(style="text-align: center;") BOLO
+            p Flier Creator
+            p.strong Situational Awareness Multi-Jurisdictional Resource
+
+block content
+    include ./partials/global-alerts.jade
+
+    //- Temporary fix for missing alerts after migrating to global-alerts
+    if ( error.length )
+        +alert_error_array( error )
+
+    if ( messages.length )
+        +alert_message_array( messages )
+
+    form#login(action="/login" method="post")
+        input(type="hidden" name="_csrf" value=loginToken)
+        +input_text("username", "Username", "", true, "", "text")
+        +input_text("password", "Password", "", true, "", "password")
+        .form-group
+            button.btn.btn-primary(type="submit" value="login") Login
+            a(href='/forgotPassword' style="margin-left:10px") Forgot password?

@@ -1,0 +1,117 @@
+extends ./admin-layout.jade
+include ./includes/mixins.jade
+
+
+block jumbo-desc
+    p Admin Portal: Agency Update
+
+
+block admin-content
+    -
+        var states = [
+            "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL",
+            "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+            "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+            "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "RI", "SC",
+            "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY"
+        ]
+
+    - var route = '/admin/agency';
+    - var form_action = '/edit/' + agency.id;
+
+    h3 #{agency.name}
+    p Fill out the form and submit to update the agency.
+
+    if (tier === 'ROOT')
+        if(agency.isActive === false)
+            div.col-xs-12
+                button#activation.btn.btn-success.pull-right(
+                type='submit'
+                style='margin-bottom:25px;'
+                ) Activate Agency
+        else
+            div.col-xs-12
+                button#activation.btn.btn-danger.pull-right(
+                type='submit'
+                style='margin-bottom:25px;'
+                ) Deactivate Agency
+        script.
+            $('#activation').click(function (data) {
+                var res = data.toElement.getAttribute('class').indexOf('btn-danger');
+                if (res !== -1)
+                    var result = confirm('Deactivate Agency?');
+                else
+                    var result = confirm('Activate Agency?');
+                if(result === true){
+                    $.ajax({
+                        url: '/admin/agency/Activation',
+                        type: 'POST',
+                        data: {agency: !{JSON.stringify(agency)}},
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log('redirect');
+                            if (typeof data.redirect == 'string')
+                                window.location = data.redirect;
+                        }
+                    })
+                }
+            });
+    form( action=( route + form_action ) enctype="multipart/form-data" method="post" )
+        input( name="id" type="hidden" value=agency.id )
+        input( name="agency_id" type="hidden" value=agency.agency_id)
+        +input_text( "name", "Agency Name", "", false, agency.name)
+        +input_text( "domain", "Agency Domain", "@example-fl.gov", false, agency.domain)
+        +input_text( "address", "Address", "", false, agency.address )
+        +input_text( "city", "City", "", false, agency.city )
+        +select_options( "state", "State", states, false, agency.state )
+        +input_text( "zip", "Zip Code", "", false,  agency.zip )
+        +input_text( "phone", "Phone Number", "", false, agency.phone )
+
+        .form-group
+            label.control-label( for="image_upload" ) Upload New Logo Image
+
+            .row
+                .col-md-4
+                    input( name="logo_upload" type="file" accept="image/*" )
+
+                .col-md-4.push-md-1.details-image
+                    if agency && agency.attachments.logo
+                        - var logo_url = route + "/asset/" + agency.id + "/logo";
+                        a.details-img( href=logo_url )
+                            img( src=logo_url alt="Logo Image" )
+                br
+        .form-group
+            label.control-label( for="image_upload" ) Upload New Shield Image
+
+            .row
+                .col-md-4
+                    input( name="shield_upload" type="file" accept="image/*" )
+
+                .col-md-4.push-md-1.details-image
+                    if agency && agency.attachments.shield
+                        - var shield_url = route + "/asset/" + agency.id + "/shield";
+                        a( href=shield_url )
+                            img( src=shield_url alt="Shield Image" )
+                br
+        .form-group
+            label.control-label( for="image_upload" ) Upload New Watermark Image
+
+            .row
+                .col-md-4
+                    input( name="watermark_upload" type="file" accept="image/*" )
+
+                .col-md-4.push-md-1.details-image
+                    if agency && agency.attachments.watermark
+                        - var watermark_url = route + "/asset/" + agency.id + "/watermark";s
+                        a( href=watermark_url )
+                            img( src=watermark_url alt="Watermark Image" )
+        if(agency.preventUnsubscription===true)
+          +check_boxChecked("preventUnsubscription","Prevent Officers from unsubscribing",true)
+        else
+          +check_box("preventUnsubscription","Prevent Officers from unsubscribing",true)
+
+        .form-group
+            button.btn.btn-primary( type="submit" value="save" ) Submit
+
+
+    .row

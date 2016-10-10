@@ -1,0 +1,58 @@
+
+include ./includes/mixins.jade
+extends ./layout.jade
+
+
+block jumbo
+    .jumbotron
+        .container
+            p Search BOLOs
+
+block content
+    include ./partials/global-alerts.jade
+
+    include ./partials/bolo-options.jade
+
+    form#create-bolo-form(action="/bolo/search" enctype="multipart/form-data" method="post")
+        input( type="hidden" name="status" value="New" )
+
+        div.text-danger.strong.h4 Search Theft - Boat
+
+        +select_options( "agencyName", "Agency", agencies, true, "" )
+
+        div.text-danger.strong.h4 Vessel
+
+        +input_text( "boatYear", "Year", "", false, "" )
+        +input_text( "boatManufacturer", "Manufacturer", "", false, "" )
+        +input_text( "boatModel", "Model", "", false, "" )
+        +input_text( "boatType", "Type", "", false, "" )
+        +select_options( "boatLength", "Length - Feet", boatFeet, false, "" )
+        +input_text( "boatColor", "Color", "", false, "" )
+        +input_text( "boatHullIdNumber", "Hull Identification Number", "", false, "" )
+        .row
+            .col-md-4
+                +select_options( "boatRegistrationNumberSt", "Registration Number", states, false, "" )
+            .col-md-8
+                +input_text( "boatRegistrationNumberNu", "", "", false, "" )
+
+        div.text-danger.strong.h4 Propulsion
+
+        +select_options( "propulsion", "Propulsion", v_propulsion, false, "" )
+        +select_options( "propulsionType", "Type", v_propulsion_type, false, "" )
+        +select_options( "propulsionMake", "Make", v_propulsion_make, false, "" )
+
+        div.text-danger.strong.h4 Trailer
+
+        +select_options( "trailer", "Trailer", v_trailer, false, "" )
+        +input_text( "trailerManufacturer", "Manufacturer", "", false, "" )
+        +input_text( "trailerVIN", "Vehicle Identification Number", "", false, "" )
+        .row
+            .col-md-4
+                +select_options( "trailerTagLicenseState", "Tag License Plate", states, false, "" )
+            .col-md-8
+                +input_text( "trailerTagLicenseNumber", "", "", false, "" )
+
+        +input_text( "wildcard", "Wildcard Search", "", false, "" )
+        +check_box("matchFields","Match Fields",true)
+        .form-group
+            button.btn.btn-primary( type="submit" value="save") Search

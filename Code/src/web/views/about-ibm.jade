@@ -1,0 +1,94 @@
+extends ./layout.jade
+include ./includes/mixins.jade
+
+// Author John Burke
+
+block jumbo
+    .jumbotron
+        .container
+            img#featured.img.center-block( src="/img/ibm.jpg" alt="" )
+
+block content
+    div.container
+        div.row
+            br
+            br
+            p IBM played a major role in bringing BOLO
+                | Flyer  Creator to life with their software engineers that mentored
+                | the students and their product Bluemix.
+            p Bluemix is a cloud
+                | platform as a service (PaaS) developed by IBM.
+                | It supports several programming languages and services as well
+                | as integrated DevOps to build, run, deploy and manage
+                | applications on the cloud. Bluemix is based on Cloud Foundry
+                | open technology and runs on SoftLayer infrastructure. Bluemix
+                | supports several programming languages including Java, Node.js,
+                | Go, PHP, Python, Ruby Sinatra, Ruby on Rails and can be extended
+                | to support other languages such as Scala through the use of
+                | buildpacks.
+                br
+                br
+
+        div.row
+            div.col-xl-offset-2.col-xl-3.col-lg-offset-2.col-lg-3.hidden-md.hidden-sm.hidden-xs
+                img#featured.img-fluid( src="/img/caraballo.jpg" alt="", width=300 )
+                h3.strong Juan Caraballo
+                p Student Mentor
+                p IBM Software Engineer
+                br
+                br
+                br
+                br
+            div.col-xl-offset-2.col-xl-3.col-lg-offset-2.col-lg-3.hidden-md.hidden-sm.hidden-xs
+                img#featured.img-fluid( src="/img/robert_loredo.jpg" alt="", width=300 )
+                h3.strong Robert Loredo
+                p Student Mentor
+                p Lead Developer, IBM Support,
+                p Powered by Watson
+                p IBM Master Inventor -
+                p Distinguished Certified IT Specialist
+                br
+                br
+                br
+                br
+        div.row
+            div.hidden-xl.hidden-lg.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-4.hidden-xs
+                img#featured.img-fluid( src="/img/caraballo.jpg" alt="", width=200 )
+                h3.strong Juan Caraballo
+                p Student Mentor
+                p IBM Software Engineer
+                br
+                br
+                br
+                br
+            div.hidden-xl.hidden-lg.col-md-offset-2.col-md-4.col-sm-offset-2.col-sm-4.hidden-xs
+                img#featured.img-fluid( src="/img/robert_loredo.jpg" alt="", width=200 )
+                h3.strong Robert Loredo
+                p Student Mentor
+                p Lead Developer, IBM Support,
+                p Powered by Watson
+                p IBM Master Inventor -
+                p Distinguished Certified IT Specialist
+                br
+                br
+                br
+                br
+        div.row
+            div.hidden-xl.hidden-lg.hidden-md.hidden-sm.col-xs-12
+                img#featured.img.center-block( src="/img/caraballo.jpg" alt="", width=200 )
+                h3.strong(align='center') Juan Caraballo
+                p(align='center') IBM Software Engineer
+                p(align='center') Student mentor
+                br
+                br
+                br
+                br
+            div.hidden-xl.hidden-lg.hidden-md.hidden-sm.col-xs-12
+                img#featured.img.center-block( src="/img/robert_loredo.png" alt="", width=200 )
+                h3.strong(align='center') Robert Loredo
+                p(align='center') IBM Software Engineer
+                p(align='center') Student mentor
+                br
+                br
+                br
+                br

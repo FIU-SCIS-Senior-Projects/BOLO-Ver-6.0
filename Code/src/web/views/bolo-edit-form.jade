@@ -1,0 +1,97 @@
+extends ./layout.jade
+include ./includes/mixins.jade
+
+
+block jumbo
+    .jumbotron
+        .container
+            p Update BOLO Details
+            button.btn.btn-primary(onclick='history.go(-1);') Go Back
+
+
+block content
+    include ./partials/global-alerts.jade
+
+    include ./partials/bolo-options.jade
+
+    .row
+        .col-md-6
+            .panel.panel-default
+                .panel-heading: h3.panel-title Details
+                .panel-body
+                    p <b>Author:</b> #{bolo.authorFName} #{bolo.authorLName}
+                    p <b>Agency:</b>
+                       a( href="/agency/" + agency.id target="_blank" ) #{agency.name}
+                    p <b>Created:</b> #{bolo.createdOn}
+                    p <b>Updated:</b> #{bolo.lastUpdatedOn}
+
+    form( action="/bolo/edit/" + bolo.id enctype="multipart/form-data" method="post" )
+        input( type="hidden" name="id" value=bolo.id )
+        input( type="hidden" name="record" value=bolo.record)
+        input( type="hidden" name="agencyName" value=bolo.agencyName)
+        input( type="hidden" name="dateReported" value=bolo.data.dateReported )
+        input( type="hidden" name="timeReported" value=bolo.data.timeReported )
+
+        +select_options( "status", "Status", bolo_status, false, bolo.status )
+
+        .row
+            .col-md-6
+                +input_text( "dateRecovered", "Date Recovered (DD/MM/YYYY)", "", false, bolo.dateRecovered )
+            .col-md-6
+                +input_text( "timeRecovered", "Time Recovered (HH:MM)", "", false, bolo.timeRecovered )
+
+
+        +input_text( "addressRecovered", "Address Recovered", "", false, bolo.addressRecovered )
+
+        .row
+            .col-md-6
+                +input_text( "zipCodeRecovered", "Zip Code", "", false, bolo.zipCodeRecovered )
+            .col-md-6
+                +input_text( "agencyRecovered", "Agency", "", false, bolo.agencyRecovered )
+
+        +select_options( "category", "Category", categories, true, bolo.category )
+        +input_text( "firstName", "First Name", "", false, bolo.firstName )
+        +input_text( "lastName", "Last Name", "", false,  bolo.lastName )
+        +input_text( "dob", "Date of Birth (MM/DD/YYYY )", "", false, bolo.dob )
+        +input_text( "dlNumber", "Drivers License Number", "", false, bolo.dlNumber )
+        +input_text( "address", "Address", "", false, bolo.address )
+        +input_text( "zipCode", "Zip Code", "", false, bolo.zipCode )
+        +select_options( "race", "Race", races, false, bolo.race )
+        +select_options( "sex", "Sex", sex, false, bolo.sex )
+        +input_text( "height", "Height - Feet-Inches (e.g. 05-09)", "", false, bolo.height )
+        +input_text( "weight", "Weight - Pounds", "", false, bolo.weight )
+        +select_options( "hairColor", "Hair Color", hair_colors, false, bolo.hairColor )
+        +input_textarea( "tattoos", "Tattoos", "", false, bolo.tattoos )
+
+        .form-group.row
+            .col-md-4
+                label.control-label( for="featured_image" ) Featured Image
+                input( name="featured_image" type="file" accept="image/*" )
+
+            .col-md-4
+                label.control-label( for="image_upload[]" ) Image Upload
+                input( name="image_upload[]" type="file" accept="image/*" )
+
+            .col-md-4
+                label.control-label( for="image_upload[]" ) Image Upload
+                input( name="image_upload[]" type="file" accept="image/*" )
+
+        .form-group
+            label.control-label Remove Images
+            table.table
+                each name, uuid in bolo.images
+                    - var img = "/bolo/asset/" + bolo.id + "/" + uuid
+                    tr
+                        td: input( type="checkbox" name="image_remove[]" value=uuid )
+                        td: p
+                            a( href=img target="_blank" ) #{name}
+                            if 'featured' === uuid
+                                i ( Featured Image )
+
+        +input_text( "video_url", "Video Link", "", false, bolo.video_url, "url" )
+        +input_textarea( "additional", "Additional Info", "", false, bolo.additional )
+        +input_textarea( "summary", "Summary", "", false, bolo.summary )
+
+        .form-group
+            button.btn.btn-primary( type="submit" value="save" id= "buttonClickEdit" disabled = false) Publish
+            button.btn.btn-default( type="submit" disabled=false value="preview" ) Preview

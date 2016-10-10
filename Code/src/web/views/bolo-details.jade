@@ -1,0 +1,133 @@
+include includes/mixins
+extends layout
+
+
+block jumbo
+  .jumbotron
+    .container
+      .row
+        div.col-xs-12
+           p BOLO Details
+      .row
+        .col-xs-14.col-md-6
+          .pull-left
+            a.btn.btn-default.pull-right( href="/bolo/details/pdf/" + bolo.id + '.pdf',target="_blank" ) Generate PDF
+            button.btn.btn-primary(onclick='history.go(-1);') Go Back
+        .col-xs-14.col-md-6
+          .pull-right
+            if((bolo.record)&&(tier > 2))
+              a.btn.btn-default.pull-right( href="/bolo/details/record/" + bolo.id) View Record
+
+
+block content
+
+    include ./partials/global-alerts.jade
+
+    div.container-fluid#boloPage
+        div.row
+            - var att_route = '/agency/' + agency.id + '/img';
+            div.col-xs-2
+              img#logo.img-fluid( src=att_route + '/logo' alt="")
+            div.col-xs-8
+              p.text-danger #{"UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE"}
+              p.strong #{agency.name} Police Department
+              p
+                em #{agency.address}
+              p
+                em #{agency.city}, #{agency.state}. #{agency.zip}
+              p
+                em #{agency.phone}
+            div.col-xs-2
+              img#badge.img-fluid( src=att_route + '/shield' alt="" )
+        div.text-center
+          h1.text-danger.strong #{bolo.data.category}
+        | &nbsp;
+        | &nbsp;
+        div.row
+            div.col-xs-4
+                p.text-center.text-danger.strong #{bolo.data.status}
+                if Object.keys( bolo.attachments ).length
+                  - var keys = Object.keys( bolo.data.attachments )
+                  img#featured.img-fluid(src="/bolo/asset/" + bolo.data.id + "/featured" alt="", width=400)
+                else
+                  img#featured.img-fluid( src="/img/nopic.png" alt="", width=400 )
+                p.strong Created: #{bolo.data.createdOn}
+
+            div.col-xs-8#boloDetails
+                form.form-horizontal
+                +form_labels_row("Bolo ID", bolo.data.id )
+
+
+                if bolo.data.dateReported.length
+                  +form_labels_row("Date Reported", bolo.data.dateReported, bolo.data.dateReported?"":"hidden")
+                if bolo.data.timeReported.length
+                  +form_labels_row("Time Reported", bolo.data.timeReported, bolo.data.timeReported?"":"hidden")
+
+
+                if bolo.data.firstName.length || bolo.data.lastName.length
+                  +form_labels_row("Name", bolo.data.firstName + " " +  bolo.data.lastName)
+                if bolo.data.race != "Select an option..."
+                  +form_labels_row("Race", bolo.data.race, bolo.data.race?"":"hidden")
+                if bolo.data.dob.length
+                  +form_labels_row("DOB", bolo.data.dob, bolo.data.dob?"":"hidden")
+                if bolo.data.dlNumber.length
+                  +form_labels_row("License #", bolo.data.dlNumber, bolo.data.dlNumber?"":"hidden")
+                if bolo.data.address.length
+                  +form_labels_row("Address", bolo.data.address, bolo.data.address?"":"hidden")
+                if bolo.data.zipCode.length
+                  +form_labels_row("Zip Code", bolo.data.zipCode, bolo.data.zipCode?"":"hidden")
+                if bolo.data.height.length
+                  +form_labels_row("Height", bolo.data.height, bolo.data.height?"":"hidden")
+                if bolo.data.weight.length
+                  +form_labels_row("Weight", bolo.data.weight + "lbs", bolo.data.weight?"":"hidden")
+                if bolo.data.sex != "Select an option..."
+                  +form_labels_row("Sex", bolo.data.sex, bolo.data.sex?"":"hidden")
+                if bolo.data.hairColor != "Select an option..."
+                  +form_labels_row("Hair Color", bolo.data.hairColor, bolo.data.hairColor?"":"hidden")
+                if bolo.data.tattoos.length
+                  +form_labels_row("Tattoos/Scars", bolo.data.tattoos,bolo.data.tattoos?"":"hidden")
+
+
+                if bolo.data.dateRecovered.length
+                  +form_labels_row("Date Recovered", bolo.data.dateRecovered, bolo.data.dateRecovered?"":"hidden")
+                if bolo.data.timeRecovered.length
+                  +form_labels_row("Time Recovered", bolo.data.timeRecovered, bolo.data.timeRecovered?"":"hidden")
+                if bolo.data.addressRecovered.length
+                  +form_labels_row("Address Recovered", bolo.data.addressRecovered, bolo.data.addressRecovered?"":"hidden")
+                if bolo.data.zipCodeRecovered.length
+                  +form_labels_row("Zip Code Recovered", bolo.data.zipCodeRecovered, bolo.data.zipCodeRecovered?"":"hidden")
+                if bolo.data.agencyRecovered.length
+                  +form_labels_row("Agency Recovered", bolo.data.agencyRecovered, bolo.data.agencyRecovered?"":"hidden")
+
+
+        div.row
+            div.col-xs-8
+        div.row
+            div.col-xs-4
+              if Object.keys( bolo.attachments ).length
+                a(href='/bolo/details/pics/' + bolo.data.id) Additional images
+        form.form-horizontal
+        | &nbsp;
+        p.strong Additional Info:
+        if bolo.data.additional.length
+          p #{bolo.data.additional}
+        else
+          | &nbsp;
+        | &nbsp;
+        if bolo.data.video_url.length
+          p.strong Video Link:
+          a(href=bolo.data.video_url) #{bolo.data.video_url}
+          p
+          | &nbsp;
+        | &nbsp;
+        p.strong Summary:
+        if bolo.data.summary.length
+          p #{bolo.data.summary}
+          p - - -
+        else
+          | &nbsp;
+        if bolo.data.authorFName != null || bolo.data.authorLName != null
+          p.strong This BOLO was created by #{user.data.sectunit}  #{user.data.ranktitle} #{bolo.data.authorFName} #{bolo.data.authorLName}.
+          if bolo.data.lastUpdatedOn != bolo.data.createdOn
+            p.strong Last updated by #{bolo.data.lastUpdatedBy.firstName} #{bolo.data.lastUpdatedBy.lastName} on #{bolo.data.lastUpdatedOn}
+          p.strong Please contact the agency should clarification be required.

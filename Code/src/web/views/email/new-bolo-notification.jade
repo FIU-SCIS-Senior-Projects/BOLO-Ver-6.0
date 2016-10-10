@@ -1,0 +1,12 @@
+
+block content
+    p A new&nbsp;
+        a(href=app_url + '/bolo/details/' + bolo.id ) #{bolo.category} BOLO
+        |&nbsp;has been posted.&nbsp;
+        a( href=app_url ) Login
+        |&nbsp;to view other BOLOs.
+    br
+    br
+    p Click&nbsp;
+      a(href=encodeURI(app_url + '/account/notifications/unsubscribe/'+  bolo.agencyName )) here
+      |&nbsp;to unsubscribe from #{bolo.agencyName} notifications.

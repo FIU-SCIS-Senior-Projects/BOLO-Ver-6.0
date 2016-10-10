@@ -1,0 +1,48 @@
+extends layout
+include ./includes/mixins.jade
+
+block jumbo
+    .jumbotron
+        .container
+            p Archived BOLOs
+
+
+block content
+    include ./partials/global-alerts.jade
+
+    link(rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css")
+
+    if bolos && 0 === bolos.length
+        p.lead No archived BOLOs.
+
+    else
+
+        if (tier === 'ROOT')
+
+            include ./partials/purge-select.jade
+
+            div.col-xs-12
+                button#purge.btn.btn-danger.pull-right(
+                type='submit'
+                style='margin-bottom:25px;'
+                ) Purge
+
+            include ./partials/dialog-box.jade
+
+
+        .row
+            for bolo in bolos
+                    include ./partials/bolo-thumbnail.jade
+                        if (tier === 'ROOT' || tier === 'ADMINISTRATOR')
+                            .actions
+                                a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) View
+                                a.btn.btn-success( href="/bolo/restore/" + bolo.id role="button" type="submit" ) Restore
+                                a.btn.btn-danger( href="/bolo/delete/" + bolo.id role="button" type="submit" ) Delete
+                        else
+                            .actions
+                                a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) View
+
+
+        .row.text-center
+            - var route = '/bolo/archive'
+            include ./partials/paging.jade

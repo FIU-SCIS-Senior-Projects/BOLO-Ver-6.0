@@ -1,0 +1,27 @@
+include ./bolo-options.jade
+include ../includes/mixins.jade
+div.col-xs-12.col-sm-6.col-md-3
+
+    div.thumbnail
+
+        div.status
+            form( action="/bolo/update/" + bolo.id method="post" ).form-group
+                input( type="hidden" name="id" value=bolo.id )
+                label.control-label( for=bolo.id )
+                div.text-uppercase.text-center.text-danger.strong.h4 #{bolo.status}
+
+        div.boloImageContainer
+
+            div.boloImageCenterer
+                if bolo.images.featured
+                    img( src="/bolo/asset/" + bolo.id + "/featured" alt=bolo.images.featured  )
+                else
+                    img( src="/img/nopic.png" alt="no image"  )
+
+        div.category
+            h4.strong(style = "text-align: center;") #{bolo.category}
+
+        div.caption
+            p <b>Updated:</b> #{bolo.lastUpdatedOn}
+            p <b>Created On:</b> #{bolo.createdOn}
+            p <b>Posted By:</b> #{bolo.agencyName}
