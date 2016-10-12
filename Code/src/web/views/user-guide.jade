@@ -1,8 +1,6 @@
 extends ./layout.jade
 include ./includes/mixins.jade
 
-// Author John Burke
-
 block jumbo
     .jumbotron
         .container
@@ -13,29 +11,9 @@ block jumbo
             br
 
 block content
-    if (tier === 'SUPERVISOR' || tier === 'ADMINISTRATOR' || tier === 'ROOT' || tier === 'OFFICER')
-        h3.strong(style='color:030b2f;') Introduction
-        p &nbsp;&nbsp;&nbsp;&nbsp;Upon Welcome to the BOLO Flyer Creator, a Situational Awareness
-            | Multi-Jurisdictional Resource. Every user of BOLO has access to
-            | different features and therefore a different user's guide will be
-            | custom tailored specific to each user. Upon logging into BOLO you
-            | will be brought to the home page. This is where you view your BOLOs
-            | along with other BOLOs from officers within your agency. In addition
-            | to viewing BOLOs from your agency, you may also opt to view BOLOs
-            | from other agencies. The first instruction will be the most
-            | important tailored for you. If you are the root or an admin it will be the
-            | settings under the Admin link. For other users it will be how to create a bolo.
-            | A BOLO can have up to several buttons on it that will be explained.
-            | From any page you will also see several other links accessible
-            | across the top. For mobile devices you will have a dropdown menu accessible
-            | from the top right corner of your screen. All these links will be
-            | explained shortly in easy to follow step by step instructions. If some
-            | reason you notice something wrong with your user details (i.e. your
-            | have a name change or something of that nature), you will need to
-            | contact your agency administration immediately.
-        br
+        p.!= md(text)
 
-    if (tier === 'ROOT')
+    if (userTier === 'ROOT')
         h3.strong(style='color:030b2f;')  Agency management
         P &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Admin'
         P &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Agency Management'
@@ -55,7 +33,7 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;8) Click 'Submit'
         br
 
-    if (tier === 'ADMINISTRATOR')
+    if (userTier === 'ADMINISTRATOR')
         h3.strong(style='color:030b2f;')  Agency management
         P &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Admin'
         P &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Agency Management'
@@ -68,8 +46,7 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;9) Click 'Submit'
         br
 
-    if (tier === 'ROOT')
-
+    if (userTier === 'ROOT')
         h3.strong(style='color:030b2f;') Data Analysis
         P &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Admin'
         P &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Data Analysis'
@@ -103,7 +80,7 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;5) click 'Submit'
         br
 
-    if (tier === 'ADMINISTRATOR' || tier === 'ROOT')
+    if (userTier === 'ADMINISTRATOR' || userTier === 'ROOT')
         h3.strong(style='color:030b2f;') User Management
         P &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Admin'
         P &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'User Management'
@@ -117,7 +94,7 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;5) Click 'Submit'
         br
 
-    if (tier === 'SUPERVISOR' || tier === 'ADMINISTRATOR' || tier === 'ROOT' || tier === 'OFFICER')
+    if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT' || userTier === 'OFFICER')
         h3.strong(style='color:030b2f;') Create a BOLO
         p &nbsp;&nbsp;&nbsp;&nbsp;Click 'Create' and Select Auto, Boat or General BOLO.
         P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Select Auto BOLO * *
@@ -165,7 +142,7 @@ block content
         p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Submit'
         br
 
-    if (tier === 'OFFICER' || tier === 'SUPERVISOR')
+    if (userTier === 'OFFICER' || userTier === 'SUPERVISOR')
         h3.strong(style='color:030b2f;') View Details of a BOLO
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Details'
         p &nbsp;&nbsp;&nbsp;&nbsp;2) Review details of a selected BOLO
@@ -173,7 +150,7 @@ block content
         p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Back' to go back to the BOLOs\n'
         br
 
-    if (tier === 'ADMINISTRATOR' || tier === 'ROOT')
+    if (userTier === 'ADMINISTRATOR' || userTier === 'ROOT')
         h3.strong(style='color:030b2f;') View Details of a BOLO
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Details'
         p &nbsp;&nbsp;&nbsp;&nbsp;2) Review details of a selected BOLO
@@ -200,7 +177,7 @@ block content
         br
 
     // print for officer
-    if (tier === 'OFFICER' || tier === 'SUPERVISOR')
+    if (userTier === 'OFFICER' || userTier === 'SUPERVISOR')
         h3.strong(style='color:030b2f;') Archive
         P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * having access
             | to view archived BOLOs might assist you are looking for someone
@@ -211,7 +188,7 @@ block content
         br
 
     //print for administrator
-    if(tier === 'ADMINISTRATOR')
+    if(userTier === 'ADMINISTRATOR')
         h3.strong(style='color:030b2f;') Archive
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Archive
         P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * At the top of the page* *
@@ -225,7 +202,7 @@ block content
     br
 
     //print for ROOT
-    if( tier === 'ROOT')
+    if( userTier === 'ROOT')
         h3.strong(style='color:030b2f;') Archive
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Archive
         P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * At the top of the page* *
@@ -239,7 +216,7 @@ block content
         p &nbsp;&nbsp;&nbsp;&nbsp;Send the BOLO to the archive files
         br
 
-    if (tier === 'SUPERVISOR' || tier === 'ADMINISTRATOR' || tier === 'ROOT' || tier === 'OFFICER')
+    if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT' || userTier === 'OFFICER')
         h3.strong(style='color:030b2f;') Agency Directory
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Agency Directory' to view a list
             | of partnering agencies.

@@ -1,4 +1,3 @@
-
 mixin alert_info(msg)
     .alert.alert-info.alert-dismissable(role="alert")
         button.close(type="button" data-dismiss="alert" aria-label="Close")
@@ -23,7 +22,9 @@ mixin alert_message_array ( messages )
 
 mixin alert_error_array ( errors )
     each e in errors
-        if e.message
+        if (e.msg)
+            +alert_error( e.msg )
+        else if (e.message)
             +alert_error( e.message )
         else if e.length
             +alert_error( e )

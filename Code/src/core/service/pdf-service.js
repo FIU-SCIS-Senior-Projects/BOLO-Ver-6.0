@@ -66,12 +66,12 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "  8) Chose to allow officers to opt out of viewing BOLOs from their agency\n"
         + "  9) Click 'Submit'\n";
 
-     var DATA_ANALYSIS = "  1) Click on 'Admin'\n"
-         + "  2) Click on 'Data Analysis'\n"
-         + "  3) Select an 'Agency'\n";
-         + "  4) Select a 'Start Date'\n"
-         + "  5) Select an End Date\n"
-         + "  6) Click 'Submit'\n"
+    var DATA_ANALYSIS = "  1) Click on 'Admin'\n"
+        + "  2) Click on 'Data Analysis'\n"
+        + "  3) Select an 'Agency'\n";
+    + "  4) Select a 'Start Date'\n"
+    + "  5) Select an End Date\n"
+    + "  6) Click 'Submit'\n"
 
     var DATA_SUBSCRIBER = "  1) Click on 'Admin'\n"
         + "  2) Click on 'Data Subscriber'\n"
@@ -79,7 +79,7 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "  4) Fill in data subscriber's ID, Name and email\n"
         + "  5) Click 'Submit'\n";
 
-     var SYSTEM_SETTING = "  1) Click on 'Admin'\n"
+    var SYSTEM_SETTING = "  1) Click on 'Admin'\n"
         + "  2) Click on 'System Settings'\n"
         + "  3) Select the number of minutes for the system to time out for all users\n"
         + "     * Time can be set between 10 and 240 minutes (recommended less than 60 minutes)\n"
@@ -87,16 +87,16 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "     * A user locked out of the system will be required to reset their password\n"
         + "  5) click 'Submit'\n";
 
-     var USER_MANAGENT = "  1) Click on 'Admin'\n"
-         + "  2) Click on 'User Management'\n"
-         + "  * * Add a new user's profile * *\n"
-         + "  3) Click on 'Add New User'\n"
-         + "  4) Fill in the empty fields\n"
-         + "  5) Click 'Submit'\n";
-         + "  * * Update a user's profile * *\n"
-         + "  3) Click on blue 'Astric' on the right of the user\n"
-         + "  4) Update required fields\n"
-         + "  5) Click 'Submit'\n";
+    var USER_MANAGENT = "  1) Click on 'Admin'\n"
+        + "  2) Click on 'User Management'\n"
+        + "  * * Add a new user's profile * *\n"
+        + "  3) Click on 'Add New User'\n"
+        + "  4) Fill in the empty fields\n"
+        + "  5) Click 'Submit'\n";
+    + "  * * Update a user's profile * *\n"
+    + "  3) Click on blue 'Astric' on the right of the user\n"
+    + "  4) Update required fields\n"
+    + "  5) Click 'Submit'\n";
 
     var CREATE_BOLO = "  1) Click 'Create' and select Auto, Boat or General BOLO.\n"
         + "  * * Select Auto BOLO * *\n"
@@ -110,30 +110,30 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "  9) Repeat Steps 2 - 7 until all information is complete.\n"
         + "  10) Click 'Submit' to submit your BOLO.\n"
         + "  11) Goto to your registered email and click on the confirmation link.\n";
-        + "  * * Select BOAT BOLO * *\n"
-        + "  2) Enter the reported time and date (required)\n"
-        + "  3) Fill in additional fields.\n"
-        + "  4) Fill in propulsion and trailer details\n"
-        + "  5) Upload available images.\n"
-        + "  6) Add a video link (if available)\n"
-        + "  7) FIll in the summery.\n"
-        + "  8) Click the 'Preview' Button to make sure you have added everything.\n"
-        + "  9) Click 'Back to Create BOLO' to go back to the BOLO.\n"
-        + "  10) Repeat Steps 2 - 7 until all information is complete.\n"
-        + "  11) Click 'Submit' to submit your BOLO.\n"
-        + "  12) Goto to your registered email and click on the confirmation link.\n";
-        + "  * * Select General BOLO * *\n"
-        + "  2) Enter the reported time and date (required)\n"
-        + "  3) Select a category (required)\n"
-        + "  4) Fill in additional fields.\n"
-        + "  5) Upload available images.\n"
-        + "  6) Add a video link (if available)\n"
-        + "  7) FIll in the summery.\n"
-        + "  8) Click the 'Preview' Button to make sure you have added everything.\n"
-        + "  9) Click 'Back to Create BOLO' to go back to the BOLO.\n"
-        + "  10) Repeat Steps 2 - 7 until all information is complete.\n"
-        + "  11) Click 'Submit' to submit your BOLO.\n"
-        + "  12) Goto to your registered email and click on the confirmation link.\n";
+    + "  * * Select BOAT BOLO * *\n"
+    + "  2) Enter the reported time and date (required)\n"
+    + "  3) Fill in additional fields.\n"
+    + "  4) Fill in propulsion and trailer details\n"
+    + "  5) Upload available images.\n"
+    + "  6) Add a video link (if available)\n"
+    + "  7) FIll in the summary.\n"
+    + "  8) Click the 'Preview' Button to make sure you have added everything.\n"
+    + "  9) Click 'Back to Create BOLO' to go back to the BOLO.\n"
+    + "  10) Repeat Steps 2 - 7 until all information is complete.\n"
+    + "  11) Click 'Submit' to submit your BOLO.\n"
+    + "  12) Goto to your registered email and click on the confirmation link.\n";
+    + "  * * Select General BOLO * *\n"
+    + "  2) Enter the reported time and date (required)\n"
+    + "  3) Select a category (required)\n"
+    + "  4) Fill in additional fields.\n"
+    + "  5) Upload available images.\n"
+    + "  6) Add a video link (if available)\n"
+    + "  7) FIll in the summery.\n"
+    + "  8) Click the 'Preview' Button to make sure you have added everything.\n"
+    + "  9) Click 'Back to Create BOLO' to go back to the BOLO.\n"
+    + "  10) Repeat Steps 2 - 7 until all information is complete.\n"
+    + "  11) Click 'Submit' to submit your BOLO.\n"
+    + "  12) Goto to your registered email and click on the confirmation link.\n";
 
     var EDIT =  "  * You can only see this option if you created the BOLO\n"
         + "  1) Click on 'Edit'\n"
@@ -143,8 +143,8 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "  4) Select and fill any field you want to update\n"
         + "  5) View your updates before posting\n"
         + "  6) Click 'Submit'\n";
-        + "  7) Confirmation email will be sent to your email\n"
-        + "  8) Go to our email and confirm the BOLO\n";
+    + "  7) Confirmation email will be sent to your email\n"
+    + "  8) Go to our email and confirm the BOLO\n";
 
     var DETAILS = "  1) Click on 'Details'\n"
         + "  2) Review details of a selected BOLO\n"
@@ -182,15 +182,15 @@ PDFService.prototype.genUserGuide = function(user, doc) {
         + "  2) Select an agency and view contact information or verify the"
         + " agency's 'Logo' and 'Shield.'\n";
 
-     var SEARCH = "  1) Select any field(s) you wish to search.\n"
+    var SEARCH = "  1) Select any field(s) you wish to search.\n"
         + "  2) Enter information value of field(s).\n"
         + "  3) Wild card search is for something you can not search with an"
         + " optional search.\n"
         + "  4) Click 'Search'\n";
 
     var FILTER = "  1) Click on 'Details'\n"
-    + "  2) Review details of a selected BOLO\n"
-    + "  3) Click 'Home' to go back to the BOLOs\n";
+        + "  2) Review details of a selected BOLO\n"
+        + "  3) Click 'Home' to go back to the BOLOs\n";
 
     var NOTIFICATIONS = "  1) Click on your 'Username'\n"
         + "  2) Click on 'Settings' from the dropdown\n"
@@ -366,16 +366,16 @@ PDFService.prototype.genDetailsPdf = function(doc, data) {
 
         // Display make only if there is a value in it
         if(data.bolo.vehicleMake !== ""){
-                doc.font('Times-Roman')
-                    .text("Make: " + data.bolo.vehicleMake, 300)
-                    .moveDown();
+            doc.font('Times-Roman')
+                .text("Make: " + data.bolo.vehicleMake, 300)
+                .moveDown();
         }
 
         // Display Model only if there is a value in it
         if(data.bolo.vehicleModel !== ""){
-                doc.font('Times-Roman')
-                    .text("Model: " + data.bolo.vehicleModel, 300)
-                    .moveDown();
+            doc.font('Times-Roman')
+                .text("Model: " + data.bolo.vehicleModel, 300)
+                .moveDown();
         }
 
         // Display Style only if there is a value in it
@@ -410,7 +410,7 @@ PDFService.prototype.genDetailsPdf = function(doc, data) {
     }
     else if(data.bolo.category === "THEFT - BOAT"){  //PDF for theft - boatMake
 
-    //VESSEL
+        //VESSEL
         //Display tittle VESSEL
         doc.fillColor('red');
         doc.fontSize(11);
@@ -504,41 +504,41 @@ PDFService.prototype.genDetailsPdf = function(doc, data) {
                 .moveDown();
         }
 
-            //Display tittle TRAILER
-            doc.fillColor('red');
-            doc.fontSize(11);
+        //Display tittle TRAILER
+        doc.fillColor('red');
+        doc.fontSize(11);
+        doc.font('Times-Roman')
+            .text("TRAILER", 300)
+            .moveDown();
+        doc.fillColor('black');
+
+        // Display Trailer only if there is a value in it
+        if(data.bolo['trailer'] !== ""){
             doc.font('Times-Roman')
-                .text("TRAILER", 300)
+                .text("Trailer: " + data.bolo['trailer'], 300)
                 .moveDown();
-            doc.fillColor('black');
+        }
 
-            // Display Trailer only if there is a value in it
-            if(data.bolo['trailer'] !== ""){
-                doc.font('Times-Roman')
-                    .text("Trailer: " + data.bolo['trailer'], 300)
-                    .moveDown();
-            }
+        // Display Manufacturer only if there is a value in it
+        if(data.bolo['trailerManufacturer'] !== ""){
+            doc.font('Times-Roman')
+                .text("Manufacturer: " + data.bolo['trailerManufacturer'], 300)
+                .moveDown();
+        }
 
-            // Display Manufacturer only if there is a value in it
-            if(data.bolo['trailerManufacturer'] !== ""){
-                doc.font('Times-Roman')
-                    .text("Manufacturer: " + data.bolo['trailerManufacturer'], 300)
-                    .moveDown();
-            }
+        // Display Vehicle ID Number only if there is a value in it
+        if(data.bolo['trailerVIN'] !== ""){
+            doc.font('Times-Roman')
+                .text("Vehicle Identification Number: " + data.bolo['trailerVIN'], 300)
+                .moveDown();
+        }
 
-            // Display Vehicle ID Number only if there is a value in it
-            if(data.bolo['trailerVIN'] !== ""){
-                doc.font('Times-Roman')
-                    .text("Vehicle Identification Number: " + data.bolo['trailerVIN'], 300)
-                    .moveDown();
-            }
-
-            // Display Tag License Plate only if there is a value in it
-            if(data.bolo['trailerTagLicenseState'] !== "" || data.bolo['trailerTagLicenseNumber'] !== ""){
-                doc.font('Times-Roman')
-                    .text("Tag License Plate: " + data.bolo['trailerTagLicenseState'] + data.bolo['trailerTagLicenseNumber'], 300)
-                    .moveDown();
-            }
+        // Display Tag License Plate only if there is a value in it
+        if(data.bolo['trailerTagLicenseState'] !== "" || data.bolo['trailerTagLicenseNumber'] !== ""){
+            doc.font('Times-Roman')
+                .text("Tag License Plate: " + data.bolo['trailerTagLicenseState'] + data.bolo['trailerTagLicenseNumber'], 300)
+                .moveDown();
+        }
     }
     else {  //PDF for general bolo
 
@@ -632,44 +632,44 @@ PDFService.prototype.genDetailsPdf = function(doc, data) {
         .text("Created: " + data.bolo.createdOn, 15, 360)
         .moveDown();
 
-        //For Data Analysis Reported
-        if(data.bolo['dateReported'] !== ""){
-            doc.font('Times-Roman')
-                .text("Date Reported: " + data.bolo['dateReported'], 15)
-                .moveDown(0.25);
-        }
-        if(data.bolo['timeReported'] !== ""){
-            doc.font('Times-Roman')
-                .text("Time Reported: " + data.bolo['timeReported'], 15)
-                .moveDown();
-        }
+    //For Data Analysis Reported
+    if(data.bolo['dateReported'] !== ""){
+        doc.font('Times-Roman')
+            .text("Date Reported: " + data.bolo['dateReported'], 15)
+            .moveDown(0.25);
+    }
+    if(data.bolo['timeReported'] !== ""){
+        doc.font('Times-Roman')
+            .text("Time Reported: " + data.bolo['timeReported'], 15)
+            .moveDown();
+    }
 
-        //For Data Analysis Recovered
-        if(data.bolo['dateRecovered'] !== ""){
-            doc.font('Times-Roman')
-                .text("Date Recovered: " + data.bolo['dateRecovered'], 15)
-                .moveDown(0.25);
-        }
-        if(data.bolo['timeRecovered'] !== ""){
-            doc.font('Times-Roman')
-                .text("Time Recovered: " + data.bolo['timeRecovered'], 15)
-                .moveDown(0.25);
-        }
-        if(data.bolo['addressRecovered'] !== ""){
-            doc.font('Times-Roman')
-                .text("Address Recovered: " + data.bolo['addressRecovered'], 15)
-                .moveDown(0.25);
-        }
-        if(data.bolo['zipCodeRecovered'] !== ""){
-            doc.font('Times-Roman')
-                .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 15)
-                .moveDown(0.25);
-        }
-        if(data.bolo['agencyRecovered'] !== ""){
-            doc.font('Times-Roman')
-                .text("Agency Recovered: " + data.bolo['agencyRecovered'], 15)
-                .moveDown();
-        }
+    //For Data Analysis Recovered
+    if(data.bolo['dateRecovered'] !== ""){
+        doc.font('Times-Roman')
+            .text("Date Recovered: " + data.bolo['dateRecovered'], 15)
+            .moveDown(0.25);
+    }
+    if(data.bolo['timeRecovered'] !== ""){
+        doc.font('Times-Roman')
+            .text("Time Recovered: " + data.bolo['timeRecovered'], 15)
+            .moveDown(0.25);
+    }
+    if(data.bolo['addressRecovered'] !== ""){
+        doc.font('Times-Roman')
+            .text("Address Recovered: " + data.bolo['addressRecovered'], 15)
+            .moveDown(0.25);
+    }
+    if(data.bolo['zipCodeRecovered'] !== ""){
+        doc.font('Times-Roman')
+            .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 15)
+            .moveDown(0.25);
+    }
+    if(data.bolo['agencyRecovered'] !== ""){
+        doc.font('Times-Roman')
+            .text("Agency Recovered: " + data.bolo['agencyRecovered'], 15)
+            .moveDown();
+    }
 
     // Display Additional Informatin only if there is a value in it
     if(data.bolo['additional'] !== ""){
@@ -798,7 +798,7 @@ PDFService.prototype.genPreviewPDF = function(doc, data) {
     }
     else if(data.bolo.category === "THEFT - BOAT"){  //PDF for theft - boat
 
-    //VESSEL
+        //VESSEL
         //Display tittle VESSEL
         doc.fillColor('red');
         doc.fontSize(11);

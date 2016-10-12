@@ -134,9 +134,11 @@ User.prototype.roleName = function () {
  * implementation and should be reviewed. The domain/bolo.js module uses a
  * similar approach that shoud be refactored as well.
  */
-User.prototype.isValid = function () {
+User.prototype.isValid = function ()
+{
     var data = this.data;
-    var result = required.filter( function ( key ) {
+    var result = required.filter( function ( key )
+    {
         return ( data[key] && typeof data[key] === schema[key].type );
     });
 
@@ -165,7 +167,7 @@ User.prototype.isValid2 = function () {
 
 /**
  * Chack if the supplied password is equal to the stored password. Will only
- * validate if the stored passwod is hashed.
+ * validate if the stored password is hashed.
  *
  * @param {String} - the password to validate
  * @returns {boolean} true if valid, false otherwise

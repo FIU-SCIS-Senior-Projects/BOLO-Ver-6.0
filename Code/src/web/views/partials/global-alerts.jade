@@ -1,5 +1,13 @@
 include ../includes/mixins.jade
 
 div
-    +alert_message_array( g_msg )
-    +alert_error_array( g_err )
+    if success_msg.length
+        +alert_info(success_msg)
+    if error_msg.length
+        +alert_warning(error_msg)
+    if passport_success.length
+        +alert_info(passport_success + username)
+    if passport_error.length
+        +alert_error(passport_error)
+    if errors
+        +alert_error_array(errors)

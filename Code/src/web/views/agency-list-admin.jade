@@ -25,9 +25,9 @@ block admin-content
                 th
         tbody
             for agency in agencies
-              if(tier==='ROOT'||(tier==='ADMINISTRATOR'&& agency.id === userAgency))
+              if(userTier==='ROOT'||(userTier==='ADMINISTRATOR'&& agency.id === userAgency))
                 tr
-                    td  #{agency.agency_id}
+                    td  #{agency.agencyID}
                     td  #{agency.name}
                     td  #{agency.city}
                     td  #{agency.state}

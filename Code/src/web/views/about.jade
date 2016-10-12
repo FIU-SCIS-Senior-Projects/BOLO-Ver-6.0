@@ -1,0 +1,12 @@
+extends ./layout.jade
+include ./includes/mixins.jade
+
+block jumbo
+    .jumbotron
+        .container
+            h3 About Us
+block content
+    div.container
+        div.row
+            p.!= md(text)
+        img#featured.img.center-block( src="/img/cec.jpg" alt="FIU: Engineering and Computing" )

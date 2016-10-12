@@ -1,27 +1,29 @@
-include ./bolo-options.jade
+include options
 include ../includes/mixins.jade
 div.col-xs-12.col-sm-6.col-md-3
-
     div.thumbnail
-
+        -
+            var boloStatus;
+            if (bolo.createdOn < bolo.lastUpdated && Date.now() - bolo.lastUpdated <= 604800000)
+                boloStatus = 'Updated';
+            else if (Date.now() - bolo.createdOn <= 604800000)
+                boloStatus = 'New';
         div.status
-            form( action="/bolo/update/" + bolo.id method="post" ).form-group
-                input( type="hidden" name="id" value=bolo.id )
-                label.control-label( for=bolo.id )
-                div.text-uppercase.text-center.text-danger.strong.h4 #{bolo.status}
+            h3.text-uppercase.text-center.text-danger.strong #{boloStatus}
 
-        div.boloImageContainer
+        div.boloImageContainer.boloImageCenterer
 
-            div.boloImageCenterer
-                if bolo.images.featured
-                    img( src="/bolo/asset/" + bolo.id + "/featured" alt=bolo.images.featured  )
-                else
-                    img( src="/img/nopic.png" alt="no image"  )
+            if (boloStatus)
+                div#thumbnailstatus.col-xs-12
+                    p.text-center.text-danger.strong #{bolo.status}
+            img( src="img/bolo/featured/" + bolo.id alt='Featured Image' )
+
+
 
         div.category
-            h4.strong(style = "text-align: center;") #{bolo.category}
+            h4.strong(style = "text-align: center;") #{bolo.category.name}
 
         div.caption
-            p <b>Updated:</b> #{bolo.lastUpdatedOn}
+            p <b>Updated:</b> #{bolo.lastUpdated}
             p <b>Created On:</b> #{bolo.createdOn}
-            p <b>Posted By:</b> #{bolo.agencyName}
+            p <b>Posted By:</b> #{bolo.agency.name}

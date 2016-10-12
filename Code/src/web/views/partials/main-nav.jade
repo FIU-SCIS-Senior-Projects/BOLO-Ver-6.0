@@ -3,17 +3,9 @@ include ../includes/mixins.jade
 +nav( "Home", "bolo-nav" )
     if userLoggedIn
         ul.nav.navbar-nav
-            +dropdown_menu( 'Create' )
-                li: a( href="/bolo/create/auto" ) Auto Theft
-                li: a( href="/bolo/create/boat" ) Boat Theft
-                    li: a( href="/bolo/create/generalbolo" ) General
-            li: a( href="/bolo/archive" ) Archive
-            li: a( href="/agency" ) Agency Directory
-            +dropdown_menu( 'Search' )
-                li: a( href="/bolo/search/auto" ) Auto Theft
-                li: a( href="/bolo/search/boat" ) Boat Theft
-                    li: a( href="/bolo/search/generalbolo" ) General
-            if (tier === 'ROOT' || tier === 'ADMINISTRATOR')
+            li: a( href="/bolo/create" ) Create A BOLO
+            li: a( href="/bolo/search" ) Search
+            if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
                 li: a( href="/admin" ) Admin
         ul.nav.navbar-nav.navbar-right
             +dropdown_menu(username)
@@ -21,9 +13,11 @@ include ../includes/mixins.jade
                 li: a( href="/userGuide" ) User Guide
                 li: a( href="/logout" ) Logout
     else
+        ul.nav.navbar-nav
+            li: a( href="/login" ) Login
         ul.nav.navbar-nav.navbar-right
             +dropdown_menu( 'About Us')
                 li: a( href="/aboutUs/MDCACP" ) M.D.C.A.C.P.
                 li: a( href="/aboutUs/FIU" ) FIU's Contribution
                 li: a( href="/aboutUs/IBM" ) IBM's Contribution
-                li: a( href="/login" ) Login
+                li: a( href="/aboutUs" ) About Us

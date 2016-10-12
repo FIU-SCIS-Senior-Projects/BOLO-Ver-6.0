@@ -1,0 +1,85 @@
+extends layout
+
+block jumbo
+    .jumbotron
+        .container
+            h3 Create a BOLO
+
+block content
+    include partials/global-alerts
+    include partials/options
+    noscript
+        h2.text-danger Javascript is disabled in your browser! You can not create a bolo without javascript enabled!
+
+    //h4 The current Date and Time is #{Date()}
+
+    form#create-bolo-form(action= "/bolo/create" enctype="multipart/form-data" method="post")
+        .form-group
+            .row
+                -
+                    var date = new Date();
+                    var day = date.getDate() < 10 ? '0' + date.getDate():date.getDate();
+                    var month = date.getMonth() < 10 ? '0' + date.getMonth():date.getMonth();
+                    var currDate = day + '/' + month + '/' + date.getFullYear();
+                    var currTime = date.getHours() + ':' + date.getMinutes();
+                .col-sm-6
+                    +input_text( "dateReported", "Date Reported", "DD/MM/YYYY", true, currDate )
+                .col-sm-6
+                    +input_text( "timeReported", "Time Reported", "HH:MM", true, currTime )
+            -
+                var categoryNames = []
+                categoryNames.push('');
+                for (var num in categories)
+                categoryNames.push(categories[num].name);
+            .cat
+                +select_options( "category", "Category", categoryNames, true)
+            div#newForms
+
+            script.
+                var categorySelector = $('.cat');
+                categorySelector.change(function () {
+                    var newForms = document.getElementById('newForms')
+                    while (newForms.firstChild) {
+                        newForms.removeChild(newForms.firstChild);
+                    }
+                    var val = categorySelector.find("option:selected").index() - 1;
+                    if (val !== -1) {
+                        var categories = !{JSON.stringify(categories)};
+                        var selectedCategory = categories[val];
+                        for (num in selectedCategory.fields) {
+                            var newDiv = document.createElement('div'),
+                                    newLabel = document.createElement('label'),
+                                    newField = document.createElement('input');
+                            newDiv.className = 'form-group';
+                            newLabel.className = 'control-label';
+                            newLabel.htmlFor = selectedCategory.fields[num];
+                            newLabel.innerHTML = selectedCategory.fields[num];
+                            newField.className = 'form-control';
+                            newField.name = 'field';
+                            newDiv.appendChild(newLabel);
+                            newDiv.appendChild(newField);
+                            newForms.appendChild(newDiv);
+                        }
+                    }
+                });
+
+            .row
+                .col-sm-4
+                    label.control-label( for="main" ) Featured Image
+                    input#main( name="featured" type="file" accept="image/*" )
+
+                .col-sm-4
+                    label.control-label( for="other1" ) Image Upload
+                    input#other1( name="other1" type="file" accept="image/*" )
+
+                .col-sm-4
+                    label.control-label( for="other2" ) Image Upload
+                    input#other2( name="other2" type="file" accept="image/*" )
+
+            +input_text( "videoURL", "Video Link", "", false, vid1, "url" )
+            +input_textarea( "info", "Additional Info", "", false, info1 )
+            +input_textarea( "summary", "Summary", "", false, summary1 )
+
+            button.btn.btn-default( name = "option" type = "submit" value = "submit") SUBMIT
+            button.btn.btn-default( name = "option" type = "submit" value = "preview" ) PREVIEW
+

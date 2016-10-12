@@ -1,30 +1,36 @@
-extends ./layout.jade
+extends layout
 
 block jumbo
     .jumbotron
         .container
             block jumbo-desc
 
-  block content
+block content
     .row
         .col-xl-3.col-lg-3.col-md-3.col-sm-3.col-xs-12
             ul.nav.nav-pills.nav-stacked(role="nav")
-                li(class=( admin_nav === 'admin-index' ? 'active' : '' ))
+                li
                     a(href="/admin") Dashboard
-                li(class=( admin_nav === 'admin-agency' ? 'active' : '' ))
-                  if(tier === 'ROOT' ||tier === 'ADMINISTRATOR')
+                li
                     a(href="/admin/agency") Agency Management
-                li(class=( admin_nav === 'admin-dataAnalysis' ? 'active' : '' ))
-                  if(tier === 'ROOT')
-                    a(href="/admin/dataAnalysis") Data Analysis
-                li(class=( admin_nav === 'admin-dataSubscriber' ? 'active' : '' ))
-                  if(tier === 'ROOT')
-                    a(href="/admin/dataSubscriber") Data Subscribers
-                li(class=( admin_nav === 'admin-systemSetting' ? 'active' : '' ))
-                  if(tier === 'ROOT')
-                    a(href="/admin/systemSetting") System Setting
-                li(class=( admin_nav === 'admin-users' ? 'active' : '' ))
-                    a(href="/admin/users") User Management
+                li
+                    a(href="/admin/user") User Management
+                if(userTier === 'ROOT')
+                    li
+                        a(href="/admin/category") Bolo Category Management
+                    li
+                        a(href="/admin/dataSubscriber") Data Subscriber Management
+                    hr
+                    li
+                        a(href="/admin/dataAnalysis") Data Analysis
+                    hr
+                    li
+                        a(href="/admin/edit/login") Edit Login Page
+                    li
+                        a(href="/admin/edit/userGuide") Edit User Guide Page
+                    li
+                        a(href="/admin/edit/aboutUs") Edit About Us Page
+
         .col-xl-9.col-lg-9.col-md-9.col-sm-9.col-xs-12
-            include ./partials/global-alerts.jade
+            include partials/global-alerts
             block admin-content

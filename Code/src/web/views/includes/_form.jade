@@ -1,23 +1,14 @@
-
 mixin option( value, selected )
     if selected
         option( value=value, selected ) #{value}
     else
         option( value=value ) #{value}
 
-mixin check_box(name,label,required)
+mixin check_box(name,label,checked)
     .form-group
-        input(type="hidden", name=name, value=0)
         label(for='checkbox1')
             span #{label}
-        input#checkbox1.checkbox.style-2(type='checkbox',name=name, checked=false)
-
-mixin check_boxChecked(name,label,required)
-    .form-group
-        input(type="hidden", name=name, value=0)
-        label(for='checkbox1')
-            span #{label}
-        input#checkbox1.checkbox.style-2(type='checkbox',name=name, checked=true)
+        input.checkbox.style-2(type='checkbox',name=name, checked=checked)
 
 
 mixin input_text( name, label, placeholder, required, value, type )
@@ -57,6 +48,8 @@ mixin select_options_onchange( name, label, options, required, selectedValue, fu
                     +option( val,true )
                 else
                     +option( val,false )
+
+
 mixin form_labels_row( label,value, css )
     div.form-group(class=css)
         label.col-xs-4.control-label #{label} :
