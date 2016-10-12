@@ -99,4 +99,5 @@ local.properties
 .texlipse
 
 *.ini
-/.idea
+.idea
+Code/src/web/uploads/

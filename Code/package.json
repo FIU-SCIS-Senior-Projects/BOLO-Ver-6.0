@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "babyparse": "^0.4.6",
-    "bcrypt": "",
     "bcrypt-nodejs": "0.0.3",
     "blob": "0.0.4",
     "blob-stream": "^0.1.3",
