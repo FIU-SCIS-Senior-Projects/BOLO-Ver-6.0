@@ -41,7 +41,7 @@ console.log('MongoDB Connection\nHost:' + db.host + '\nPort:' + db.port);
  */
 var app = express();
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
 
 /**
@@ -138,7 +138,6 @@ app.use(function (req, res, next) {
     }
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
-
     //locals set by passport
     res.locals.passport_success = req.flash('success');
     res.locals.passport_error = req.flash('error');

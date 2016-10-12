@@ -1,8 +1,9 @@
-var fs = require('fs');
-var md = require('node-markdown').Markdown;
 /**
  * This class sets the controls for the aboutUs routes
  */
+
+var fs = require('fs');
+var md = require('node-markdown').Markdown;
 
 /**
  * This function is to display the MDCACP about page
@@ -26,9 +27,9 @@ exports.getAboutUsIBM = function (req, res) {
 };
 
 exports.getAboutUs = function (req, res) {
-    fs.readFile('./public/AboutUs.md', function (err, data) {
+    fs.readFile(__dirname + '/../public/AboutUs.md', function (err, data) {
         if (err) {
-            res.render('error');
+            throw err;
         } else {
             console.log('AboutUs.md is being read');
             res.render('about', {md: md, text: data.toString()});

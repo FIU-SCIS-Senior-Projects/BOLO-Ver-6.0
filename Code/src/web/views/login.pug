@@ -1,18 +1,19 @@
-extends ./layout.jade
-include ./includes/mixins.jade
+extends layout
 
 block jumbo
     .jumbotron
-      .container(style="display:flex; justify-content: center;")
-        div
-          div(style="display: flex; justify-content: center;")
-              img(src= "/img/chiefsofpolice.png", style="height:200px;")
-            h1(style="text-align: center;") BOLO
-            p Flier Creator
-            p.strong Situational Awareness Multi-Jurisdictional Resource
+        .container(style="display:flex; justify-content: center;")
+            div(style="display: flex; justify-content: center;")
+                img(src= "/img/chiefsofpolice.png", style="height:200px;")
+            .row
+                h1(style="text-align: center;") BOLO
+            .row
+                p Flier Creator
+            v
+                p.strong Situational Awareness Multi-Jurisdictional Resource
 
 block content
-    include ./partials/global-alerts.jade
+    include partials/global-alerts
     noscript
         h2.text-danger Javascript is disabled in your browser! You can not create a bolo or access most features without javascript enabled!
     form#login(action="/login" method="post")

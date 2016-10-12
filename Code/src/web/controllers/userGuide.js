@@ -8,7 +8,7 @@ var pdfService = require('../services/pdf-service');
  * Displays the user guide on each individual teir.
  */
 exports.getUserGuide = function (req, res) {
-    fs.readFile('./public/UserGuide.md', function (err, data) {
+    fs.readFile(__dirname + '/../public/UserGuide.md', function (err, data) {
         if (err) throw err;
         res.render('user-guide', {md: md, text: data.toString()});
     });

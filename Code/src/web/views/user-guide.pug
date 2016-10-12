@@ -1,5 +1,5 @@
-extends ./layout.jade
-include ./includes/mixins.jade
+extends layout
+include includes/mixins
 
 block jumbo
     .jumbotron
@@ -11,7 +11,9 @@ block jumbo
             br
 
 block content
-        p.!= md(text)
+    .container
+        .row
+            != md(text)
 
     if (userTier === 'ROOT')
         h3.strong(style='color:030b2f;')  Agency management

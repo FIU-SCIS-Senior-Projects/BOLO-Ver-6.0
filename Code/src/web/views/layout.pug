@@ -1,6 +1,5 @@
 include includes/mixins
 
-
 doctype html
 script(src="/bower_components/jquery/dist/jquery.min.js" )
 script(src="/bower_components/jquery-ui/jquery-ui.min.js" )
@@ -8,9 +7,9 @@ script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
 script(src="/bower_components/js/bootstrap-select.min.js")
 link(rel="stylesheet" href="/bower_components/css/bootstrap-select.min.css")
 
-script( type="text/javascript", src="/js/ui.js" )
-script( type="text/javascript", src="/js/jquery.maskedinput.js" )
-script( type="text/javascript", src="/js/jqueryscripts.js" )
+script( type="text/javascript" src="/js/ui.js" )
+script( type="text/javascript" src="/js/jquery.maskedinput.js" )
+script( type="text/javascript" src="/js/jqueryscripts.js" )
 
 block scripts
 
@@ -35,7 +34,7 @@ html.no-js
         <![endif]-->
 
         #wrap
-            include ./partials/main-nav.jade
+            include partials/main-nav
 
             block jumbo
 
@@ -44,4 +43,4 @@ html.no-js
 
             .push
 
-        include ./partials/footer.jade
+        include partials/footer
