@@ -25,7 +25,6 @@
     "brfs": "^1.4.3",
     "browserify": "^13.0.0",
     "cfenv": "1.0.x",
-    "cloudant": "*",
     "connect-flash": "^0.1.1",
     "cookie-parser": "*",
     "csurf": "^1.8.3",
