@@ -1,50 +1,35 @@
-# BOLO Flier Creator Version 5
+# BOLO Flier Creator Version 6
 
-#
+## Version 6 Developers
+- Dominick Martelly (dominick.martelly@gmail.com)
+- Brian Zamora (bzamo007@fiu.edu)
 
-
-This project is the fourth iteration of the BOLO Flier Creator application
-conceptualized by the Pinecrest Police Department in Miami, Florida.  The fourth
-version aims to push the project to deployment while adding more features and
+This project is the sixth iteration of the BOLO Flier Creator
+application conceptualized by the Pinecrest Police Department in Miami,
+Florida. The sixth version aims to convert the application to mongoDB,
+add more features and test the application.
 
 The current application stack consists of:
 
+- [Jade](http://jadelang.net)
 - [Node.js](http://nodejs.org)
 - [Express](http://expressjs.com)
-- [IBM Bluemix PaaS](http://www.ibm.com/cloud-computing/bluemix)
-- [Cloudant](http://cloudant.com)
-- [SendGrid](https://sendgrid.com/)
+- [SendGrid](https://sendgrid.com)
+- [MongoDB](https://www.mongodb.com)
 
 ## How to use
 
-This app is designed to be used in a Node.js environment. Version 5 of the BOLO
+This app is designed to be used in a Node.js environment. Version 6 of
+the BOLO Flier Creator is designed to be used with a MongoDB server.
 
-Flier Creator is designed to be used in conjunction with the Bluemix PaaS and
-CloudFoundry.
+### Running the application
 
-### Using on Bluemix with CloudFoundry
+The application is ran from Code/scr/web/app.js
 
-**tl;dr** Add the Cloudant service to your Bluemix, create a manifest.yml file,
-connect your CloudFoundry CLI to the Bluemix API, push your app via the `cf
-push` command.
+### Running MongoDB
 
-**Steps**
-
-1. Add the Cloudant service to your Bluemix account:
-    * Reference the [Bluemix Cloudant
-      docs](https://cloudant.com/cloudant-ibm-bluemix-tutorials-and-demos/) for
-      detailed instruction.
-2. Create a `manifest.yml` file using the included manifest.yml.sample file in
-   the project.
-    * Make sure to remove the `.sample` extension from the filename.
-    * Using the sample with IBM Bluemix, the only keys that should need to be
-      changed are `sevices`, `host`, and `name`.
-3. Connect your CloudFoundry CLI to the Bluemix API.
-    * Reference the [Bluemix CF CLI
-      docs](https://www.ng.bluemix.net/docs/starters/install_cli.html) for
-      detailed instructions.
-4. Push your app: `cf push`
-
+A mongoDB server is need form the application to connect to. A server
+can be started locally
 
 ## Development Notes
 
