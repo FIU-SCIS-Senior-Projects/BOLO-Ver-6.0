@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var exec = require('gulp-exec');
-var confirm = require('gulp-confirm')
+var confirm = require('gulp-confirm');
 
 /*
 Initializes the database with default
@@ -20,7 +20,7 @@ gulp.task("initdb", function(){
     err: true,
     stderr: true,
     stdout: true
-  }
+  };
 
   gulp.src('./')
     .pipe(confirm({
@@ -37,7 +37,7 @@ gulp.task("initdb", function(){
     .pipe(exec('node create-jasons.js', options))
     .pipe(exec.reporter(reportOptions))
     .pipe(exec('node create-subscriber-helper.js', options))
-    .pipe(exec.reporter(reportOptions));
+    .pipe(exec.reporter(reportOptions))
     .pipe(exec('node create-settings.js', options))
     .pipe(exec.reporter(reportOptions));
-})
+});

@@ -99,3 +99,7 @@ local.properties
 .texlipse
 
 *.ini
+.idea/
+Code/src/web/public/AboutUs.md
+Code/src/web/public/UserGuide.md
+uploads/
