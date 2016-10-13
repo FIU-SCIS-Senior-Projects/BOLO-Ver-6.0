@@ -40,85 +40,75 @@ var getErrorMessage = function (err) {
 /**
  * Responds with new Jade Page to Upload CSV
  */
-module.exports.getCSVForm = function (req, res) {
+exports.getCSVForm = function (req, res) {
     res.render('admin-user-multiple');
 };
 
 /**
  * Creates multiple users from a csv file
  */
-module.exports.multiUserCreate = function (req, res) {
-        var converter = new Converter({});
-        var index = 0;
+exports.multiUserCreate = function (req, res) {
+    var converter = new Converter({});
+    var index = 0;
 
-        if (req.files.csvfile)
-        {
-            var csv = req.files.csvfile[0];
+    if (req.files.csvfile) {
+        var csv = req.files.csvfile[0];
 
-        }
-        else
-        {
-            req.flash('error_msg', 'NO CSV SELECTED -- Please Select A CSV File');
-            res.redirect('/admin/user/multiple');
-        }
+    }
+    else {
+        req.flash('error_msg', 'NO CSV SELECTED -- Please Select A CSV File');
+        res.redirect('/admin/user/multiple');
+    }
 
-        converter.fromFile(csv.path, function (err, result)
-        {
-            console.log("JSON CSV" + JSON.stringify(result));
-            while (index < result.length)
-            {
-                console.log('index: %s, result.length: %s', index, result.length);
-                console.log(result[index]);
-                var newUser = function (index)
-                {
-                    Agency.findAgencyByName(result[index].Agency, function (err, userAgency)
-                    {
+    converter.fromFile(csv.path, function (err, result) {
+        console.log("JSON CSV" + JSON.stringify(result));
+        while (index < result.length) {
+            console.log('index: %s, result.length: %s', index, result.length);
+            console.log(result[index]);
+            var newUser = function (index) {
+                Agency.findAgencyByName(result[index].Agency, function (err, userAgency) {
 
-                        if(err) throw err;
-                        console.log('******* index: %s, result.length: %s *******', index, result.length);
-                        var index2 = 0;
+                    if (err) throw err;
+                    console.log('******* index: %s, result.length: %s *******', index, result.length);
+                    var index2 = 0;
 
-                        //console.log('******* index - 2: %s, result.length: %s *******', index, result.length);
-                        var newUser = new User({
-                            username: result[index].Username,
-                            firstname: result[index].Firstname,
-                            lastname: result[index].Lastname,
-                            password: result[index].Password,
-                            email: result[index].Email,
-                            tier: result[index].Role,
-                            badge: result[index].BadgeNumber,
-                            unit: result[index].Unit,
-                            rank: result[index].Title,
-                            agency: userAgency.id
-                        });
-                        //Save the user
-                        User.createUser(newUser, function (err, user)
-                        {
-                            if (err)
-                            {
-                                throw err;
-                            }
-                            //If no errors, user has been saved
-                            else
-                            {
-                                console.log(user);
-                                console.log('User has been registered');
-                            }
-                        });
-
+                    //console.log('******* index - 2: %s, result.length: %s *******', index, result.length);
+                    var newUser = new User({
+                        username: result[index].Username,
+                        firstname: result[index].Firstname,
+                        lastname: result[index].Lastname,
+                        password: result[index].Password,
+                        email: result[index].Email,
+                        tier: result[index].Role,
+                        badge: result[index].BadgeNumber,
+                        unit: result[index].Unit,
+                        rank: result[index].Title,
+                        agency: userAgency.id
                     });
-                }
+                    //Save the user
+                    User.createUser(newUser, function (err, user) {
+                        if (err) {
+                            throw err;
+                        }
+                        //If no errors, user has been saved
+                        else {
+                            console.log(user);
+                            console.log('User has been registered');
+                        }
+                    });
 
-                newUser(index);
-                index = index + 1;
-            }
-        });
-            console.log("I Finished");
-            req.flash('success_msg', 'All Users Successfully Uploaded');
-            res.redirect('/admin/user/multiple');
+                });
+            };
 
-        };
+            newUser(index);
+            index = index + 1;
+        }
+    });
+    console.log("I Finished");
+    req.flash('success_msg', 'All Users Successfully Uploaded');
+    res.redirect('/admin/user/multiple');
 
+};
 
 /**
  * Responds with a form to create a new user.
