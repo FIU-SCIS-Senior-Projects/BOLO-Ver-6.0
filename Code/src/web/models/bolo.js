@@ -85,10 +85,11 @@ module.exports.findAllBolos = function (isConfirmed, limit, skip, sortBy, callba
         .exec(callback);
 };
 
-module.exports.findBolosByAgency = function (agencyName, limit, skip, sortBy, callback) {
+module.exports.findBolosByAgency = function (agencyName, isArchived, limit, skip, sortBy, callback) {
     Bolo.find({
         agency: agencyName,
-        isConfirmed: true
+        isConfirmed: true,
+        isArchived: isArchived
     }).limit(limit)
         .skip(skip)
         .sort({sortBy: 1})
@@ -103,4 +104,12 @@ module.exports.findBolosByAuthor = function (authorName, limit, callback) {
     Bolo.find({
         author: authorName
     }).limit(limit).sort({}).exec(callback);
+};
+
+module.exports.deleteBolo = function (id, callback) {
+    Bolo.remove({_id: id}).exec(callback);
+};
+
+module.exports.deleteAllArchivedBolos = function (callback) {
+    Bolo.remove({isArchived: true}).exec(callback);
 };

@@ -14,10 +14,15 @@ router.get('/', control.listBolos);
 router.get('/create', control.getCreateBolo);
 router.post('/create', boloImages, control.postCreateBolo);
 router.get('/search', control.getBoloSearch);
+router.get('/archive', control.listArchivedBolos);
+router.post('/purge', control.purgeArchivedBolos);
 router.get('/:id', control.getBoloDetails);
+router.post('/pdf/:id', control.renderBoloAsPDF);
 router.post('/archive/:id', control.archiveBolo);
+router.post('/unarchive/:id', control.unArchiveBolo);
 router.get('/confirm/:token', control.confirmBolo);
 router.get('/edit/:id', control.getEditBolo);
 router.post('/edit/:id', control.postEditBolo);
+router.post('/delete/:id', control.deleteBolo);
 
 module.exports = router;

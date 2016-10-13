@@ -259,7 +259,7 @@ exports.listBolos = function (req, res) {
     var limit = req.query.limit || config.const.BOLOS_PER_PAGE;
     var sortBy = req.query.sort || 'lastUpdated';
     var skip = (1 <= page) ? (page - 1) * limit : 0;
-    Bolo.findBolosByAgency(req.user.agency, limit, skip, sortBy, function (err, listOfBolos) {
+    Bolo.findBolosByAgency(req.user.agency, false, limit, skip, sortBy, function (err, listOfBolos) {
         if (err) throw err;
         Agency.findAllAgencies(function (err, listOfAgencies) {
             if (err) throw err;
@@ -289,256 +289,18 @@ exports.getBoloDetails = function (req, res) {
     })
 };
 
-// list bolos by agency at the root route
-router.get('/agency/:id', function (req, res, next) {
-
-    var agency = req.params.id;
-    var page = parseInt(req.query.page) || 1;
-    console.log('page: ' + page);
-    var limit = config.const.BOLOS_PER_PAGE;
-    console.log('limit: ' + limit);
-    var skip = (1 <= page) ? (page - 1) * limit : 0;
-    var data = {
-        'paging': {
-            'first': 1,
-            'current': page
-        }
-    };
-
-
-    Bolo.findBolosByAgency(agency, limit, skip).then(function (results) {
-        data.bolos = results.bolos;
-        data.agencyRoute = req.params.id;
-        console.log('total: ' + results.total);
-        data.paging.last = Math.ceil(results.total / limit);
-        console.log('paging: ' + data.paging.last);
-        agencyService.getAgencies().then(function (agencies) {
-
-            data.agencies = agencies;
-
-            var i;
-            for (i = 0; i < agencies.length; i++) {
-                if (agencies[i].data.id === req.user.agency) {
-
-                    data.agency = agencies[i];
-                    data.userAgency = agencies[i].data;
-
-                }
-                if (agencies[i].data.id === agency) {
-
-                    data.filter = agencies[i].data.name;
-                }
-            }
-
-            res.render('bolo-list-agency', data);
-        });
-    }).catch(function (error) {
-        next(error);
-    });
-
-});
-
-
 /**
- * Grabs the agencies to filter by from a front end ajax call
+ * Renders the Bolo as a PDF
  */
-var agenciesToFilterBy;
-router.post('/agencies/', function (req, res) {
-
-    agenciesToFilterBy = req.body['agencies'];
-    console.log("Posted and got " + agenciesToFilterBy);
-    res.send({
-        redirect: '/bolo/agencies'
-    });
-
-});
-
-router.get('/agencies/', function (req, res, next) {
-
-    if (typeof agenciesToFilterBy === 'undefined') {
-        res.redirect('/bolo');
-    }
-    //var author = req.user.username;
-    var page = parseInt(req.query.page) || 1;
-    console.log('page: ' + page);
-    var limit = config.const.BOLOS_PER_PAGE;
-    console.log('limit: ' + limit);
-    var skip = (1 <= page) ? (page - 1) * limit : 0;
-    var data = {
-        'paging': {
-            'first': 1,
-            'current': page
+exports.renderBoloAsPDF = function (req, res) {
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+        if (err) {
+            res.render('404');
+        } else {
+            req.flash('error_msg', 'Not yet Implemented');
+            res.redirect('/bolo');
         }
-    };
-
-    // parse the agenciesToFilterBy array and create a string of agencies
-    var filter = "";
-    for (var i = 0; i < agenciesToFilterBy.length; i++) {
-        filter += agenciesToFilterBy[i];
-        if (i + 1 < agenciesToFilterBy.length) {
-            filter += ", ";
-        }
-    }
-    data.filter = filter;
-    data.pageRoute = '/bolo/agencies';
-
-    boloService.getBolosFromAgencies(agenciesToFilterBy, limit, skip).then(function (results) {
-        data.bolos = results.bolos;
-
-        agencyService.getAgencies().then(function (agencies) {
-            data.agencies = agencies;
-            var i;
-            for (i = 0; i < agencies.length; i++) {
-                if (req.user.agency === agencies[i].data.id) {
-                    data.userAgency = agencies[i].data;
-                }
-            }
-            data.paging.last = Math.ceil((Math.ceil(results.total / limit) * results.bolos.length) / limit);
-            res.render('bolo-list', data);
-
-        });
-    }).catch(function (error) {
-        next(error);
-    });
-
-});
-
-/**
- * List archived bolos
- */
-exports.getArchivedBolos = function (req, res) {
-
-    var page = parseInt(req.query.page) || 1;
-    var limit = config.const.BOLOS_PER_PAGE;
-    var skip = (1 <= page) ? (page - 1) * limit : 0;
-
-    var data = {
-        'paging': {
-            'first': 1,
-            'current': page
-        }
-    };
-
-    boloService.getArchiveBolos(limit, skip).then(function (results) {
-        data.bolos = results.bolos;
-        data.paging.last = Math.ceil(results.total / limit);
-        res.render('bolo-archive', data);
-    }).catch(function (error) {
-        next(error);
-    });
-};
-
-router.post('/archive/purge', function (req, res) {
-
-    var pass = req.body.password;
-    var username = req.user.data.username;
-    var range = req.body.range;
-    var authorized = false;
-
-    //2nd level of auth
-    userService.authenticate(username, pass)
-        .then(function (account) {
-            var min_mins = 0;
-            if (account) {
-                //third level of auth
-                var tier = req.user.roleName();
-
-                if (tier === 'ROOT') {
-                    authorized = true;
-                    if (range == 1) {
-                        min_mins = 1051200;
-                    } else if (range == 2) {
-
-                        min_mins = 0;
-                    }
-
-                    var now = moment().format(config.const.DATE_FORMAT);
-                    var then = "";
-                    boloService.getArchiveBolosForPurge().then(function (bolos) {
-
-                        var promises = [];
-                        for (var i = 0; i < bolos.bolos.length; i++) {
-                            var curr = bolos.bolos[i];
-                            then = curr.lastUpdatedOn;
-
-                            var ms = moment(now, config.const.DATE_FORMAT).diff(moment(then, config.const.DATE_FORMAT));
-                            var d = moment.duration(ms);
-                            var minutes = parseInt(d.asMinutes());
-
-                            if (minutes > min_mins) {
-                                promises.push(boloService.removeBolo(curr.id));
-                            }
-                        }
-
-                        Promise.all(promises).then(function (responses) {
-                            if (responses.length >= 1) {
-                                req.flash(GFMSG, 'Successfully purged ' + responses.length + ' BOLOs.');
-                            } else {
-                                req.flash(GFMSG, 'No BOLOs meet purge criteria.');
-                            }
-                            res.send({
-                                redirect: '/bolo/archive'
-                            });
-                        });
-
-                    });
-
-                }
-            }
-            if (authorized === false) {
-                req.flash(GFERR,
-                    'You do not have permissions to purge BOLOs. Please ' +
-                    'contact your agency\'s administrator ' +
-                    'for access.');
-                res.send({
-                    redirect: '/bolo/archive'
-                });
-            }
-        }).catch(function () {
-        req.flash(GFERR, "error in purge process, please try again");
-        res.send({
-            redirect: '/bolo/archive'
-        });
-    });
-});
-
-router.get('/search/results', function (req, res) {
-
-
-    console.log(req.query.bookmark);
-    var query_string = req.query.valid;
-    console.log(query_string);
-    var data = {
-        bookmark: req.query.bookmark || {},
-        more: true,
-        query: query_string
-    };
-    // Do something with variable
-    var limit = config.const.BOLOS_PER_PAGE;
-
-    boloService.searchBolos(limit, query_string, data.bookmark).then(function (results) {
-        data.paging = results.total > limit;
-
-        if (results.returned < limit) {
-            console.log('theres no more!!');
-            data.more = false; //indicate that another page exists
-        }
-
-        data.previous_bookmark = data.bookmark || {};
-        data.bookmark = results.bookmark;
-        console.log("current: " + data.bookmark);
-        console.log("previous: " + data.previous_bookmark);
-
-        data.bolos = results.bolos;
-        res.render('bolo-search-results', data);
-    }).catch(function (error) {
-        next(error);
-    });
-});
-
-exports.getBoloSearch = function (req, res) {
-    req.flash('error_msg', 'Not Yet Implemented');
-    res.redirect('/bolo');
+    })
 };
 
 /**
@@ -648,30 +410,6 @@ exports.postCreateBolo = function (req, res) {
 };
 
 /**
- * Update bolo status through thumbnail select menu
- */
-router.post('/update/:id', function (req, res, next) {
-
-});
-
-/**
- * Render the bolo edit form
- */
-exports.getEditBolo = function (req, res) {
-    req.flash('error_msg', 'Not yet Implemented');
-    res.redirect('/bolo');
-};
-
-/**
- * Process edits on a specific bolo
- */
-exports.postEditBolo = function (req, res) {
-    //var token = crypto.random(20);
-    req.flash('error_msg', 'Not yet Implemented');
-    res.redirect('/bolo');
-};
-
-/**
  * Confirms an emailed Bolo
  */
 exports.confirmBolo = function (req, res) {
@@ -692,164 +430,114 @@ exports.confirmBolo = function (req, res) {
 };
 
 /**
+ * Render the bolo edit form
+ */
+exports.getEditBolo = function (req, res) {
+    req.flash('error_msg', 'Not yet Implemented');
+    res.redirect('/bolo');
+};
+
+/**
+ * Process edits on a specific bolo
+ */
+exports.postEditBolo = function (req, res) {
+    //var token = crypto.random(20);
+    req.flash('error_msg', 'Not yet Implemented');
+    res.redirect('/bolo');
+};
+
+/**
+ * List archived bolos
+ */
+exports.listArchivedBolos = function (req, res) {
+    var page = req.query.page || 1;
+    var limit = req.query.limit || config.const.BOLOS_PER_PAGE;
+    var sortBy = req.query.sort || 'lastUpdated';
+    var skip = (1 <= page) ? (page - 1) * limit : 0;
+    Bolo.findBolosByAgency(req.user.agency, true, limit, skip, sortBy, function (err, listOfBolos) {
+        if (err) throw err;
+        Agency.findAllAgencies(function (err, listOfAgencies) {
+            if (err) throw err;
+            res.render('bolo-archive', {
+                bolos: listOfBolos,
+                agencies: listOfAgencies,
+                paging: {
+                    current: page,
+                    last: Math.ceil(listOfBolos.length / limit)
+                }
+            });
+        });
+    });
+};
+
+/**
  * Handle requests to inactivate a specific bolo
  */
 exports.archiveBolo = function (req, res) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
         if (err) throw err;
+        bolo.isArchived = true;
+        var shortID = bolo.id.substring(0, 8) + '...';
+        bolo.save(function (err) {
+            if (err) throw err;
+            req.flash('error_msg', 'Bolo ' + shortID + ' has been archived');
+            res.redirect('/bolo');
+        });
+    });
+};
+
+/**
+ * Handle requests to activate a specific bolo
+ */
+exports.unArchiveBolo = function (req, res) {
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+        if (err) throw err;
+        bolo.isArchived = false;
         req.flash('error_msg', 'Not yet Implemented');
         res.redirect('/bolo');
     });
 };
 
 /**
- * Process a request to restore a bolo from the archive.
+ * Deletes a specific bolo
  */
-router.get('/restore/:id', function (req, res, next) {
-    var data = {};
-
-    getAllBoloData(req.params.id).then(function (_data) {
-        _.extend(data, _data);
-        var auth = new BoloAuthorize(data.bolo, data.author, req.user);
-        if (auth.authorizedToArchive()) {
-            boloService.activate(data.bolo.id, true);
-        }
-    }).then(function (response) {
-        req.flash(GFMSG, 'Successfully restored BOLO.');
-        setTimeout(function () {
-            res.redirect('/bolo/archive')
-        }, 3000);
-    }).catch(function (error) {
-        if (!/unauthorized/i.test(error.message)) throw error;
-
-        req.flash(GFERR,
-            'You do not have permissions to restore this BOLO. Please ' +
-            'contact your agency\'s supervisor or administrator ' +
-            'for access.'
-        );
-        res.redirect('back');
-    }).catch(function (error) {
-        next(error);
-    });
-});
-
+exports.deleteBolo = function (req, res) {
+    var shortID = req.params.id.substring(0, 8) + '...';
+    //Check if the current user is authorized to delete the bolo
+    if (req.user.tier === 'ROOT' ||
+        (req.user.tier === 'ADMINISTRATOR' && req.user.agency.id === bolo.agency.id)) {
+        Bolo.deleteBolo(req.params.id, function (err, bolo) {
+            if (err) throw err;
+            req.flash('success_msg', 'BOLO ' + shortID + ' has been deleted');
+            res.redirect('/bolo/archive');
+        });
+    } else {
+        req.flash('error_msg', 'You are not authorized to delete BOLO ' + shortID);
+        res.redirect('/bolo/archive');
+    }
+};
 
 /**
- * Process a request delete a bolo with the provided id
+ * Deletes all archived bolos
  */
-router.get('/delete/:id', function (req, res, next) {
-
-    getAllBoloData(req.params.id).then(function (data) {
-        var auth = new BoloAuthorize(data.bolo, data.author, req.user);
-        if (auth.authorizedToDelete()) {
-            return boloService.removeBolo(req.params.id);
-        }
-    }).then(function (response) {
-        req.flash(GFMSG, 'Successfully deleted BOLO.');
-        res.redirect('back');
-    }).catch(function (error) {
-        if (!/unauthorized/i.test(error.message)) throw error;
-
-        req.flash(GFERR,
-            'You do not have permissions to delete this BOLO. Please ' +
-            'contact your agency\'s supervisor or administrator ' +
-            'for access.'
-        );
-        res.redirect('back');
-    }).catch(function (error) {
-        next(error);
-    });
-});
-
-
-router.get('/details/pdf/:id' + '.pdf', function (req, res, next) {
-    console.log("I'm In the function");
-
-    var data = {};
-    var someData = {};
-
-    var doc = new PDFDocument();
-    var existWatermark = false;
-    boloService.getAttachment(req.params.id, 'featured').then(function (attDTO) {
-        console.log("I'm In the middle of the function 1");
-        someData.featured = attDTO.data;
-        return boloService.getBolo(req.params.id);
-    }).then(function (id) {
-        console.log("I'm In the middle of the function 2");
-        data.bolo = id;
-        return agencyService.getAgency(id.agency);
-    }).then(function (agency) {
-        console.log("I'm In the middle of the function 3");
-        data.agency = agency;
-        if (agency.attachments['watermark'] != null) {
-            existWatermark = true;
-        }
-        if (existWatermark)
-            return agencyService.getAttachment(agency.id, 'watermark');
-        else
-            return null;
-    })/*.then(function (watermark) {
-     console.log("I'm In the middle of the function 4");
-     if (existWatermark)
-     someData.watermark = watermark.data;
-     return agencyService.getAttachment(data.agency.id, 'logo')
-     }).then(function (logo) {
-     console.log("I'm In the middle of the function 5");
-     someData.logo = logo.data;
-     return agencyService.getAttachment(data.agency.id, 'shield')
-     }).then(function (shield) {
-     console.log("I'm In the middle of the function 6");
-     someData.shield = shield.data;
-     return userService.getByUsername(data.bolo.authorUName);
-     })*/.then(function (user) {
-        console.log("I'm In the middle of the function 7");
-        data.user = userService.getByUsername(data.bolo.authorUName);
-        console.log("Checking Attributes of USER: " + data.user);
-        console.log("User.rank: " + data.user.sectunit);
-        console.log("User.name: " + data.user.fname);
-        console.log("Author.name: " + data.bolo.authorFName);
-        var logo = agencyService.getAttachment(data.agency.id, 'logo');
-        console.log("LOGO: ", +logo);
-        someData.shield = '/Users/libsys/BOLO6/Code/src/web/public/img/pinecrest-police-logo.png';
-        someData.logo = '/Users/libsys/BOLO6/Code/src/web/public/img/logo.jpg';
-
-        if (existWatermark) {
-            doc.image(someData.watermark, 0, 0, {
-                fit: [800, 800]
-            });
-        }
-        pdfService.genDetailsPdf(doc, data);
-
-        doc.image(someData.featured, 15, 155, {
-            fit: [260, 200]
+exports.purgeArchivedBolos = function (req, res) {
+    //Check if the current user is authorized to delete all archived bolos
+    if (req.user.tier === 'ROOT') {
+        Bolo.deleteAllArchivedBolos(function (err, result) {
+            if (err) throw err;
+            req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.n + ' BOLOs');
+            res.redirect('/bolo/archive');
         });
-        doc.image(someData.logo, 15, 15, {
-            height: 100
-        });
-        //console.log(someData.shield.content_type);
-        doc.image(someData.shield, 500, 15, {
-            height: 100
-        });
-        doc.end();
+    } else {
+        req.flash('error_msg', 'You are not authorized to purge all BOLOs');
+        res.redirect('/bolo/archive');
+    }
+};
 
-        res.contentType("application/pdf");
-        doc.pipe(res);
-
-    }).catch(function (error) {
-        next(error);
-    });
-    console.log("I'm at the end of the function");
-});
-
-router.get('/details/record/:id', function (req, res, next) {
-    var data = {
-        'form_errors': req.flash('form-errors')
-    };
-    boloService.getBolo(req.params.id).then(function (bolo) {
-        data.record = bolo.record;
-        res.render('bolo-record-tracking', data);
-
-    }).catch(function (error) {
-        next(error);
-    });
-});
+/**
+ * Searches though all bolos where the user has access
+ */
+exports.getBoloSearch = function (req, res) {
+    req.flash('error_msg', 'Not Yet Implemented');
+    res.redirect('/bolo');
+};

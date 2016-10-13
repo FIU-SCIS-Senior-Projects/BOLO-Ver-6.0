@@ -1,5 +1,5 @@
 include options
-include ../includes/mixins
+
 div.col-xs-12.col-sm-6.col-md-3
     div.thumbnail
         -
@@ -16,7 +16,7 @@ div.col-xs-12.col-sm-6.col-md-3
             if !(bolo.status === 'ACTIVE')
                 div#thumbnailstatus.col-xs-12
                     p.text-center.text-danger.strong #{bolo.status}
-            img( src="img/bolo/featured/" + bolo.id alt='Featured Image' )
+            img( src="/img/bolo/featured/" + bolo.id alt='Featured Image' )
 
 
 
