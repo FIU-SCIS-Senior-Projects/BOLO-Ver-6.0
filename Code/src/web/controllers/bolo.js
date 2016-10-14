@@ -526,6 +526,7 @@ exports.purgeArchivedBolos = function (req, res) {
     if (req.user.tier === 'ROOT') {
         Bolo.deleteAllArchivedBolos(function (err, result) {
             if (err) throw err;
+            console.log(result);
             req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.n + ' BOLOs');
             res.redirect('/bolo/archive');
         });
