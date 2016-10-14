@@ -38,14 +38,14 @@ var Schema = new mongoose.Schema({
     summary: {
         type: String
     },
-    featured: {
-        data: Buffer,
-        contentType: String
-    },
     status: {
         type: String,
         enum: ['ACTIVE', 'FOUND', 'ARRESTED'],
         required: true
+    },
+    featured: {
+        data: Buffer,
+        contentType: String
     },
     other1: {
         data: Buffer,
@@ -66,6 +66,10 @@ var Schema = new mongoose.Schema({
     isArchived: {
         type: Boolean,
         default: false
+    },
+    subscribers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'user',
     }
 });
 

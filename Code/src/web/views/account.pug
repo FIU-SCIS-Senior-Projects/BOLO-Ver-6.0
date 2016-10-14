@@ -11,7 +11,7 @@ block account-content
     table.table
         tr
             td Name
-            td #{user.firstname} #{user.lastnamename}
+            td #{user.firstname} #{user.lastname}
         tr
             td Email
             td #{user.email}
@@ -36,4 +36,4 @@ block account-content
             | Please contact your Agency administrator to
             | make changes to your account details.
     else
-        a.btn.bg-info( href='/admin/user/edit/' + user.id ) Update Details
+        a.btn.btn-info( href='/admin/user/edit/' + user.id ) Update Details
