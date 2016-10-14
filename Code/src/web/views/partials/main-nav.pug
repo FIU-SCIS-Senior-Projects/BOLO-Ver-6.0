@@ -9,9 +9,10 @@ include ../includes/mixins
             if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
                 li: a( href="/admin" ) Admin
         ul.nav.navbar-nav.navbar-right
-            +dropdown_menu(username)
-                li: a( href="/account" ) Setting
+            +dropdown_menu(userName)
+                li: a( href="/account" ) Account
                 li: a( href="/userGuide" ) User Guide
+                li: a( href="/aboutUs" ) About Us
                 li: a( href="/logout" ) Logout
     else
         ul.nav.navbar-nav

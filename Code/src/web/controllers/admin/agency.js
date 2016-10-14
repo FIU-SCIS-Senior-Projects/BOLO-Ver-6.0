@@ -122,7 +122,6 @@ exports.postCreateForm = function (req, res) {
     // If the form is valid
     else {
         var newAgency = new Agency({
-            agencyID: req.body.agency_id,
             name: req.body.name,
             emailDomain: req.body.domain,
             address: req.body.address,

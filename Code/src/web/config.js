@@ -1,6 +1,5 @@
 /**
- * This file configures the Clouldant and the SendGrid databases
- *
+ * This file configures the MongoDB Database, constant values, and other settings
  * @type {exports|module.exports}
  */
 
@@ -17,9 +16,6 @@ require('dotenv').config({
 var core = path.resolve(__dirname, '../core');
 var config = {};
 
-/* Export the config object */
-module.exports = config;
-
 /* Application Config */
 config.appURL = process.env.APP_URL || 'http://localhost:3000';
 
@@ -27,26 +23,17 @@ var bootswatch_theme = 'yeti-custom';
 config.bootstrap = '/css/vendor/bootswatch/' +
     bootswatch_theme + '/bootstrap.min.css';
 
-config.const = config.constants = {
-    /* Flash Message Subjects */
-    'GFERR': 'Flash Subject - Global Error',
-    'GFMSG': 'Flash Subject - Global Message',
-
+config.const = {
+    pdf_view_path: path.resolve(__dirname, './views/pdf-view'),
     /* BOLO Page Settings todo*/
-    'BOLOS_PER_PAGE': 3,
+    BOLOS_PER_PAGE: 3,
 
-    'pdf_view_path': path.resolve(__dirname, './views/pdf-view'),
     /* http://momentjs.com/docs/#/displaying/ */
-    'DATE_FORMAT': 'MM-DD-YY HH:mm:ss',
-
-    'MAX_IMG_SIZE': 512000,
-
-    'HIGH_COMPRESSION': 10,
-
-    'MEDIUM_COMPRESSION': 40,
-
-    'LOW_COMPRESSION': 70
-
+    DATE_FORMAT: 'MM-DD-YY HH:mm:ss',
+    MAX_IMG_SIZE: 512000,
+    HIGH_COMPRESSION: 10,
+    MEDIUM_COMPRESSION: 40,
+    LOW_COMPRESSION: 70
 };
 
 // Sets the number of days a bolo can remain unconfirmed before expiring
@@ -58,9 +45,13 @@ config.max_age = 1000 * 15 * 60;
 config.maxNumberOfLogInAttempts = 10;
 
 //Database configuration
-config.dbport = 27017;
-config.db = 'mongodb://localhost/BOLO';
+config.db = 'mongodb://localhost:27017/BOLO';
 config.host = 'localhost';
+config.dbport = 27017;
+config.collection = 'BOLO';
+
+//Root password (TODO remove after development for security)
+config.rootPasswd = '1234';
 
 //Email configuration for conformations
 config.email = {
@@ -69,14 +60,12 @@ config.email = {
     'template_path': path.resolve(__dirname, './views/email')
 };
 
-
 /**
  * Validation Policy
  *
  * @see http://validatejs.org#validators for documentation detailing the list
  * of pre-defined validators or how to create custom validators
  */
-
 config.validation = {
     'password': {
         presence: true,
@@ -101,3 +90,6 @@ config.validation = {
         }
     }
 };
+
+/* Export the config object */
+module.exports = config;

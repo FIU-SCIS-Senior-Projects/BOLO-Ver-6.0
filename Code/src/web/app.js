@@ -132,7 +132,8 @@ app.use(flash());
 app.use(function (req, res, next) {
     if (req.user) {
         res.locals.userLoggedIn = true;
-        res.locals.username = req.user.username;
+        res.locals.userID = req.user._id;
+        res.locals.userName = req.user.username;
         res.locals.userTier = req.user.tier;
         res.locals.userAgency = req.user.agency;
     }

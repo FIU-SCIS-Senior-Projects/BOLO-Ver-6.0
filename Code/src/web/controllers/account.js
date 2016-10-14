@@ -12,69 +12,32 @@ var emailService = require('../services/email-service');
 
 var passwordUtil = require('../lib/password-util');
 
+var User = require("../models/user.js");
+var Agency = require('../models/agency');
+
 /**
  * Responds with a the account home page.
  */
 exports.getAccountDetails = function (req, res) {
-    var data = {
-        'account_nav': 'account-home',
-        'user': req.user
-    };
-
-    agencyService.getAgency(data.user.agency).then(function (agency) {
-            data.agency = agency;
-            res.render('account-details', data);
-        })
-        .catch(function (error) {
-            console.error('Error at %s >>> %s function getAccountDetails in the account.js', req.originalUrl, error.message);
-            req.flash(GFERR, 'Unknown error occurred, please try again.');
-            res.redirect('back');
-        });
+    User.findUserByID(req.user._id, function (err, user) {
+        if (err) throw err;
+        res.render('account', {user: user});
+    })
 };
 
 /**
  * Responds with the change password form page.
  */
 exports.getChangePassword = function (req, res) {
-    var data = {
-        'account_nav': 'account-password',
-        'form_errors': req.flash('form-errors')
-    };
-
-    res.render('account-password', data);
+    res.render('account-password');
 };
 
 /**
  * Process form data from the change password form page.
  */
 exports.postChangePassword = function (req, res) {
-    parseFormData(req).then(function (formDTO) {
-            var validationErrors = validatePassword(
-                formDTO.fields.password, formDTO.fields.confirm
-            );
-
-            if (validationErrors) {
-                console.log("account.js postChangePassword func");
-                req.flash('form-errors', validationErrors);
-                throw new FormError();
-            }
-
-            return userService.resetPassword(req.user.id, formDTO.fields.password);
-        })
-        .then(function () {
-            sendPasswordChangedEmail(req.user);
-            req.flash(GFMSG, 'Password change successful.');
-            res.redirect('/account');
-        })
-        .catch(function (error) {
-            if ('FormError' !== error.name) throw error;
-            res.redirect('back');
-        })
-        .catch(function (error) {
-            console.error('Error at %s >>> %s in the function postChangePassword in the account.js', req.originalUrl, error.message);
-            req.flash(GFERR, 'Unknown error occurred, please try again.');
-            res.redirect('back');
-        });
+    req.flash('error_msg', 'Not Yet Implemented');
+    res.redirect('/account/password');
 };
 
 /**
@@ -104,15 +67,8 @@ function sendPasswordChangedEmail(user) {
  * Respond with a form to manage notifications.
  */
 exports.getUserNotifications = function (req, res) {
-    var data = {
-        'account_nav': 'account-notification'
-    };
-
-    agencyService.getAgencies(req.user.notifications)
-        .then(function (agencies) {
-            data.agencies = agencies;
-            res.render('account-notifications', data);
-        });
+    req.flash('error_msg', 'Not Yet Implemented');
+    res.redirect('/account');
 };
 
 /**
@@ -122,9 +78,9 @@ exports.getAvailableAgencyNotifications = function (req, res) {
     var data = {'account_nav': 'account-notification'};
 
     agencyService.getAgencies().then(function (agencies) {
-            data.agencies = agencies;
-            res.render('account-notifications-add', data);
-        })
+        data.agencies = agencies;
+        res.render('account-notifications-add', data);
+    })
         .catch(function (error) {
             console.error('Error at %s >>> %s function getAvailableAgencyNotifications in the account.js', req.originalUrl, error.message);
             req.flash(GFERR, 'Unknown error occurred, please try again.');
@@ -147,13 +103,13 @@ exports.postUnsubscribeNotifications = function (req, res) {
         console.log(req.user.id);
         return agencyService.getAgency(req.user.agency)
     }).then(function (agency) {
-            if (selected.indexOf(agency.name) > -1 && agency.preventUnsubscription === true) {
-                req.flash(GFERR, 'You cannot unsubscribe from your own agency');
-                selected = [];
-                res.redirect('back');
-            }
-            return userService.removeNotifications(req.user.id, selected);
-        })
+        if (selected.indexOf(agency.name) > -1 && agency.preventUnsubscription === true) {
+            req.flash(GFERR, 'You cannot unsubscribe from your own agency');
+            selected = [];
+            res.redirect('back');
+        }
+        return userService.removeNotifications(req.user.id, selected);
+    })
         .then(function (user) {
             if (!user) {
                 req.flash(GFERR, 'Subscriptions update error occured.');
@@ -173,13 +129,13 @@ exports.getUnsubscribeNotificationsFromEmail = function (req, res) {
 
     var selected = [req.params.agencyId];
     return agencyService.getAgency(req.user.agency).then(function (agency) {
-            if (selected.indexOf(agency.name) > -1 && agency.preventUnsubscription === true) {
-                req.flash(GFERR, 'You cannot unsubscribe from your own agency');
-                selected = [];
-                res.redirect('/account/notifications');
-            }
-            return userService.removeNotifications(req.user.id, selected)
-        })
+        if (selected.indexOf(agency.name) > -1 && agency.preventUnsubscription === true) {
+            req.flash(GFERR, 'You cannot unsubscribe from your own agency');
+            selected = [];
+            res.redirect('/account/notifications');
+        }
+        return userService.removeNotifications(req.user.id, selected)
+    })
         .then(function (user) {
             if (!user) {
                 req.flash(GFERR, 'Subscriptions update error occured.');
@@ -201,16 +157,16 @@ exports.getUnsubscribeNotificationsFromEmail = function (req, res) {
  */
 exports.postSubscribeNotifications = function (req, res) {
     parseFormData(req).then(function (formDTO) {
-            var selected = formDTO.fields['agencies[]'] || [];
+        var selected = formDTO.fields['agencies[]'] || [];
 
-            if (!selected.length) {
-                return req.user;
-            }
+        if (!selected.length) {
+            return req.user;
+        }
 
-            return userService.addNotifications(
-                req.user.id, formDTO.fields['agencies[]']
-            );
-        })
+        return userService.addNotifications(
+            req.user.id, formDTO.fields['agencies[]']
+        );
+    })
         .then(function (user) {
             if (!user) {
                 req.flash(GFERR, 'Subscriptions update error occured.');

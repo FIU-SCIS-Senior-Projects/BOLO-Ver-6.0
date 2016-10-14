@@ -24,12 +24,8 @@ var config              = require('../../config');
  * Respond with a form to create a Data Subscriber.
  */
 module.exports.getDataAnalysis = function(req, res) {
-    var data = {}; // empty variable to store our data
-    /* get all the agencies from the database*/
-    agencyService.getAgencies().then(function(agencies) {
-        data.agencies = agencies; // put our agency data into data.agencies
-        res.render('data-analysis', data); //pending
-    });
+    req.flash('error_msg','Not Yet Implemented');
+    res.redirect('/admin');
 };
 
 module.exports.downloadCsv = function(req, res) {

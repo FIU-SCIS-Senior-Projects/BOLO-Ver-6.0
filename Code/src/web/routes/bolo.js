@@ -17,7 +17,7 @@ router.get('/search', control.getBoloSearch);
 router.get('/archive', control.listArchivedBolos);
 router.post('/purge', control.purgeArchivedBolos);
 router.get('/:id', control.getBoloDetails);
-router.post('/pdf/:id', control.renderBoloAsPDF);
+router.get('/pdf/:id', control.renderBoloAsPDF);
 router.post('/archive/:id', control.archiveBolo);
 router.post('/unarchive/:id', control.unArchiveBolo);
 router.get('/confirm/:token', control.confirmBolo);

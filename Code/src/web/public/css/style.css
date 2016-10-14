@@ -164,16 +164,21 @@ input[type="file"] {
     position: relative;
 }
 
-.boloImageCenterer {
-
-}
-
 .boloImageCenterer img {
     display: block;
     margin: 0 auto;
     border: solid #cccccc 2px;
     height: 250px;
     width: 250px;
+}
+
+.boloDetailsImages img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    max-width: 100%;
+    height: auto;
 }
 
 .caption {
@@ -340,14 +345,7 @@ a.thumbnail.active {
     height: auto;
 }
 
-#featured {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 30px;
-    max-width: 100%;
-    height: auto;
-}
+
 
 #badge {
     float: left;

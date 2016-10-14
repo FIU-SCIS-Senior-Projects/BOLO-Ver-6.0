@@ -154,7 +154,7 @@ var sendAccountLockedEmailToAdmins = function (account) {
  */
 exports.getLogIn = function (req, res) {
     if (req.user) {
-        req.flash('error_msg', 'Already logged in as *' + req.user.username + '*');
+        req.flash('error_msg', 'Already logged in as *' + req.user.userName + '*');
         res.redirect('/bolo');
     }
     else {

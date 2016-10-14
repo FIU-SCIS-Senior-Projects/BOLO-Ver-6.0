@@ -9,7 +9,7 @@ block jumbo
             .row
                 .col-xs-14.col-md-6
                     .pull-left
-                        a.btn.btn-default.pull-right( href="/bolo/details/pdf/" + bolo.id + '.pdf',target="_blank" ) Generate PDF
+                        a.btn.btn-default.pull-right( href="/bolo/pdf/" + bolo.id ,target="_blank" ) Generate PDF
                         button.btn.btn-primary(onclick='history.go(-1);') Go Back
                 .col-xs-14.col-md-6
                     .pull-right
@@ -47,22 +47,27 @@ block content
             | &nbsp;
             | &nbsp;
         .row
-            if(bolo.status !== "New" && bolo.status !== "Updated")
+            if(bolo.status !== 'ACTIVE')
                 div#updatedstatus.col-xs-12
                     p.text-center.text-danger.strong #{bolo.status}
             else
                 div.col-xs-12
                     p.text-center.text-danger.strong #{bolo.status}
-        .row
-            if (bolo.featured && !bolo.other1 && !bolo.other2)
-                .col-xs-12
+        .row.img-fluid.boloDetailsImages
+            if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
+                .col-xs-8
                     img.img-responsive(src="/img/bolo/featured/" + bolo.id)
-            else if (bolo.featured && bolo.other1 && !bolo.other2)
+            else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
                 .col-xs-6
                     img.img-responsive(src="/img/bolo/featured/" + bolo.id)
                 .col-xs-6
                     img.img-responsive(src="/img/bolo/other1/" + bolo.id)
-            else
+            else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
+                .col-xs-6
+                    img.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                .col-xs-6
+                    img.img-responsive(src="/img/bolo/other2/" + bolo.id)
+            else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
                 .col-xs-4
                     img.img-responsive(src="/img/bolo/other1/" + bolo.id)
                 .col-xs-4
