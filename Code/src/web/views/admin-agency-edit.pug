@@ -24,7 +24,7 @@ block admin-content
                         button#activation.btn.btn-success.pull-right(type='submit')
                             | Activate Agency
                     else
-                        button#activation.btn.btn-danger.pull-right(type='submit')
+                        button#activation.btn.btn-warning.pull-right(type='submit')
                             | Deactivate Agency
                 br
 
@@ -74,6 +74,5 @@ block admin-content
         br
         .form-group
             button.btn.btn-primary( type="submit" value="save" ) Submit
-    if (userTier === 'ROOT')
-        form(action= '/admin/agency/delete/' + agency.id  enctype="multipart/form-data" method="get" )
-            button.btn.btn-danger( type="submit" value="save" ) Delete Agency
+            if (userTier === 'ROOT')
+                a.btn.btn-danger.pull-right( href='/admin/agency/delete/' + agency.id type="submit" value="save" ) Delete Agency

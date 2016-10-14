@@ -1,5 +1,4 @@
 extends admin-layout
-include includes/mixins
 
 block jumbo-desc
     h3 Agency Delete: #{agency.name}
@@ -8,7 +7,9 @@ block admin-content
     .col-md-12
         .page-header
             h2 WARNING. THIS CAN NOT BE UNDONE
-            p.text-alert This will delete all the users associated with agency #{agency.name}
+            p.text-danger
+                | This will delete all the users
+                | associated with agency #{agency.name}
     if users.length
         table.table.table-striped
             thead

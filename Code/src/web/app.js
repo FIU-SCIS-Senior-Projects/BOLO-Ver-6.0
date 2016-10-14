@@ -143,7 +143,7 @@ app.use(function (req, res, next) {
     res.locals.passport_success = req.flash('success');
     res.locals.passport_error = req.flash('error');
 
-    console.log('locals.username = ' + res.locals.username);
+    console.log('locals.username = ' + res.locals.userName);
     console.log('locals.error_msg = ' + res.locals.error_msg);
     console.log('locals.success_msg = ' + res.locals.success_msg);
     next();
@@ -191,7 +191,6 @@ app.use('/', mainRoutes.auth);
 app.use('/aboutUs', mainRoutes.aboutUs);
 app.use('/img', mainRoutes.img);
 
-
 /**
  * If user is logged in, then keep going
  */
@@ -232,7 +231,7 @@ app.use('/admin/agency', adminRoutes.agency);
  * if the app went though all routes and could not find a page
  */
 app.use(function (req, res) {
-    console.error('404 encountered at %s, request ip = %s', req, req.ip);
+    console.error('404 encountered at %s, request ip = %s', req.originalUrl, req.ip);
     res.status(404).render('404');
 });
 

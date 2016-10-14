@@ -114,6 +114,10 @@ module.exports.deleteBolo = function (id, callback) {
     Bolo.remove({_id: id}).exec(callback);
 };
 
+module.exports.removeAuthorFromBolos = function (authorID, nullID, callback) {
+    Bolo.update({author: authorID}, {author: nullID}, {multi: true}, callback);
+};
+
 module.exports.deleteAllArchivedBolos = function (callback) {
     Bolo.remove({isArchived: true}).exec(callback);
 };

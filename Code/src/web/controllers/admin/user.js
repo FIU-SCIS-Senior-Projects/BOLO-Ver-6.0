@@ -10,6 +10,7 @@ var request = require("request");
 
 var User = require('../../models/user');
 var Agency = require('../../models/agency');
+var Bolo = require('../../models/bolo');
 
 /**
  * Error handling for MongoDB
@@ -327,11 +328,47 @@ exports.postEditDetails = function (req, res) {
 };
 
 /**
+ * Renders the delete user page
+ */
+exports.getDeleteUser = function (req, res) {
+    User.findUserByID(req.params.id, function (err, user) {
+        if (err) throw err;
+        res.render('admin-user-delete', {user: user});
+    })
+};
+
+/**
  * Attempts to delete user with the given id
  */
-exports.getDelete = function (req, res) {
-    req.flash('error_msg', 'Page is not yet ready');
-    res.redirect('/admin');
+exports.postDeleteUser = function (req, res) {
+    User.findUserByID(req.params.id, function (err, user) {
+        if (err) throw err;
+        if (req.user.tier === 'ROOT' ||
+            (req.user.tier === 'ADMINISTRATOR' && req.user.agency._id === user.agency._id)) {
+            User.comparePassword(req.body.password, req.user.password, function (err, result) {
+                if (result) {
+                    User.findUserByUsername('null', function (err, nullUser) {
+                        Bolo.removeAuthorFromBolos(req.params.id, nullUser.id, function (err, result) {
+                            if (err) throw err;
+                            console.log(result);
+                            User.removeUserByID(req.params.id, function (err, result) {
+                                if (err) throw err;
+                                console.log(result);
+                                req.flash('success_msg', 'User has been deleted');
+                                res.redirect('/admin/user');
+                            })
+                        })
+                    })
+                } else {
+                    req.flash('error_msg', 'Password was not correct');
+                    res.redirect('/admin/user/delete/' + req.params.id);
+                }
+            })
+        } else {
+            req.flash('error_msg', 'You are not authorized to delete this user');
+            res.redirect('/admin/user');
+        }
+    })
 };
 
 /**

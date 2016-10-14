@@ -107,6 +107,10 @@ module.exports.findUsersByAgencyID = function (agencyID, callback) {
     User.find({agency: agencyID}).populate('agency').exec(callback);
 };
 
+module.exports.removeUserByID = function (id, callback) {
+    User.remove({_id: id}).exec(callback);
+};
+
 module.exports.removeUsersByAgencyID = function (agencyID, callback) {
     User.remove({agency: agencyID}).exec(callback);
 };

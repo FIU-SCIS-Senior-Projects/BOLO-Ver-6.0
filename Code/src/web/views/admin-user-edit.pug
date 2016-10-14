@@ -8,14 +8,14 @@ block admin-content
     h3 #{user.username}
     p Fill out the form and submit to update the user.
 
-    form( action=( '/admin/user/activation/' + user.id ) method="post" )
-        if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
+    if (userTier === 'ROOT' || (userTier === 'ADMINISTRATOR' && userAgency._id === user.agency._id))
+        form( action=( '/admin/user/activation/' + user.id ) method="post" )
             .form-group
                 if(user.isActive === false)
                     button#activation.btn.btn-success.pull-right(type='submit')
                         | Activate User
                 else
-                    button#activation.btn.btn-danger.pull-right(type='submit')
+                    button#activation.btn.btn-warning.pull-right(type='submit')
                         | Deactivate User
             br
 
@@ -38,3 +38,6 @@ block admin-content
 
         .form-group
             button.btn.btn-primary(type="submit" value="save") Submit
+            if (userTier === 'ROOT' || (userTier === 'ADMINISTRATOR' && userAgency._id === user.agency._id))
+                a.btn.btn-danger.pull-right(href='/admin/user/delete/' + user._id)
+                    | Delete User

@@ -4,7 +4,6 @@ var jade = require('jade');
 var moment = require('moment');
 //var tz = require('moment-timezone'); //Do Not Remove
 var path = require('path');
-var router = require('express').Router();
 var util = require('util');
 var uuid = require('node-uuid');
 var PDFDocument = require('pdfkit');
@@ -21,8 +20,6 @@ var config = require('../config');
 
 var emailService = require('../services/email-service');
 var pdfService = require('../services/pdf-service');
-
-var BoloAuthorize = require('../lib/authorization.js').BoloAuthorize;
 
 /**
  * Error handling for MongoDB
@@ -493,8 +490,12 @@ exports.unArchiveBolo = function (req, res) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
         if (err) throw err;
         bolo.isArchived = false;
-        req.flash('error_msg', 'Not yet Implemented');
-        res.redirect('/bolo');
+        var shortID = bolo.id.substring(0, 8) + '...';
+        bolo.save(function (err) {
+            if (err) throw err;
+            req.flash('success_msg', 'Bolo ' + shortID + ' has been restored');
+            res.redirect('/bolo/archive');
+        });
     });
 };
 
