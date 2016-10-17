@@ -415,13 +415,16 @@ exports.confirmBolo = function (req, res) {
         else if (!boloToConfirm) {
             req.flash('error_msg', 'Bolo to confirm was not found on the database');
             res.redirect('/bolo');
+        } else if (boloToConfirm.isConfirmed === true) {
+            req.flash('success_msg', 'That Bolo was already confirmed');
+            res.redirect('/bolo');
         } else {
             boloToConfirm.isConfirmed = true;
             boloToConfirm.save(function (err) {
                 if (err) throw err;
                 req.flash('success_msg', 'Bolo has been confirmed');
                 res.redirect('/bolo');
-            })
+            });
         }
     });
 };
