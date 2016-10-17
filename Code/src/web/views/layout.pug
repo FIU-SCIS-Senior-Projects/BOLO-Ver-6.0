@@ -1,15 +1,13 @@
 include includes/mixins
 
 doctype html
-script(src="/bower_components/jquery/dist/jquery.min.js" )
-script(src="/bower_components/jquery-ui/jquery-ui.min.js" )
-script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" )
-script(src="/bower_components/js/bootstrap-select.min.js")
-link(rel="stylesheet" href="/bower_components/css/bootstrap-select.min.css")
-
-script( type="text/javascript" src="/js/ui.js" )
-script( type="text/javascript" src="/js/jquery.maskedinput.js" )
-script( type="text/javascript" src="/js/jqueryscripts.js" )
+script(src="/jquery/jquery-3.1.1.js" )
+script(src="/jquery/jquery.maskedinput.js" )
+script(src="/jquery/jqueryscripts.js" )
+script(src="/jquery-ui-1.12.1/jquery-ui.min.js" )
+//script(src="js/ui.js" )
+script(src="/bootstrap-3.3.7-dist/js/bootstrap.min.js" )
+script(src="/bootstrap-select-1.11.2/js/bootstrap-select.min.js" )
 
 block scripts
 
@@ -21,16 +19,17 @@ html.no-js
 
         title #{title}
 
-        link( href=config_bootstrap, rel="stylesheet" )
+        link( href="/bootstrap-select-1.11.2/css/bootstrap-select.min.css" rel="stylesheet")
+        link( href="/bootstrap-3.3.7-dist/css/bootstrap.min.css", rel="stylesheet" )
         link( href="/css/style.css" rel="stylesheet" )
         block styles
 
     body
         <!--[if lt IE 8]>
         p.browsehappy
-          | You are using an <strong>outdated</strong> browser.
-          | Please <a href="http://browsehappy.com/">upgrade your browser</a>
-          | to improve your experience.
+            | You are using an <strong>outdated</strong> browser.
+            | Please <a href="http://browsehappy.com/">upgrade your browser</a>
+            | to improve your experience.
         <![endif]-->
 
         #wrap
