@@ -45,28 +45,23 @@ block content
                     p.text-center.text-danger.strong #{bolo.status}
 
         //Render Images
-        div
+        div.center-block
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                col-xs-8
                     img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
-                col-xs-6
+                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
                     img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
-                col-xs-6
-                    img#other1.img-responsive(src="/img/bolo/other1/" + bolo.id)
-            else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
-                col-xs-6
-                    img#featured.img-responsive.featured(src="/img/bolo/featured/" + bolo.id)
-                col-xs-6
-                    img#other2.img-responsive(src="/img/bolo/other2/" + bolo.id)
-            else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
-                col-xs-4
-                    img#featured.img-responsive.featured(src="/img/bolo/featured/" + bolo.id)
-                col-xs-4
-                    img#other1.img-responsive(src="/img/bolo/other1/" + bolo.id)
-                col-xs-4
-                    img#other2.img-responsive(src="/img/bolo/other2/" + bolo.id)
 
+            else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
+                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
+                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+
+            else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
+                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
+                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                    img#tertiaryimage.img-responsive(src="/img/bolo/other2/" + bolo.id)
+
+        br
         div.row
             div.col-xs-8#boloDetails
                 form.form-horizontal
