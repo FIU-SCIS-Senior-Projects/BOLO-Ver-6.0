@@ -44,7 +44,7 @@ block admin-content
                 .col-sm-6.details-image
                     if (agency.logo.data)
                         p Current Logo
-                        img(src='/img/agency/logo/#{agency._id}')
+                        img(src='/img/agency/logo/' + agency.id)
                     else
                         p.alert Error! No Image Found
         br
@@ -56,7 +56,7 @@ block admin-content
                 .col-sm-6.details-image
                     if (agency.shield.data)
                         p Current Shield
-                        img(src='/img/agency/shield/#{agency._id}')
+                        img(src='/img/agency/shield/' + agency.id)
                     else
                         i No Image Found
         br
@@ -68,7 +68,7 @@ block admin-content
                 .col-sm-6.details-image
                     if (agency.watermark.data)
                         p Current Watermark
-                        img(src='/img/agency/watermark/#{agency._id}')
+                        img(src='/img/agency/watermark/' + agency.id)
                     else
                         i No Image Found
         br
