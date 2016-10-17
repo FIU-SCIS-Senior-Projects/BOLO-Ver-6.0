@@ -172,14 +172,44 @@ input[type="file"] {
     width: 250px;
 }
 
-.boloDetailsImages img{
+/*Uniform Image Sizing*/
+.crop {
+    height: 300px;
+    width: 400px;
+    overflow: hidden;
+}
+.crop img {
+    height: 300px;
+    width: 400px;
+}
+/*Primary Image*/
+#featured{
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 30px;
-    max-width: 100%;
+    position: relative;
+    bottom: 0;
+    right: -440px;
+    max-width: 30%;
     height: auto;
 }
+/*Secondary Image*/
+#other1{
+    display: block;
+    position: relative;
+    bottom: 163px;
+    right:  0px;
+    max-width: 30%;
+    height: auto;
+}
+/*Tertiary Image*/
+#other2{
+    display: block;
+    position: relative;
+    bottom: 410px;
+    right:  -900px;
+    max-width: 30%;
+    height: auto;
+}
+
 
 .caption {
 }
@@ -376,20 +406,20 @@ a.thumbnail.active {
 }
 
 #boloDetails {
-    top: 0; /*[wherever you want it]*/
-    left: 25%; /*[wherever you want it]*/
+    top: 0;
+    left: 18%;
 
 }
 
 #created {
     top: 0; /*[wherever you want it]*/
-    left: 26%; /*[wherever you want it]*/
+    left: 31%; /*[wherever you want it]*/
 
 }
 
 #additionalDetails {
     top: 0; /*[wherever you want it]*/
-    left: 26%; /*[wherever you want it]*/
+    left: 31%; /*[wherever you want it]*/
 
 }
 
