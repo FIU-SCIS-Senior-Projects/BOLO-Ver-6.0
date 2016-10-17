@@ -36,16 +36,6 @@ block content
                         em #{bolo.agency.phone}
             div.col-xs-2
                 img#badge.img-fluid( src='/img/agency/shield/' + bolo.agency.id alt="Agency Shield" )
-        //if(bolo.status !== "New" && bolo.status !== "Updated")
-            div#editedcategorytext.text-center
-                text-danger.strong #{bolo.category}
-            | &nbsp;
-            | &nbsp;
-        //else
-            div#categorytext.text-center
-                h1.text-danger.strong #{bolo.category}
-            | &nbsp;
-            | &nbsp;
         .row
             if(bolo.status !== 'ACTIVE')
                 div#updatedstatus.col-xs-12
@@ -53,45 +43,67 @@ block content
             else
                 div.col-xs-12
                     p.text-center.text-danger.strong #{bolo.status}
-        .row.img-fluid.boloDetailsImages
+
+        //Render Images
+        div
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                .col-xs-8
-                    img.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                col-xs-8
+                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
-                .col-xs-6
-                    img.img-responsive(src="/img/bolo/featured/" + bolo.id)
-                .col-xs-6
-                    img.img-responsive(src="/img/bolo/other1/" + bolo.id)
+                col-xs-6
+                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                col-xs-6
+                    img#other1.img-responsive(src="/img/bolo/other1/" + bolo.id)
             else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
-                .col-xs-6
-                    img.img-responsive(src="/img/bolo/featured/" + bolo.id)
-                .col-xs-6
-                    img.img-responsive(src="/img/bolo/other2/" + bolo.id)
+                col-xs-6
+                    img#featured.img-responsive.featured(src="/img/bolo/featured/" + bolo.id)
+                col-xs-6
+                    img#other2.img-responsive(src="/img/bolo/other2/" + bolo.id)
             else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
-                .col-xs-4
-                    img.img-responsive(src="/img/bolo/other1/" + bolo.id)
-                .col-xs-4
-                    img.img-responsive(src="/img/bolo/featured/" + bolo.id)
-                .col-xs-4
-                    img.img-responsive(src="/img/bolo/other2/" + bolo.id)
+                col-xs-4
+                    img#featured.img-responsive.featured(src="/img/bolo/featured/" + bolo.id)
+                col-xs-4
+                    img#other1.img-responsive(src="/img/bolo/other1/" + bolo.id)
+                col-xs-4
+                    img#other2.img-responsive(src="/img/bolo/other2/" + bolo.id)
 
-        .col-xs-8#boloDetails
-            - for (var i = 0; i < bolo.fields.length; i++)
-                .row
-                    p #{bolo.category.fields[i]}: #{bolo.fields[i]}
+        div.row
+            div.col-xs-8#boloDetails
+                form.form-horizontal
+                //+form_labels_row("Bolo ID", bolo.data.id )
 
-        .row
+                - for (var i = 0; i < bolo.fields.length; i++)
+                    div.col-xs-8#boloDetails
+                        p.strong #{bolo.category.fields[i]} :
+                    div.row
+                        p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.fields[i]}
+
+        br
+        br
+        div.row
+            div.col-xs-8
+        div.row
             div.col-xs-8#created
                 p.strong Created: #{bolo.createdOn}
-        .rowcol-xs-8#additionalDetails
+        div.col-xs-8#additionalDetails
+            form.form-horizontal
+            | &nbsp;
             p.strong Additional Info:
+            if bolo.info.length
                 p #{bolo.info}
+            else
                 | &nbsp;
-            p.strong Video Link:
+            | &nbsp;
+            if bolo.videoURL.length
+                p.strong Video Link:
                 a(href=bolo.videoURL) #{bolo.videoURL}
-                | &nbsp;
+                p
+            | &nbsp;
             p.strong Summary:
+            if bolo.summary.length
                 p #{bolo.summary}
+            else
                 | &nbsp;
-            p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
-            p.strong Please contact the agency should clarification be required.
+            if bolo.author.firstname != null || bolo.author.lastname != null
+                p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
+                p.strong Please contact the agency should clarification be required.
