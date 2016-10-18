@@ -45,27 +45,35 @@ block content
                     p.text-center.text-danger.strong #{bolo.status}
 
         //Render Images
-        div.center-block
+        div.col-md-12
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
                     img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
-                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
-                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                    img#secondarysettingsleft(src="/img/bolo/other1/" + bolo.id)
+                    img#featured(src="/img/bolo/featured/" + bolo.id)
 
             else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
-                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
+                    img#secondarysettingsright.img-responsive(src="/img/bolo/other2/" + bolo.id)
                     img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
 
             else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
-                    img#secondaryimage.img-responsive(src="/img/bolo/other1/" + bolo.id)
-                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
-                    img#tertiaryimage.img-responsive(src="/img/bolo/other2/" + bolo.id)
+                    img#secondaryimage(src="/img/bolo/other1/" + bolo.id)
+                    img#featured(src="/img/bolo/featured/" + bolo.id)
+                    img#tertiaryimage(src="/img/bolo/other2/" + bolo.id)
 
-        br
+
         div.row
+            br
+            br
             div.col-xs-8#boloDetails
                 form.form-horizontal
                 //+form_labels_row("Bolo ID", bolo.data.id )
+                br
+                br
+                div.col-xs-8#boloDetails
+                    p.strong BOLO ID :
+                div.row
+                    p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.id}
 
                 - for (var i = 0; i < bolo.fields.length; i++)
                     div.col-xs-8#boloDetails
@@ -73,8 +81,7 @@ block content
                     div.row
                         p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.fields[i]}
 
-        br
-        br
+
         div.row
             div.col-xs-8
         div.row

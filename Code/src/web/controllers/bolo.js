@@ -290,12 +290,127 @@ exports.getBoloDetails = function (req, res) {
  * Renders the Bolo as a PDF
  */
 exports.renderBoloAsPDF = function (req, res) {
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+    Bolo.findBoloByID(req.params.id, function (err, bolo)
+    {
         if (err) {
             res.render('404');
-        } else {
-            req.flash('error_msg', 'Not yet Implemented');
-            res.redirect('/bolo');
+        }
+        else
+        {
+            //req.flash('error_msg', 'Not yet Implemented');
+            //res.redirect('/bolo');
+            //Variable and Object Declaration
+            var data = {};
+            var doc = new PDFDocument();
+            var existWatermark = false;
+
+            /*
+             ===================================================
+             *            GET AGENCY DEPENDENT ITEMS           *
+             ===================================================
+             */
+            Agency.findAgencyByID(bolo.agency.id, function (err, agency)
+            {
+                if (err) throw err;
+
+
+                /*
+                 ===================================================
+                 *         Begin Building The PDF Document         *
+                 ===================================================
+                 */
+
+                //--------------GRAPHICS PORTION-----------------------
+                console.log("agency.watermark: " + agency.watermark.data);
+                console.log( "Watermark OBJECT length: " + Object.keys(agency.watermark).length);
+                console.log( "Watermark OBJECT keys: " + Object.keys(agency.watermark));
+                console.log("Logo Path: " + agency.logo);
+                console.log("Shield Path: " + agency.shield);
+                console.log( "Logo OBJECT length: " + Object.keys(agency.logo).length);
+                console.log( "Shield OBJECT length: " + Object.keys(agency.shield).length);
+                //Write Agency Graphics if they exist to the PDF
+                if (agency.watermark.data != undefined)
+                {
+                    doc.image(agency.watermark.path, 0, 0, {
+                        fit: [800, 800]
+                    });
+                }
+
+                if(agency.logo.data != undefined)
+                {
+                    console.log("I made it in here1");
+                    doc.image(agency.logo.data, 15, 15, {
+                        height: 100
+                    });
+                }
+                if(agency.shield.data != undefined)
+                {
+                    console.log("I made it in here2");
+                    doc.image(agency.shield.data, 525, 15, {
+                        height: 100
+                    });
+                }
+
+                //Write BOLO Images if they exist to the PDF
+                doc.image(bolo.featured.data, 230, 135, {
+                    fit: [200, 140], align: 'center'
+                }).moveDown(5);
+
+                if(bolo.other1.data != undefined){
+                    doc.image(bolo.other1.data, 230, 135, {
+                        fit: [200, 140], align: 'center'
+                    }).moveDown(5);
+                }
+                if(bolo.other2.data != undefined){
+                    doc.image(bolo.other2.data, 230, 135, {
+                        fit: [200, 140], align: 'center'
+                    }).moveDown(5);
+                }
+
+                //--------------TEXT PORTION-----------------------
+
+                //Write headers and Police Department Information to the PDF Document
+                doc.fontSize(8);
+                doc.fillColor('red');
+                doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 120, 15, {align: 'center'})
+                    .moveDown(0.25);
+                doc.fillColor('black');
+                doc.text(agency.name + " Police Department", {align: 'center'})
+                    .moveDown(0.25);
+                doc.text(agency.address)
+                    .moveDown(0.25);
+                doc.text(agency.city + ", " + agency.state + ", " + agency.zip, {align: 'center'})
+                    .moveDown(0.25);
+                doc.text(agency.phone, {align: 'center'})
+                    .moveDown(0.25);
+                doc.fontSize(20);
+                doc.fillColor('red');
+                doc.text(bolo.category, 115, 80, {align: 'center'})
+                    .moveDown(8);
+
+                //BOLO Details to the PDF Document
+                doc.fontSize(23);
+                if(bolo.status !== "Active" && bolo.status !== "Updated"){
+                    doc.fillColor('red');
+                    doc.text(bolo.status, 65 , 130, {align: 'left'})//original 100, 140
+                        .moveDown();
+                }
+                doc.fontSize(11);
+                doc.fillColor('black');
+                doc.fontSize(11);
+                doc.font('Times-Roman')
+                    .text("Bolo ID:                                    " + bolo.id, 200)
+                    .moveDown();
+
+                //doc.image();
+
+                doc.end();
+
+                res.contentType("application/pdf");
+                doc.pipe(res);
+
+            });
+
         }
     })
 };
