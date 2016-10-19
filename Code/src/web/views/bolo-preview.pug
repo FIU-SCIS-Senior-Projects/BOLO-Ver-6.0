@@ -1,21 +1,29 @@
-include includes/mixins
 extends layout
 
-
 block jumbo
-  .jumbotron
-    .container
-      div#wrapper.row
-          p BOLO Details Preview
-          a.btn.btn-default( type = "button" onClick="history.go(-1);return true;") Back to Create BOLO
+    .jumbotron
+        .container
+            .row
+                div.col-xs-12
+                    p BOLO Details
+            .row
+                .col-xs-14.col-md-6
+                    .pull-left
+                        button.btn.btn-primary(onclick='history.go(-1);') Go Back
+                .col-xs-14.col-md-6
+                    .pull-right
+                        if((bolo.record) && (tier > 2))
+                            a.btn.btn-default.pull-right( href="/bolo/details/record/" + bolo.id) View Record
+
 
 block content
-    include ./partials/global-alerts.jade
 
-    div.container-fluid#boloPage
+    include partials/global-alerts
+
+    div#boloPage.container-fluid
         div.row
             div.col-xs-2
-                img#logo.img-fluid( src='/img/logo.jpg' alt="")
+                img#logo.img-fluid( src='/img/agency/logo/' + agency.id alt="Agency Logo")
             div.col-xs-8.text-center
                 p.text-danger #{"UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE"}
                     p.strong #{agency.name} Police Department
@@ -26,86 +34,76 @@ block content
                     p
                         em #{agency.phone}
             div.col-xs-2
-                img#badge.img-fluid( src='/img/pinecrest-police-logo.png' alt="" )
-        if(bolo.data.status !== "New" && bolo.data.status !== "Updated")
-            div#editedcategorytext.text-center
-                text-danger.strong #{bolo.data.category}
-            | &nbsp;
-            | &nbsp;
-        else
-            div#categorytext.text-center
-                h1.text-danger.strong #{bolo.data.category}
-            | &nbsp;
-            | &nbsp;
-        div.row
-            if(bolo.data.status !== "New" && bolo.data.status !== "Updated")
+                img#badge.img-fluid( src='/img/agency/shield/' + agency.id alt="Agency Shield" )
+        .row
+            if(bolo.status !== 'ACTIVE')
                 div#updatedstatus.col-xs-12
-                    p.text-center.text-danger.strong #{bolo.data.status}
+                    p.text-center.text-danger.strong #{bolo.status}
             else
                 div.col-xs-12
-                    p.text-center.text-danger.strong #{bolo.data.status}
-            div.col-xs-12
-                if(buffer)
-                    img#featured.img-fluid( src='data:image/jpg;base64,#{buffer}' width=400 )
-                else
-                    img#featured.img-fluid( src="/img/nopic.png" alt="", width=400 )
-                | &nbsp;
-                | &nbsp;
+                    p.text-center.text-danger.strong #{bolo.status}
 
+        //Render Images
+        div.col-md-12
+            if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
+                img#featured.img-fluid( src='data:image/jpg;base64, #{bolo.featured.binary.buffer}')
 
+            else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
+                img#secondarysettingsleft(src="/img/bolo/other1/" + bolo.id)
+                img#featured(src="/img/bolo/featured/" + bolo.id)
+
+            else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
+                img#secondarysettingsright.img-responsive(src="/img/bolo/other2/" + bolo.id)
+                img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+
+            else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
+                img#secondaryimage(src="/img/bolo/other1/" + bolo.id)
+                img#featured(src="/img/bolo/featured/" + bolo.id)
+                img#tertiaryimage(src="/img/bolo/other2/" + bolo.id)
+
+        div.row
+            br
+            br
             div.col-xs-8#boloDetails
                 form.form-horizontal
-                +form_labels_row("Bolo ID", "XYZ000" )
-
-                if bolo.data.dateReported.length
-                  +form_labels_row("Date Reported", bolo.data.dateReported, bolo.data.dateReported?"":"hidden")
-                if bolo.data.timeReported.length
-                  +form_labels_row("Time Reported", bolo.data.timeReported, bolo.data.timeReported?"":"hidden")
-
-                if bolo.data.authorFName != null || bolo.data.authorLName != null
-                  +form_labels_row("Author", bolo.data.authorFName + " " +  bolo.data.authorLName )
-                if bolo.data.vehicleYear.length
-                  +form_labels_row("Year", bolo.data.vehicleYear, bolo.data.vehicleYear?"":"hidden")
-                if bolo.data.vehicleMake.length
-                  +form_labels_row("Make", bolo.data.vehicleMake, bolo.data.vehicleMake?"":"hidden")
-                if bolo.data.vehicleModel.length
-                  +form_labels_row("Model", bolo.data.vehicleModel, bolo.data.vehicleModel?"":"hidden")
-                if bolo.data.vehicleStyle.length
-                  +form_labels_row("Style", bolo.data.vehicleStyle, bolo.data.vehicleStyle?"":"hidden")
-                if bolo.data.vehicleColor.length
-                   +form_labels_row("Color", bolo.data.vehicleColor, bolo.data.vehicleColor?"":"hidden")
-                if bolo.data.vehicleIdNumber.length
-                   +form_labels_row("Vehicle Identification Number", bolo.data.vehicleIdNumber, bolo.data.vehicleIdNumber?"":"hidden")
-                | &nbsp;
+                br
+                br
+                div.col-xs-8#boloDetails
+                    p.strong BOLO ID :
                 div.row
-                   div.col-xs-12
-                      if bolo.data.vehicleLicenseState != '' || bolo.data.vehicleLicensePlate != ''
-                         +form_labels_row("Tag License Plate", bolo.data.vehicleLicenseState + " " +  bolo.data.vehicleLicensePlate )
+                    p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.id}
 
-            div.row
-                div.col-xs-8
-            div.row
-                div.col-xs-8#created
-                    p.strong Created: #{bolo.data.createdOn}
-            div.col-xs-8#additionalDetails
-                form.form-horizontal
+                - for (var i = 0; i < bolo.fields.length; i++)
+                    div.col-xs-8#boloDetails
+                        p.strong #{category.fields[i]} :
+                    div.row
+                        p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.fields[i]}
+
+
+        div.row
+            div.col-xs-8
+        div.row
+            div.col-xs-8#created
+                p.strong Created: #{bolo.createdOn}
+        div.col-xs-8#additionalDetails
+            form.form-horizontal
+            | &nbsp;
+            p.strong Additional Info:
+            if bolo.info.length
+                p #{bolo.info}
+            else
                 | &nbsp;
-                p.strong Additional Info:
-                if bolo.data.additional.length
-                    p #{bolo.data.additional}
-                else
-                    | &nbsp;
+            | &nbsp;
+            if bolo.videoURL.length
+                p.strong Video Link:
+                a(href=bolo.videoURL) #{bolo.videoURL}
+                p
+            | &nbsp;
+            p.strong Summary:
+            if bolo.summary.length
+                p #{bolo.summary}
+            else
                 | &nbsp;
-                if bolo.data.video_url.length
-                    p.strong Video Link:
-                    a(href=bolo.data.video_url) #{bolo.data.video_url}
-                    p
-                | &nbsp;
-                p.strong Summary:
-                if bolo.data.summary.length
-                    p #{bolo.data.summary}
-                else
-                    | &nbsp;
-                if bolo.data.authorFName != null || bolo.data.authorLName != null
-                    p.strong This BOLO was created by #{sectunit}  #{ranktitle} #{bolo.data.authorFName} #{bolo.data.authorLName}.
-                    p.strong Please contact the agency should clarification be required.
+            if bolo.author.firstname != null || bolo.author.lastname != null
+                p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
+                p.strong Please contact the agency should clarification be required.

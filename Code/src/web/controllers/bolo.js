@@ -280,7 +280,7 @@ exports.getBoloDetails = function (req, res) {
         if (err) {
             res.render('404');
         } else {
-            console.log(bolo);
+            console.log("Generate BOLO DETAILS" + bolo);
             res.render('bolo-details', {bolo: bolo});
         }
     })
@@ -586,9 +586,14 @@ exports.postCreateBolo = function (req, res) {
                         info: req.body.info,
                         summary: req.body.summary,
                         conformationToken: token,
-                        status: 'ACTIVE'
+                        status: 'ACTIVE',
+                        fields: req.body.field
                     });
                     newBolo.fields = req.body.field;
+                    console.log("THESE ARE THE NEW BOLO FIELDS: " + req.body.field);
+                    console.log("THESE ARE THE CATEGORY FIELDS: " + category.fields);
+                    console.log("THIS IS THE CATEGORY: " + category);
+
                     if (req.files['featured']) {
                         newBolo.featured = {
                             data: fs.readFileSync(req.files['featured'][0].path),
@@ -607,17 +612,30 @@ exports.postCreateBolo = function (req, res) {
                             contentType: req.files['other2'][0].mimeType
                         };
                     }
-                    newBolo.save(function (err) {
-                        if (err) {
-                            prevForm.errors = getErrorMessage(err);
-                            res.render('bolo-create', prevForm);
-                        } else {
-                            console.log('Sending email using Sendgrid');
-                            sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
-                            req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
-                            res.redirect('/bolo');
+                    Agency.findAgencyByID(req.user.agency.id, function (err, agency)
+                    {
+                        console.log("NEW BOLO: " + newBolo);
+                        if(req.body.option === "preview")
+                        {
+                            res.render('bolo-preview', {bolo: newBolo, category: category, agency: agency});
                         }
-                    });
+                        else
+                        {
+                            newBolo.save(function (err) {
+                                if (err) {
+                                    prevForm.errors = getErrorMessage(err);
+                                    res.render('bolo-create', prevForm);
+                                } else {
+                                    console.log('Sending email using Sendgrid');
+                                    sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
+                                    req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
+                                    res.redirect('/bolo');
+                                }
+                            });
+                        }
+                    })
+
+
                 })
             }
         }
