@@ -118,7 +118,7 @@ exports.getCreateForm = function (req, res) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
         if (err) throw err;
         var listOfAgencyNames = [];
-        for (const agencyName of listOfAgencies)
+        for (const agencyName in listOfAgencies)
             listOfAgencyNames.push(agencyName.name);
         res.render('admin-user-create', {
             agencies: listOfAgencyNames
@@ -164,7 +164,7 @@ exports.postCreateForm = function (req, res) {
             else {
                 console.log(errors);
                 var listOfAgencyNames = [];
-                for (const agencyName of listOfAgencies)
+                for (const agencyName in listOfAgencies)
                     listOfAgencyNames.push(agencyName.name);
                 prevForm.agencies = listOfAgencyNames;
                 prevForm.errors = errors;
@@ -197,7 +197,7 @@ exports.postCreateForm = function (req, res) {
                         else {
                             console.log(err);
                             var listOfAgencyNames = [];
-                            for (const agencyName of listOfAgencies)
+                            for (const agencyName in listOfAgencies)
                                 listOfAgencyNames.push(agencyName.name);
                             prevForm.agencies = listOfAgencyNames;
                             prevForm.errors = getErrorMessage(err);

@@ -321,13 +321,7 @@ exports.renderBoloAsPDF = function (req, res) {
                  */
 
                 //--------------GRAPHICS PORTION-----------------------
-                console.log("agency.watermark: " + agency.watermark.data);
-                console.log( "Watermark OBJECT length: " + Object.keys(agency.watermark).length);
-                console.log( "Watermark OBJECT keys: " + Object.keys(agency.watermark));
-                console.log("Logo Path: " + agency.logo);
-                console.log("Shield Path: " + agency.shield);
-                console.log( "Logo OBJECT length: " + Object.keys(agency.logo).length);
-                console.log( "Shield OBJECT length: " + Object.keys(agency.shield).length);
+
                 //Write Agency Graphics if they exist to the PDF
                 if (agency.watermark.data != undefined)
                 {
@@ -338,74 +332,183 @@ exports.renderBoloAsPDF = function (req, res) {
 
                 if(agency.logo.data != undefined)
                 {
-                    console.log("I made it in here1");
                     doc.image(agency.logo.data, 15, 15, {
                         height: 100
                     });
                 }
                 if(agency.shield.data != undefined)
                 {
-                    console.log("I made it in here2");
-                    doc.image(agency.shield.data, 525, 15, {
+                    doc.image(agency.shield.data, 490, 15, {
                         height: 100
                     });
                 }
 
-                //Write BOLO Images if they exist to the PDF
-                doc.image(bolo.featured.data, 230, 135, {
-                    fit: [200, 140], align: 'center'
-                }).moveDown(5);
+                //Write BOLO Images based on how many images exist, to the PDF
 
-                if(bolo.other1.data != undefined){
-                    doc.image(bolo.other1.data, 230, 135, {
-                        fit: [200, 140], align: 'center'
+                //Only Featured is present
+                if((bolo.other1.data == undefined) && (bolo.other2.data == undefined))
+                {
+                    doc.image(bolo.featured.data, 228, 135, {
+                        width: 170, height: 110, align: 'center'
                     }).moveDown(5);
                 }
-                if(bolo.other2.data != undefined){
-                    doc.image(bolo.other2.data, 230, 135, {
-                        fit: [200, 140], align: 'center'
+                // Only Featured and Other1 are present
+                if( (bolo.other1.data != undefined) && (bolo.other2.data == undefined))
+                {
+                    doc.image(bolo.featured.data, 330, 135, {
+                        width: 170, height: 110, align: 'center'
+                    }).moveDown(5);
+
+                    doc.image(bolo.other1.data, 130, 135, {
+                        width: 170, height: 110, align: 'left'
+                    }).moveDown(5);
+                }
+                // Only Featured and Other2 are present
+                if( (bolo.other2.data != undefined) && (bolo.other1.data == undefined))
+                {
+                    doc.image(bolo.featured.data, 130, 135, {
+                        width: 170, height: 110, align: 'center'
+                    }).moveDown(5);
+
+                    doc.image(bolo.other2.data, 330, 135, {
+                        width: 170, height: 110, align: 'left'
+                    }).moveDown(5);
+                }
+                // All Images are present
+                if((bolo.other1.data != undefined) && (bolo.other2.data != undefined))
+                {
+                    doc.image(bolo.featured.data, 228, 135, {
+                        width: 170, height: 110, align: 'center'
+                    }).moveDown(5);
+
+                    doc.image(bolo.other1.data, 40, 135, {
+                        width: 170, height: 110, align: 'left'
+                    }).moveDown(5);
+
+                    doc.image(bolo.other2.data, 415, 135, {
+                        width: 170, height: 110, align: 'right'
                     }).moveDown(5);
                 }
 
                 //--------------TEXT PORTION-----------------------
 
                 //Write headers and Police Department Information to the PDF Document
-                doc.fontSize(8);
+                doc.fontSize(10);
+                doc.font('Times-Roman')
                 doc.fillColor('red');
-                doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 120, 15, {align: 'center'})
+                doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE",85,15, {align: 'center'})
                     .moveDown(0.25);
                 doc.fillColor('black');
                 doc.text(agency.name + " Police Department", {align: 'center'})
                     .moveDown(0.25);
-                doc.text(agency.address)
+                doc.text(agency.address, {align: 'center'})
                     .moveDown(0.25);
-                doc.text(agency.city + ", " + agency.state + ", " + agency.zip, {align: 'center'})
+                doc.text(agency.city + ", " + agency.state + ", " + agency.zipcode, {align: 'center'})
                     .moveDown(0.25);
                 doc.text(agency.phone, {align: 'center'})
                     .moveDown(0.25);
                 doc.fontSize(20);
                 doc.fillColor('red');
-                doc.text(bolo.category, 115, 80, {align: 'center'})
-                    .moveDown(8);
 
-                //BOLO Details to the PDF Document
+                //Write Category and BOLO status to the PDF Document
                 doc.fontSize(23);
-                if(bolo.status !== "Active" && bolo.status !== "Updated"){
+                if(bolo.status !== "Active" && bolo.status !== "Updated")
+                {
                     doc.fillColor('red');
-                    doc.text(bolo.status, 65 , 130, {align: 'left'})//original 100, 140
-                        .moveDown();
+                    doc.text(bolo.category.name + " -- " + bolo.status, 85 , 100, {align: 'center'})//original 100, 140
+                        .moveDown(7);
                 }
-                doc.fontSize(11);
+                doc.fontSize(12);
                 doc.fillColor('black');
                 doc.fontSize(11);
                 doc.font('Times-Roman')
-                    .text("Bolo ID:                                    " + bolo.id, 200)
+                    .text("Bolo ID: ", 200)
+                    .moveUp()
+                    .text(bolo.id, 400)
                     .moveDown();
 
-                //doc.image();
+                //Write all of the fields and details to the PDF Document
+                for (var i = 0; i < bolo.fields.length; i++)
+                {
+                    console.log("I am trying to print the text!");
+                    doc.fillColor('black');
+                    doc.fontSize(12);
+                    doc.font('Times-Roman')
+                        .text(bolo.category.fields[i] + ": ", 200)
+                        .moveUp()
+                        .text(bolo.fields[1], 400)
+                        .moveDown();
 
+                }
+
+                //Write Additional Details
+                doc.font('Times-Roman')
+                    .text(" " , 200)
+                    .moveDown();
+
+                doc.font('Times-Bold')
+                    .text("Created: " + bolo.createdOn, 200)
+                    .moveDown();
+
+
+                /*
+                //For Data Analysis Recovered
+                if(data.bolo['dateRecovered'] !== ""){
+                    doc.font('Times-Roman')
+                        .text("Date Recovered: " + data.bolo['dateRecovered'], 200)
+                        .moveDown(0.25);
+                }
+                if(data.bolo['timeRecovered'] !== ""){
+                    doc.font('Times-Roman')
+                        .text("Time Recovered: " + data.bolo['timeRecovered'], 200)
+                        .moveDown(0.25);
+                }
+                if(data.bolo['addressRecovered'] !== ""){
+                    doc.font('Times-Roman')
+                        .text("Address Recovered: " + data.bolo['addressRecovered'], 200)
+                        .moveDown(0.25);
+                }
+                if(data.bolo['zipCodeRecovered'] !== ""){
+                    doc.font('Times-Roman')
+                        .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 200)
+                        .moveDown(0.25);
+                }
+                if(data.bolo['agencyRecovered'] !== ""){
+                    doc.font('Times-Roman')
+                        .text("Agency Recovered: " + data.bolo['agencyRecovered'], 200)
+                        .moveDown();
+                }
+                */
+
+                // Display Additional Information only if there is a value in it
+                if(bolo.info !== "")
+                {
+                    doc.font('Times-Bold')
+                        .text("Additional: ", 200)
+                        .moveDown(0.25);
+                    doc.font('Times-Roman')
+                        .text(bolo.info, {width: 281})
+                        .moveDown();
+                }
+
+                // Display a Summary only if there is a value in it
+                if(bolo.summary !== ""){
+                    doc.font('Times-Bold')
+                        .text("Summary: ", 200)
+                        .moveDown(0.25);
+                    doc.font('Times-Roman')
+                        .text(bolo.summary, {width: 281})
+                        .moveDown();
+                }
+
+                doc.font('Times-Bold')
+                    .text("This BOLO was created by: " + bolo.author.unit + " " + bolo.author.rank + " " + bolo.author.firstname + " " + bolo.author.lastname)
+                    .moveDown(0.25);
+                doc.font('Times-Bold')
+                    .text("Please contact the agency should clarification be required.", {width: 281});
+
+                //End Document and send it to the front end via res
                 doc.end();
-
                 res.contentType("application/pdf");
                 doc.pipe(res);
 
