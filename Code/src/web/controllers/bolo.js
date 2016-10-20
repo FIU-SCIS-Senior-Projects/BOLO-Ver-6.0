@@ -249,27 +249,47 @@ function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
 }
 
 /**
- * List bolos at the root route
+ * List active bolos based on query
  */
 exports.listBolos = function (req, res) {
-    var page = req.query.page || 1;
-    var limit = req.query.limit || config.const.BOLOS_PER_PAGE;
-    var sortBy = req.query.sort || 'lastUpdated';
-    var skip = (1 <= page) ? (page - 1) * limit : 0;
-    Bolo.findBolosByAgency(req.user.agency, false, limit, skip, sortBy, function (err, listOfBolos) {
-        if (err) throw err;
-        Agency.findAllAgencies(function (err, listOfAgencies) {
-            if (err) throw err;
-            res.render('bolo', {
-                bolos: listOfBolos,
-                agencies: listOfAgencies,
-                paging: {
-                    current: page,
-                    last: Math.ceil(listOfBolos.length / limit)
-                }
+    console.log(req.query);
+    var limit = config.const.BOLOS_PER_QUERY;
+    var filter = req.query.filter || 'allBolos';
+    var isArchived = req.query.archived || false;
+    switch (filter) {
+        case 'allBolos':
+            Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('allBolos Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
             });
-        });
-    });
+            break;
+        case 'myAgency':
+            Bolo.findBolosByAgency(req.user.agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('myAgency Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+            });
+            break;
+        case 'myBolos':
+            Bolo.findBolosByAuthor(req.user.id, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('myBolos Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+            });
+            break;
+        default:
+            Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('allBolos Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+            });
+            break;
+    }
+};
+
+exports.renderBoloPage = function (req, res) {
+    res.render('bolo');
 };
 
 /**
@@ -290,27 +310,22 @@ exports.getBoloDetails = function (req, res) {
  * Renders the Bolo as a PDF
  */
 exports.renderBoloAsPDF = function (req, res) {
-    Bolo.findBoloByID(req.params.id, function (err, bolo)
-    {
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
         if (err) {
             res.render('404');
         }
-        else
-        {
+        else {
             //req.flash('error_msg', 'Not yet Implemented');
             //res.redirect('/bolo');
             //Variable and Object Declaration
-            var data = {};
             var doc = new PDFDocument();
-            var existWatermark = false;
 
             /*
              ===================================================
              *            GET AGENCY DEPENDENT ITEMS           *
              ===================================================
              */
-            Agency.findAgencyByID(bolo.agency.id, function (err, agency)
-            {
+            Agency.findAgencyByID(bolo.agency.id, function (err, agency) {
                 if (err) throw err;
 
 
@@ -323,21 +338,18 @@ exports.renderBoloAsPDF = function (req, res) {
                 //--------------GRAPHICS PORTION-----------------------
 
                 //Write Agency Graphics if they exist to the PDF
-                if (agency.watermark.data != undefined)
-                {
+                if (agency.watermark.data != undefined) {
                     doc.image(agency.watermark.path, 0, 0, {
                         fit: [800, 800]
                     });
                 }
 
-                if(agency.logo.data != undefined)
-                {
+                if (agency.logo.data != undefined) {
                     doc.image(agency.logo.data, 15, 15, {
                         height: 100
                     });
                 }
-                if(agency.shield.data != undefined)
-                {
+                if (agency.shield.data != undefined) {
                     doc.image(agency.shield.data, 490, 15, {
                         height: 100
                     });
@@ -346,15 +358,13 @@ exports.renderBoloAsPDF = function (req, res) {
                 //Write BOLO Images based on how many images exist, to the PDF
 
                 //Only Featured is present
-                if((bolo.other1.data == undefined) && (bolo.other2.data == undefined))
-                {
+                if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
                     doc.image(bolo.featured.data, 228, 135, {
                         width: 170, height: 110, align: 'center'
                     }).moveDown(5);
                 }
                 // Only Featured and Other1 are present
-                if( (bolo.other1.data != undefined) && (bolo.other2.data == undefined))
-                {
+                if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
                     doc.image(bolo.featured.data, 330, 135, {
                         width: 170, height: 110, align: 'center'
                     }).moveDown(5);
@@ -364,8 +374,7 @@ exports.renderBoloAsPDF = function (req, res) {
                     }).moveDown(5);
                 }
                 // Only Featured and Other2 are present
-                if( (bolo.other2.data != undefined) && (bolo.other1.data == undefined))
-                {
+                if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
                     doc.image(bolo.featured.data, 130, 135, {
                         width: 170, height: 110, align: 'center'
                     }).moveDown(5);
@@ -375,8 +384,7 @@ exports.renderBoloAsPDF = function (req, res) {
                     }).moveDown(5);
                 }
                 // All Images are present
-                if((bolo.other1.data != undefined) && (bolo.other2.data != undefined))
-                {
+                if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
                     doc.image(bolo.featured.data, 228, 135, {
                         width: 170, height: 110, align: 'center'
                     }).moveDown(5);
@@ -394,9 +402,9 @@ exports.renderBoloAsPDF = function (req, res) {
 
                 //Write headers and Police Department Information to the PDF Document
                 doc.fontSize(10);
-                doc.font('Times-Roman')
+                doc.font('Times-Roman');
                 doc.fillColor('red');
-                doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE",85,15, {align: 'center'})
+                doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 85, 15, {align: 'center'})
                     .moveDown(0.25);
                 doc.fillColor('black');
                 doc.text(agency.name + " Police Department", {align: 'center'})
@@ -412,10 +420,9 @@ exports.renderBoloAsPDF = function (req, res) {
 
                 //Write Category and BOLO status to the PDF Document
                 doc.fontSize(23);
-                if(bolo.status !== "Active" && bolo.status !== "Updated")
-                {
+                if (bolo.status !== "Active" && bolo.status !== "Updated") {
                     doc.fillColor('red');
-                    doc.text(bolo.category.name + " -- " + bolo.status, 85 , 100, {align: 'center'})//original 100, 140
+                    doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
                         .moveDown(7);
                 }
                 doc.fontSize(12);
@@ -428,8 +435,7 @@ exports.renderBoloAsPDF = function (req, res) {
                     .moveDown();
 
                 //Write all of the fields and details to the PDF Document
-                for (var i = 0; i < bolo.fields.length; i++)
-                {
+                for (var i = 0; i < bolo.fields.length; i++) {
                     console.log("I am trying to print the text!");
                     doc.fillColor('black');
                     doc.fontSize(12);
@@ -443,7 +449,7 @@ exports.renderBoloAsPDF = function (req, res) {
 
                 //Write Additional Details
                 doc.font('Times-Roman')
-                    .text(" " , 200)
+                    .text(" ", 200)
                     .moveDown();
 
                 doc.font('Times-Bold')
@@ -452,37 +458,36 @@ exports.renderBoloAsPDF = function (req, res) {
 
 
                 /*
-                //For Data Analysis Recovered
-                if(data.bolo['dateRecovered'] !== ""){
-                    doc.font('Times-Roman')
-                        .text("Date Recovered: " + data.bolo['dateRecovered'], 200)
-                        .moveDown(0.25);
-                }
-                if(data.bolo['timeRecovered'] !== ""){
-                    doc.font('Times-Roman')
-                        .text("Time Recovered: " + data.bolo['timeRecovered'], 200)
-                        .moveDown(0.25);
-                }
-                if(data.bolo['addressRecovered'] !== ""){
-                    doc.font('Times-Roman')
-                        .text("Address Recovered: " + data.bolo['addressRecovered'], 200)
-                        .moveDown(0.25);
-                }
-                if(data.bolo['zipCodeRecovered'] !== ""){
-                    doc.font('Times-Roman')
-                        .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 200)
-                        .moveDown(0.25);
-                }
-                if(data.bolo['agencyRecovered'] !== ""){
-                    doc.font('Times-Roman')
-                        .text("Agency Recovered: " + data.bolo['agencyRecovered'], 200)
-                        .moveDown();
-                }
-                */
+                 //For Data Analysis Recovered
+                 if(data.bolo['dateRecovered'] !== ""){
+                 doc.font('Times-Roman')
+                 .text("Date Recovered: " + data.bolo['dateRecovered'], 200)
+                 .moveDown(0.25);
+                 }
+                 if(data.bolo['timeRecovered'] !== ""){
+                 doc.font('Times-Roman')
+                 .text("Time Recovered: " + data.bolo['timeRecovered'], 200)
+                 .moveDown(0.25);
+                 }
+                 if(data.bolo['addressRecovered'] !== ""){
+                 doc.font('Times-Roman')
+                 .text("Address Recovered: " + data.bolo['addressRecovered'], 200)
+                 .moveDown(0.25);
+                 }
+                 if(data.bolo['zipCodeRecovered'] !== ""){
+                 doc.font('Times-Roman')
+                 .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 200)
+                 .moveDown(0.25);
+                 }
+                 if(data.bolo['agencyRecovered'] !== ""){
+                 doc.font('Times-Roman')
+                 .text("Agency Recovered: " + data.bolo['agencyRecovered'], 200)
+                 .moveDown();
+                 }
+                 */
 
                 // Display Additional Information only if there is a value in it
-                if(bolo.info !== "")
-                {
+                if (bolo.info !== "") {
                     doc.font('Times-Bold')
                         .text("Additional: ", 200)
                         .moveDown(0.25);
@@ -492,7 +497,7 @@ exports.renderBoloAsPDF = function (req, res) {
                 }
 
                 // Display a Summary only if there is a value in it
-                if(bolo.summary !== ""){
+                if (bolo.summary !== "") {
                     doc.font('Times-Bold')
                         .text("Summary: ", 200)
                         .moveDown(0.25);
@@ -699,12 +704,11 @@ exports.postEditBolo = function (req, res) {
 /**
  * List archived bolos
  */
-exports.listArchivedBolos = function (req, res) {
+exports.renderArchivedBolos = function (req, res) {
     var page = req.query.page || 1;
-    var limit = req.query.limit || config.const.BOLOS_PER_PAGE;
+    var limit = config.const.BOLOS_PER_PAGE;
     var sortBy = req.query.sort || 'lastUpdated';
-    var skip = (1 <= page) ? (page - 1) * limit : 0;
-    Bolo.findBolosByAgency(req.user.agency, true, limit, skip, sortBy, function (err, listOfBolos) {
+    Bolo.findBolosByAgency(req.user.agency, true, true, limit, sortBy, function (err, listOfBolos) {
         if (err) throw err;
         Agency.findAllAgencies(function (err, listOfAgencies) {
             if (err) throw err;

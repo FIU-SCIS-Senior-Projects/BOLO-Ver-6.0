@@ -79,35 +79,31 @@ module.exports.findBoloByID = function (id, callback) {
     Bolo.findOne({_id: id}).populate('agency').populate('author').populate('category').exec(callback);
 };
 
-module.exports.findAllBolos = function (isConfirmed, limit, skip, sortBy, callback) {
-    Bolo.find({
-        isConfirmed: isConfirmed
-    }).populate('agency').populate('author').populate('category')
+module.exports.findAllBolos = function (isConfirmed, isArchived, limit, sortBy, callback) {
+    Bolo.find({isConfirmed: isConfirmed, isArchived: isArchived})
+        .populate('agency').populate('author').populate('category')
         .limit(limit)
-        .skip(skip)
-        .sort(sortBy)
+        .sort([[sortBy, -1]])
         .exec(callback);
 };
 
-module.exports.findBolosByAgency = function (agencyName, isArchived, limit, skip, sortBy, callback) {
-    Bolo.find({
-        agency: agencyName,
-        isConfirmed: true,
-        isArchived: isArchived
-    }).limit(limit)
-        .skip(skip)
-        .sort({sortBy: 1})
+module.exports.findBolosByAuthor = function (authorID, isConfirmed, isArchived, limit, sortBy, callback) {
+    Bolo.find({author: authorID, isConfirmed: isConfirmed, isArchived: isArchived})
+        .populate('agency').populate('author').populate('category')
+        .limit(limit)
+        .sort([[sortBy, -1]])
+        .exec(callback);
+};
+module.exports.findBolosByAgency = function (agencyID, isConfirmed, isArchived, limit, sortBy, callback) {
+    Bolo.find({agency: agencyID, isConfirmed: isConfirmed, isArchived: isArchived})
+        .populate('agency').populate('author').populate('category')
+        .limit(limit)
+        .sort([[sortBy, -1]])
         .exec(callback);
 };
 
 module.exports.findBoloByToken = function (token, callback) {
     Bolo.findOne({conformationToken: token}).exec(callback);
-};
-
-module.exports.findBolosByAuthor = function (authorName, limit, callback) {
-    Bolo.find({
-        author: authorName
-    }).limit(limit).sort({}).exec(callback);
 };
 
 module.exports.deleteBolo = function (id, callback) {

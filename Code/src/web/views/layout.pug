@@ -1,18 +1,19 @@
 include includes/mixins
 
 doctype html
-script(src="/jquery/jquery-3.1.1.js" )
-script(src="/jquery/jquery.maskedinput.js" )
-script(src="/jquery/jqueryscripts.js" )
-script(src="/jquery-ui-1.12.1/jquery-ui.min.js" )
-//script(src="js/ui.js" )
-script(src="/bootstrap-3.3.7-dist/js/bootstrap.min.js" )
-script(src="/bootstrap-select-1.11.2/js/bootstrap-select.min.js" )
-
-block scripts
-
-html.no-js
+html
     head
+        script(src="/jquery/jquery-3.1.1.min.js" )
+        script(src="/jquery/jqueryscripts.js" )
+        script(src="/jquery/jquery.maskedinput.js" )
+        script(src="/jquery-ui-1.12.1/jquery-ui.min.js" )
+        script(src="/js/ui.js" )
+        script(src="/js/jquery.twbsPagination.min.js" )
+        script(src="/bootstrap-3.3.7-dist/js/bootstrap.min.js" )
+        script(src="/bootstrap-select-1.11.2/js/bootstrap-select.min.js" )
+
+        block scripts
+
         meta( charset='utf-8' )
         meta( http-equiv='X-UA-Compatible', content='IE=edge' )
         meta( name='viewport', content='width=device-width, initial-scale=1' )
@@ -22,6 +23,7 @@ html.no-js
         link( href="/bootstrap-select-1.11.2/css/bootstrap-select.min.css" rel="stylesheet")
         link( href="/bootstrap-3.3.7-dist/css/bootstrap.min.css", rel="stylesheet" )
         link( href="/css/style.css" rel="stylesheet" )
+
         block styles
 
     body
@@ -34,12 +36,10 @@ html.no-js
 
         #wrap
             include partials/main-nav
-
             block jumbo
 
             .container
+                include partials/global-alerts
                 block content
-
             .push
-
         include partials/footer
