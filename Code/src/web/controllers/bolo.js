@@ -217,10 +217,10 @@ function sendBoloToDataSubscriber(bolo, template) {
 /**
  * Sends an email to the loggedin user to confirm a created bolo
  *
- * @param email
- * @param firstname
- * @param lastname
- * @param token
+ * @param email the users email address
+ * @param firstname the users first name
+ * @param lastname the users last name
+ * @param token the bolo's random generated token
  */
 function sendBoloConfirmationEmail(email, firstname, lastname, token) {
 
@@ -236,7 +236,6 @@ function sendBoloConfirmationEmail(email, firstname, lastname, token) {
 }
 
 function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
-
     emailService.send({
         'to': email,
         'from': config.email.from,
@@ -648,6 +647,33 @@ exports.postCreateBolo = function (req, res) {
 };
 
 /**
+ * Confirms an emailed Bolo for a logged out user
+ */
+exports.loggedOutConfirmBolo = function (req, res, next) {
+    if (!req.user) {
+        Bolo.findBoloByToken(req.params.token, function (err, boloToConfirm) {
+            if (err) throw err;
+            else if (!boloToConfirm) {
+                req.flash('error_msg', 'Bolo to confirm was not found on the database');
+                res.redirect('/login');
+            } else if (boloToConfirm.isConfirmed === true) {
+                req.flash('error_msg', 'That Bolo was already confirmed');
+                res.redirect('/login');
+            } else {
+                boloToConfirm.isConfirmed = true;
+                boloToConfirm.save(function (err) {
+                    if (err) throw err;
+                    req.flash('success_msg', 'Bolo has been confirmed');
+                    res.redirect('/login');
+                });
+            }
+        });
+    } else {
+        next();
+    }
+};
+
+/**
  * Confirms an emailed Bolo
  */
 exports.confirmBolo = function (req, res) {
@@ -657,7 +683,7 @@ exports.confirmBolo = function (req, res) {
             req.flash('error_msg', 'Bolo to confirm was not found on the database');
             res.redirect('/bolo');
         } else if (boloToConfirm.isConfirmed === true) {
-            req.flash('success_msg', 'That Bolo was already confirmed');
+            req.flash('error_msg', 'That Bolo was already confirmed');
             res.redirect('/bolo');
         } else {
             boloToConfirm.isConfirmed = true;

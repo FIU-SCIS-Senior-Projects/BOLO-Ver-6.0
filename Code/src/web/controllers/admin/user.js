@@ -118,8 +118,10 @@ exports.getCreateForm = function (req, res) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
         if (err) throw err;
         var listOfAgencyNames = [];
-        for (const agencyName in listOfAgencies)
-            listOfAgencyNames.push(agencyName.name);
+        for (const i in listOfAgencies)
+            listOfAgencyNames.push(listOfAgencies[i].name);
+        console.log(listOfAgencies);
+        console.log(listOfAgencyNames);
         res.render('admin-user-create', {
             agencies: listOfAgencyNames
         })
@@ -177,6 +179,20 @@ exports.postCreateForm = function (req, res) {
         //Create a new user model to save
         Agency.findAgencyByName(req.body.agency, function (err, userAgency) {
             if (err) throw err;
+            if (!userAgency) {
+                Agency.findAllAgencies(function (err, listOfAgencies) {
+                    if (err) throw err;
+                    else {
+                        console.log(errors);
+                        var listOfAgencyNames = [];
+                        for (const i in listOfAgencies)
+                            listOfAgencyNames.push(listOfAgencies[i].name);
+                        prevForm.agencies = listOfAgencyNames;
+                        prevForm.errors = ['Could not find that agency...'];
+                        res.render('admin-user-create', prevForm);
+                    }
+                })
+            }
             var newUser = new User({
                 username: req.body.username,
                 firstname: req.body.fname,

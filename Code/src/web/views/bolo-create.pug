@@ -1,19 +1,22 @@
 extends layout
 
+block scripts
+    script(src="/jquery-validation-1.15.0/jquery.validate.js")
+    script(src="/jquery-validation-1.15.0/form-validation.js")
+
 block jumbo
     .jumbotron
         .container
             h3 Create a BOLO
 
 block content
-    include partials/global-alerts
     include partials/options
     noscript
         h2.text-danger Javascript is disabled in your browser! You can not create a bolo without javascript enabled!
 
     //h4 The current Date and Time is #{Date()}
 
-    form#create-bolo-form(action= "/bolo/create" enctype="multipart/form-data" method="post")
+    form#create-bolo-form(name='createBoloForm' action= "/bolo/create" enctype="multipart/form-data" method="post")
         .form-group
             .row
                 -
@@ -21,10 +24,11 @@ block content
                     var day = date.getDate() < 10 ? '0' + date.getDate():date.getDate();
                     var month = date.getMonth() < 10 ? '0' + date.getMonth():date.getMonth();
                     var currDate = day + '/' + month + '/' + date.getFullYear();
-                    var currTime = date.getHours() + ':' + date.getMinutes();
+                    var currTime = (date.getHours() < 10 ? '0' + date.getHours():date.getHours()) + ':' +
+                                    (date.getMinutes() < 10 ? '0' + date.getMinutes():date.getMinutes());
                     var categoryNames = ['']
                     for (var num in categories)
-                        categoryNames.push(categories[num].name);
+                    categoryNames.push(categories[num].name);
                 .col-sm-6
                     +input_text( "dateReported", "Date Reported", "DD/MM/YYYY", true, currDate )
                 .col-sm-6
@@ -32,7 +36,6 @@ block content
             .cat
                 +select_options( "category", "Category", categoryNames, true)
             div#newForms
-
             script.
                 var categorySelector = $('.cat');
                 categorySelector.change(function () {
@@ -60,6 +63,7 @@ block content
                         }
                     }
                 });
+
 
             .row
                 .col-sm-4

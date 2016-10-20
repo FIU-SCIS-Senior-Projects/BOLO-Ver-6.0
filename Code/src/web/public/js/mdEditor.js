@@ -4,7 +4,6 @@ window.onload = function () {
     var markdownArea = document.getElementById('markdown');
 
     var convertTextAreaToMarkdown = function () {
-        console.log(textInputBox.value);
         var markdownText = textInputBox.value;
         markdownArea.innerHTML = converter.makeHtml(markdownText)
     };
