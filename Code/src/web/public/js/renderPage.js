@@ -10,11 +10,13 @@ var renderPage = function (bolosPerPage, visibleNumbers) {
         data: {filter: filterValue, archived: archivedBolos},
         success: function (response) {
             if (!response) {
-                boloDiv.empty();
                 $('#purge').hide();
+                pagingDiv.hide();
+                boloDiv.empty();
                 boloDiv.append('<p class="text-success" style="font-size: xx-large">No Archived Bolos</p>');
             } else {
                 $('#purge').show();
+                pagingDiv.show();
                 boloDiv.empty();
                 boloDiv.append(response);
                 boloDiv.children().hide();

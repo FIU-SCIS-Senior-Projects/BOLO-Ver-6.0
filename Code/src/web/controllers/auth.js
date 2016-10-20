@@ -229,9 +229,9 @@ exports.LogOut = function (req, res) {
     res.redirect('/login');
 };
 
-router.get('/forgotPassword', function (req, res) {
+exports.renderForgotPasswordPage = function (req, res) {
     res.render('forgot-password');
-});
+};
 
 router.post('/forgotPassword', function (req, res) {
 

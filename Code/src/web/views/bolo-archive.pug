@@ -14,8 +14,7 @@ block jumbo
 
 block content
     if (userTier === 'ROOT')
-        div.col-xs-12.pull-right
-            form( action= '/bolo/purge/' method="post" ).form-group.pull-right
+        div.pull-right
                 //TODO Create a purge date range to delete BOLOs
                 //label.control-label(for="purgeRange") Bolos Older Than:
                     select#purgeRange(name="purgeRange")
