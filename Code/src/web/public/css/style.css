@@ -85,15 +85,6 @@ input[type="file"] {
     margin: 3px;
 }
 
-.btn.btn-danger {
-    margin: 0px;
-}
-
-.btn.btn-success {
-    margin: 0px;
-}
-
-
 .jumbotron {
     background-color: #030b2f;
     color: white;

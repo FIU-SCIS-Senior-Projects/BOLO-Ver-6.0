@@ -249,36 +249,41 @@ function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
 }
 
 /**
- * List bolos at the root route
+ * List active bolos based on query
  */
 exports.listBolos = function (req, res) {
     console.log(req.query);
-    var limit = config.const.BOLOS_PER_PAGE;
+    var limit = config.const.BOLOS_PER_QUERY;
     var filter = req.query.filter || 'allBolos';
+    var isArchived = req.query.archived || false;
     switch (filter) {
         case 'allBolos':
-            Bolo.findAllBolos(true, false, limit, 'createdOn', function (err, listOfBolos) {
+            Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
                 if (err) throw err;
                 console.log('allBolos Bolos: num = ' + listOfBolos.length);
-                res.render('partials/bolo-active-thumbnails', {bolos: listOfBolos});
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
             });
             break;
         case 'myAgency':
-            Bolo.findBolosByAgency(req.user.agency, true, false, limit, 'createdOn', function (err, listOfBolos) {
+            Bolo.findBolosByAgency(req.user.agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
                 if (err) throw err;
                 console.log('myAgency Bolos: num = ' + listOfBolos.length);
-                res.render('partials/bolo-active-thumbnails', {bolos: listOfBolos});
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
             });
             break;
         case 'myBolos':
-            Bolo.findBolosByAuthor(req.user.id, true, false, limit, 'createdOn', function (err, listOfBolos) {
+            Bolo.findBolosByAuthor(req.user.id, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
                 if (err) throw err;
                 console.log('myBolos Bolos: num = ' + listOfBolos.length);
-                res.render('partials/bolo-active-thumbnails', {bolos: listOfBolos});
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
             });
             break;
         default:
-            res.render('404');
+            Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('allBolos Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+            });
             break;
     }
 };
@@ -685,7 +690,7 @@ exports.postEditBolo = function (req, res) {
 /**
  * List archived bolos
  */
-exports.listArchivedBolos = function (req, res) {
+exports.renderArchivedBolos = function (req, res) {
     var page = req.query.page || 1;
     var limit = config.const.BOLOS_PER_PAGE;
     var sortBy = req.query.sort || 'lastUpdated';

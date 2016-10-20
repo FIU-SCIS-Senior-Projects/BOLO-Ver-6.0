@@ -1,5 +1,5 @@
-extends ./layout.jade
-include ./includes/mixins.jade
+extends layout
+include includes/mixins
 
 
 block jumbo
@@ -10,8 +10,7 @@ block jumbo
 
 
 block content
-    include ./partials/global-alerts.jade
-
+    include partials/global-alerts
     include partials/options
 
     .row
@@ -21,7 +20,7 @@ block content
                 .panel-body
                     p <b>Author:</b> #{bolo.authorFName} #{bolo.authorLName}
                     p <b>Agency:</b>
-                       a( href="/agency/" + agency.id target="_blank" ) #{agency.name}
+                        a( href="/agency/" + agency.id target="_blank" ) #{agency.name}
                     p <b>Created:</b> #{bolo.createdOn}
                     p <b>Updated:</b> #{bolo.lastUpdatedOn}
 
