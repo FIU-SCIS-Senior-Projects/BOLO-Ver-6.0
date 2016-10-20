@@ -137,6 +137,15 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
             // todo check if this is async
             var html = jade.renderFile(tmp, tdata);
             console.log("SENDING EMAIL SUCCESSFULLY");
+            emailService.send({
+                'to': email,
+                'from': config.email.from,
+                'fromName': config.email.fromName,
+                'subject': 'BOLO Alert: Confirm BOLO ' + firstname + " " + lastname,
+                'text': 'Your BOLO was created but not confirmed. \n' +
+                'Click on the link below to confirm: \n\n' +
+                config.appURL + '/bolo/confirm/' + token + '\n\n'
+            })
             return emailService.send({
                 'to': creatorEmail,
                 'bcc': subscribers,
@@ -306,7 +315,7 @@ exports.getBoloDetails = function (req, res) {
 };
 
 /**
- * Renders the Bolo as a PDF
+ * Renders the Bolo as a PDF for Printing and Saving
  */
 exports.renderBoloAsPDF = function (req, res) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
@@ -594,34 +603,48 @@ exports.postCreateBolo = function (req, res) {
                         fields: req.body.field
                     });
                     newBolo.fields = req.body.field;
+                    var buffer = {};
                     console.log("THESE ARE THE NEW BOLO FIELDS: " + req.body.field);
                     console.log("THESE ARE THE CATEGORY FIELDS: " + category.fields);
                     console.log("THIS IS THE CATEGORY: " + category);
+                    console.log("HERE IS THE IMAGE INFORMATION:");
+                    console.log("===================================");
 
                     if (req.files['featured']) {
                         newBolo.featured = {
                             data: fs.readFileSync(req.files['featured'][0].path),
                             contentType: req.files['featured'][0].mimeType
                         };
+                        buffer.featured = newBolo.featured.data.toString('base64');
+
+                        console.log("Featured: " + newBolo.featured);
+
                     }
                     if (req.files['other1']) {
                         newBolo.other1 = {
                             data: fs.readFileSync(req.files['other1'][0].path),
                             contentType: req.files['other1'][0].mimeType
                         };
+                        buffer.other1 = newBolo.other1.data.toString('base64');
+                        console.log("Other1: " + newBolo.other1);
                     }
                     if (req.files['other2']) {
                         newBolo.other2 = {
                             data: fs.readFileSync(req.files['other2'][0].path),
                             contentType: req.files['other2'][0].mimeType
                         };
+                        buffer.other2 = newBolo.other2.data.toString('base64');
+                        console.log("Other2: " + newBolo.other2);
                     }
+
+                    console.log("===================================");
                     Agency.findAgencyByID(req.user.agency.id, function (err, agency)
                     {
                         console.log("NEW BOLO: " + newBolo);
                         if(req.body.option === "preview")
                         {
-                            res.render('bolo-preview', {bolo: newBolo, category: category, agency: agency});
+
+                            res.render('bolo-preview', {bolo: newBolo, category: category, agency: agency, buffer: buffer});
                         }
                         else
                         {
@@ -634,6 +657,9 @@ exports.postCreateBolo = function (req, res) {
                                     sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
                                     req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
                                     res.redirect('/bolo');
+
+
+
                                 }
                             });
                         }
