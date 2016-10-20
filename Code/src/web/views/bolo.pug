@@ -3,80 +3,61 @@ extends layout
 block jumbo
     .jumbotron
         .container
-            div#wrapper
-                div
-                    h3 Active BOLOs
-                div.input-group.pull-right
-                    span
-                select.selectpicker(id="parent-menu" title="Filter By" onchange="location = this.value" data-width="fit")
-                    option(value="/bolo/mybolos" ) My Bolos
-                    option(value="/bolo/agency/" + userAgency.agencyID name="agencyID" ) My Agency
-                    option(value="/bolo/" ) All Bolos
+            h3 Active BOLOs
 
-                form-inline(role="form" action="/admin/users/create" enctype="multipart/form-data" method="post" )
-                    div.input-group
-                        span.input-group-btn
-                            select.selectpicker(multiple title="Select Agencies" id="agency-select" data-width="160px" data-selected-text-format="count>1"  )
-                                for agency in agencies
-                                    //if(agency.id !== userAgency.id)
-                                    option(value=agency.name ) #{agency.name}
-                        button.btn.btn-default(type = "submit" value = "send" id="submit-select") Submit
-                            script.
-                                $('#submit-select').hide();
-                                $(window).load(function (e) {
-
-                                    if ($('#agency-select').is(":visible")) {
-                                        $('#submit-select').show();
-                                    }
-
-
-                                    $('#submit-select').click(function (e) {
-                                        var agencies = $('#agency-select').val();
-
-
-                                        if (agencies.length > 0) {
-                                            $.ajax({
-                                                url: '/bolo/agencies',
-                                                type: 'POST',
-                                                data: {agencies},
-                                                success: function (response) {
-                                                    window.location = response.redirect;
-                                                    ;
-                                                }
-                                            })
-                                        }
-
-                                    })
-                                })
+            label.label(for='filter')
+                | Filter BOLOs By:
+            select#filter.selectpicker(title="Filter By" data-width="fit")
+                option(value="allBolos" selected="selected") All Bolos
+                option(value="myAgency") My Agency
+                option(value="myBolos") My Bolos
 
 block content
     include partials/global-alerts
-        h2 #{filter}
-    if !bolos.length
-        p.lead No active BOLOs at this time.
-
-    .row
-        for bolo in bolos
-            if bolo && bolo.isConfirmed === true
-                include partials/bolo-thumbnail
-                    if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR' )
-                        .actions
-                            form( action= '/bolo/archive/' + bolo.id method="post" )
-                                a.btn.btn-info( href="/bolo/edit/" + bolo.id, role="button" )
-                                    | Edit
-                                a.btn.btn-primary( href="/bolo/" + bolo.id role="button" )
-                                    | Details
-                                button.btn.btn-warning( type='submit' onclick="return confirm('Are you sure you want to archive this bolo?')")
-                                    | Archive
-                    else if (username === bolo.author.username )
-                        .actions
-                            a.btn.btn-info( href="/bolo/edit/" + bolo.id, role="button" )
-                                | Edit
-                            a.btn.btn-primary( href="/bolo/" + bolo.id role="button" )
-                                | Details
-                    else
-                        .actions
-                            a.btn.btn-primary( href="/bolo/" + bolo.id role="button" )
-                                | Details
+    #bolo-list.row.text-center
     .row.text-center
-        include partials/paging
+        nav(aria-label="Page navigation")
+            ul#bolo-paging.pagination
+    script.
+        //Render the page with bolos from the users agency
+        var filterSelector = $('#filter')
+        var renderPage = function (bolosPerPage, visibleNumbers) {
+            var filterValue = filterSelector.find("option:selected").val();
+            var listOfBoloThumbnails = $('.thumbnail');
+            var boloDiv = $('#bolo-list');
+            var pagingDiv = $('#bolo-paging');
+            $.ajax({
+                url: '/bolo/list', type: 'GET',
+                data: {filter: filterValue},
+                success: function (response) {
+                    boloDiv.empty();
+                    boloDiv.append(response);
+                    boloDiv.children().hide();
+                    boloDiv.children().slice(0, bolosPerPage).show();
+                    $(function () {
+                        pagingDiv.twbsPagination({
+                            totalPages: listOfBoloThumbnails.length <= bolosPerPage ?
+                                    1 : Math.floor(listOfBoloThumbnails.length / bolosPerPage),
+                            visiblePages: visibleNumbers,
+                            prev: '&laquo;',
+                            next: '&raquo;',
+                            onPageClick: function (event, page) {
+                                boloDiv.children().hide();
+                                var start = (page - 1) * bolosPerPage;
+                                var end = start + bolosPerPage;
+                                boloDiv.children().slice(start, end).show();
+                            }
+                        });
+                    });
+                }
+            })
+        };
+        $(document).ready(function () {
+            renderPage(12, 8);
+        })
+
+        //When you change the filter, render the selected bolos, and the paging
+        filterSelector.change(function () {
+            renderPage(12, 8);
+        });
+

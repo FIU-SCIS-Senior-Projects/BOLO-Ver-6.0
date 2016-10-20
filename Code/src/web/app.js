@@ -142,10 +142,11 @@ app.use(function (req, res, next) {
     //locals set by passport
     res.locals.passport_success = req.flash('success');
     res.locals.passport_error = req.flash('error');
-
-    console.log('locals.username = ' + res.locals.userName);
-    console.log('locals.error_msg = ' + res.locals.error_msg);
-    console.log('locals.success_msg = ' + res.locals.success_msg);
+    if (inDevelopmentMode && false) {
+        console.log('locals.username = ' + res.locals.userName);
+        console.log('locals.error_msg = ' + res.locals.error_msg);
+        console.log('locals.success_msg = ' + res.locals.success_msg);
+    }
     next();
 });
 

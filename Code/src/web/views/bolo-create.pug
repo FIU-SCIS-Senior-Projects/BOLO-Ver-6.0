@@ -22,15 +22,13 @@ block content
                     var month = date.getMonth() < 10 ? '0' + date.getMonth():date.getMonth();
                     var currDate = day + '/' + month + '/' + date.getFullYear();
                     var currTime = date.getHours() + ':' + date.getMinutes();
+                    var categoryNames = ['']
+                    for (var num in categories)
+                        categoryNames.push(categories[num].name);
                 .col-sm-6
                     +input_text( "dateReported", "Date Reported", "DD/MM/YYYY", true, currDate )
                 .col-sm-6
                     +input_text( "timeReported", "Time Reported", "HH:MM", true, currTime )
-            -
-                var categoryNames = []
-                categoryNames.push('');
-                for (var num in categories)
-                categoryNames.push(categories[num].name);
             .cat
                 +select_options( "category", "Category", categoryNames, true)
             div#newForms

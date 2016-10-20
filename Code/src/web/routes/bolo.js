@@ -10,7 +10,8 @@ var upload = multer({dest: './uploads/'});
 var boloImages = upload.fields([{name: 'featured', maxCount: 1},
     {name: 'other1', maxCount: 1}, {name: 'other2', maxCount: 1}]);
 
-router.get('/', control.listBolos);
+router.get('/', control.renderBoloPage);
+router.get('/list', control.listBolos);
 router.get('/create', control.getCreateBolo);
 router.post('/create', boloImages, control.postCreateBolo);
 router.get('/search', control.getBoloSearch);
