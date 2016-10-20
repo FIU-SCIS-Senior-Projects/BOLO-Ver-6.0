@@ -46,20 +46,22 @@ block content
         //Render Images
         div.col-md-12
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                img#featured.img-fluid( src='data:image/jpg;base64, #{bolo.featured.binary.buffer}')
+                p I'M HERE
+                p #{buffer.featured}
+                img#featured.img-fluid( src='data:image/jpeg;charset=utf-8;base64, #{buffer.featured}')
 
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
-                img#secondarysettingsleft(src="/img/bolo/other1/" + bolo.id)
-                img#featured(src="/img/bolo/featured/" + bolo.id)
+                img#secondarysettingsleft.img-fluid( src='data:image/jpeg;base64, #{buffer.other1}')
+                img#featured.img-fluid( src='data:image/jpeg;base64, #{buffer.featured}')
 
             else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
-                img#secondarysettingsright.img-responsive(src="/img/bolo/other2/" + bolo.id)
-                img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                img#secondarysettingsright.img-fluid( src='data:image/jpeg;base64, #{buffer.other2}')
+                img#featured.img-fluid( src='data:image/jpg;base64, #{buffer.featured}')
 
             else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
-                img#secondaryimage(src="/img/bolo/other1/" + bolo.id)
-                img#featured(src="/img/bolo/featured/" + bolo.id)
-                img#tertiaryimage(src="/img/bolo/other2/" + bolo.id)
+                img#secondaryimage.img-fluid( src='data:image/jpeg;base64, #{buffer.other1}')
+                img#featured.img-fluid( src='data:image/jpeg;base64, #{buffer.featured}')
+                img#tertiaryimage.img-fluid( src='data:image/jpeg;base64, #{buffer.other2}')
 
         div.row
             br
