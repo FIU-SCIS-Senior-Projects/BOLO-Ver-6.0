@@ -19,3 +19,5 @@ block content
         .form-group
             button.btn.btn-primary(type="submit" value="login") Login
             a(href='/forgotPassword' style="margin-left:10px") Forgot password?
+    script.
+        window.onload = function() {document.getElementsByName("username")[0].focus();}
