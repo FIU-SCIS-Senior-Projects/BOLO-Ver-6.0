@@ -137,6 +137,15 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
             // todo check if this is async
             var html = jade.renderFile(tmp, tdata);
             console.log("SENDING EMAIL SUCCESSFULLY");
+            emailService.send({
+                'to': email,
+                'from': config.email.from,
+                'fromName': config.email.fromName,
+                'subject': 'BOLO Alert: Confirm BOLO ' + firstname + " " + lastname,
+                'text': 'Your BOLO was created but not confirmed. \n' +
+                'Click on the link below to confirm: \n\n' +
+                config.appURL + '/bolo/confirm/' + token + '\n\n'
+            })
             return emailService.send({
                 'to': creatorEmail,
                 'bcc': subscribers,
@@ -307,7 +316,7 @@ exports.getBoloDetails = function (req, res) {
 };
 
 /**
- * Renders the Bolo as a PDF
+ * Renders the Bolo as a PDF for Printing and Saving
  */
 exports.renderBoloAsPDF = function (req, res) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
@@ -649,6 +658,9 @@ exports.postCreateBolo = function (req, res) {
                                     sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
                                     req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
                                     res.redirect('/bolo');
+
+
+
                                 }
                             });
                         }
