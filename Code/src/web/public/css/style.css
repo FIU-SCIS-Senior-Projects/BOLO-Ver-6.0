@@ -150,7 +150,7 @@ input[type="file"] {
     position: relative;
 }
 
-.boloImageCenterer img {
+.boloImageCenterer a img {
     display: block;
     margin: 0 auto;
     border: solid #cccccc 2px;

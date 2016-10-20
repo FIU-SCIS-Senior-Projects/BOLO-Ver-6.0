@@ -83,7 +83,7 @@ module.exports.findAllBolos = function (isConfirmed, isArchived, limit, sortBy, 
     Bolo.find({isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)
-        .sort(sortBy)
+        .sort([[sortBy, -1]])
         .exec(callback);
 };
 
@@ -91,14 +91,14 @@ module.exports.findBolosByAuthor = function (authorID, isConfirmed, isArchived, 
     Bolo.find({author: authorID, isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)
-        .sort(sortBy)
+        .sort([[sortBy, -1]])
         .exec(callback);
 };
 module.exports.findBolosByAgency = function (agencyID, isConfirmed, isArchived, limit, sortBy, callback) {
     Bolo.find({agency: agencyID, isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)
-        .sort(sortBy)
+        .sort([[sortBy, -1]])
         .exec(callback);
 };
 

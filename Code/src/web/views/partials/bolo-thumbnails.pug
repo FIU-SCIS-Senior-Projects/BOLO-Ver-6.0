@@ -15,9 +15,8 @@ for bolo in bolos
                 if !(bolo.status === 'ACTIVE')
                     div#thumbnailstatus.col-xs-12
                         p.text-center.text-danger.strong #{bolo.status}
-                img.img-thumbnail( src="/img/bolo/featured/" + bolo.id alt='Featured Image' )
-
-
+                a(href="/bolo/" + bolo.id)
+                    img.img-thumbnail( src="/img/bolo/featured/" + bolo.id alt='Featured Image')
 
             div.category
                 h4.strong(style = "text-align: center;") #{bolo.category.name}
@@ -42,7 +41,7 @@ for bolo in bolos
                                 | Delete
                 else
                     .pull-left
-                        a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) View
+                        a.btn.btn-primary( href="/bolo/" + bolo.id role="button" ) View
             else
                 if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR' )
                     .pull-left
