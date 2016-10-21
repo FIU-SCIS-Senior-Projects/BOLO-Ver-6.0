@@ -549,6 +549,7 @@ exports.postCreateBolo = function (req, res) {
  */
 exports.loggedOutConfirmBolo = function (req, res, next) {
     if (!req.user) {
+        //yep
         Bolo.findBoloByToken(req.params.token, function (err, boloToConfirm) {
             if (err) throw err;
             else if (!boloToConfirm) {
