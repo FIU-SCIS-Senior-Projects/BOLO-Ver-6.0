@@ -11,7 +11,7 @@ add more features and test the application.
 
 The current application stack consists of:
 
-- [Jade](http://jadelang.net)
+- [Pug](https://pugjs.org/)
 - [Node.js](http://nodejs.org)
 - [Express](http://expressjs.com)
 - [SendGrid](https://sendgrid.com)
@@ -40,7 +40,6 @@ do is save a file named .env in your project root with the needed environment
 variables set. Check the .env.example file to see the format and variables
 used in this project.  **Do not edit the .env.example file and/or commit it.**
 
-
 ### Testing
 This project is using the following libraries for testing:
 
@@ -53,19 +52,19 @@ The project is set up for an effective BDD/TDD workflow. Tests are contained
 in the test/ directory which contain directories for unit, functional, and
 acceptance tests.
 
-To execute Functional and Unit tests with coverage reports:  
+To execute Functional and Unit tests with coverage reports:
 `npm test`
 
 Coverage reports are stored in `./coverage` directory.
 
-To run individual tests:  
-`mocha test/unit` -or- `npm run unit-test`  
+To run individual tests:
+`mocha test/unit` -or- `npm run unit-test`
 `mocha test/integration`
 `mocha test/functional`
 
 The --watch flag can be used to watch for any changes to tests during
-development:  
-`mocha --watch test/unit`  
+development:
+`mocha --watch test/unit`
 `mocha --watch test/integration`
 `mocha --watch test/functional`
 
@@ -85,13 +84,3 @@ using the `npm install` command. Then type `npm run docs` and that's it.
 Open jsdoc/index.html file in your browser to read. Enjoy.
 
 ## References
-
-### Bluemix Guides and References
-
-[Design, manage, and test multi-instance Bluemix
-applications](http://www.ibm.com/developerworks/cloud/library/cl-develop-scalable-bluemix-app/)
-- The application's session handling strategy needs to be refactored. Currently
-  is is storing sessions in-memory which can cause a Bluemix instance to crash
-  when too many sessions are stored. This guide talks about session handling via
-  key-value stores like Redis and CouchDB (Cloudant) in the context of
-  multi-instance applications.

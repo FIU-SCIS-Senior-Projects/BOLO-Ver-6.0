@@ -1,26 +1,24 @@
 'use strict';
 
-var uuid = require('node-uuid');
-var PDFDocument = require('pdfkit');
-//var blobStream = require('blob-stream'); // added blobstream dependency
-var iframe = require('iframe');
 var fs = require('fs');
+var uuid = require('node-uuid');
 var crypto = require('crypto');
+
+var config = require('../config');
 
 var Bolo = require('../models/bolo');
 var Agency = require('../models/agency');
 var Category = require('../models/category');
 var User = require('../models/user');
 
-var config = require('../config');
-
 var emailService = require('../services/email-service');
 var pdfService = require('../services/pdf-service');
+var PDFDocument = require('pdfkit');
 
 /**
  * Error handling for MongoDB
  */
-var getErrorMessage = function (err) {
+function getErrorMessage(err) {
     var message = [];
 
     if (err.code) {
@@ -41,132 +39,10 @@ var getErrorMessage = function (err) {
         }
     }
     return message;
-};
-
-/**
- * Send email notification of a new bolo.
- * @param bolo
- * @param template
- * @param creatorEmail
- * @returns {Promise}
- */
-function sendBoloNotificationEmail(bolo, template, creatorEmail) {
-    var data = {};
-    var someData = {};
-    var sort = 'username';
-    var existWatermark = false;
-
-    var doc = new PDFDocument();
-    console.log('----->ready to send email' + JSON.stringify(bolo));
-    boloService.getAttachment(bolo.id, 'featured').then(function (attDTO) {
-        someData.featured = attDTO.data;
-        return boloService.getBolo(bolo.id);
-    }).then(function (bolo) {
-        data.bolo = bolo;
-        return agencyService.getAgency(bolo.agency);
-    }).then(function (agency) {
-        data.agency = agency;
-        console.log(agency);
-        if (agency.attachments['watermark'] != null) {
-            existWatermark = true;
-        }
-        return agencyService.getAttachment(agency.id, 'logo')
-    }).then(function (logo) {
-        someData.logo = logo.data;
-        return agencyService.getAttachment(data.agency.id, 'shield')
-    }).then(function (shield) {
-        someData.shield = shield.data;
-        if (existWatermark)
-            return agencyService.getAttachment(data.agency.id, 'watermark');
-        else
-            return null;
-    }).then(function (watermark) {
-        if (existWatermark)
-            someData.watermark = watermark.data;
-        return userService.getByUsername(bolo.authorUName);
-    }).then(function (user) {
-        data.user = user;
-        if (existWatermark) {
-            doc.image(someData.watermark, 0, 0, {
-                fit: [800, 800]
-            });
-        }
-        doc.image(someData.featured, 15, 155, {
-            fit: [260, 200]
-        });
-        doc.image(someData.logo, 15, 15, {
-            height: 100
-        });
-        doc.image(someData.shield, 500, 15, {
-            height: 100
-        });
-        pdfService.genDetailsPdf(doc, data);
-        doc.end();
-
-    });
-
-    return userService.getUsers(sort)
-        .then(function (users) {
-            // filters out users and pushes their emails into array
-            var subscribers = users.filter(function (user) {
-                var flag = false;
-                if (user.notifications) {
-                    var notificationLength = user.notifications.length;
-                    for (var i = 0; i < notificationLength; i++) {
-                        if (bolo.agencyName === user.notifications[i]) {
-                            flag = true;
-                        }
-                    }
-                }
-                return flag;
-            }).map(function (user) {
-                console.log(user.email);
-                return user.email;
-            });
-
-            var tmp = config.email.template_path + '/' + template + '.jade';
-            var tdata = {
-                'bolo': bolo,
-                'app_url': config.appURL
-            };
-
-            // todo check if this is async
-            var html = jade.renderFile(tmp, tdata);
-            console.log("SENDING EMAIL SUCCESSFULLY");
-            emailService.send({
-                'to': email,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: Confirm BOLO ' + firstname + " " + lastname,
-                'text': 'Your BOLO was created but not confirmed. \n' +
-                'Click on the link below to confirm: \n\n' +
-                config.appURL + '/bolo/confirm/' + token + '\n\n'
-            });
-            return emailService.send({
-                'to': creatorEmail,
-                'bcc': subscribers,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: ' + bolo.category,
-                'html': html,
-                'files': [{
-                    filename: tdata.bolo.id + '.pdf', // required only if file.content is used.
-                    contentType: 'application/pdf', // optional
-                    content: doc
-                }]
-            });
-
-        })
-        .catch(function (error) {
-            console.error(
-                'Unknown error occurred while sending notifications to users' +
-                'subscribed to agency id %s for BOLO %s\n %s',
-                bolo.agency, bolo.id, error.message
-            );
-        });
 }
 
 /**
+ * Sends an email to a subscriber of a bolo
  *
  * @param bolo a bolo object
  * @param template
@@ -300,6 +176,9 @@ exports.listBolos = function (req, res) {
     }
 };
 
+/**
+ * Gets the bolo view
+ */
 exports.renderBoloPage = function (req, res) {
     res.render('bolo');
 };
@@ -309,13 +188,9 @@ exports.renderBoloPage = function (req, res) {
  */
 exports.getBoloDetails = function (req, res) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) {
-            res.render('404');
-        } else {
-            console.log("Generate BOLO DETAILS" + bolo);
-            res.render('bolo-details', {bolo: bolo});
-        }
-    })
+        if (err) throw err;
+        res.render('bolo-details', {bolo: bolo});
+    });
 };
 
 /**
@@ -339,8 +214,6 @@ exports.renderBoloAsPDF = function (req, res) {
              */
             Agency.findAgencyByID(bolo.agency.id, function (err, agency) {
                 if (err) throw err;
-
-
                 /*
                  ===================================================
                  *         Begin Building The PDF Document         *
@@ -355,7 +228,6 @@ exports.renderBoloAsPDF = function (req, res) {
                         fit: [800, 800]
                     });
                 }
-
                 if (agency.logo.data != undefined) {
                     doc.image(agency.logo.data, 15, 15, {
                         height: 100
@@ -528,9 +400,7 @@ exports.renderBoloAsPDF = function (req, res) {
                 doc.end();
                 res.contentType("application/pdf");
                 doc.pipe(res);
-
             });
-
         }
     })
 };
@@ -544,7 +414,6 @@ exports.getCreateBolo = function (req, res) {
             req.flash('error_msg', 'Could not load the Categories on the database');
             res.redirect('/bolo');
         } else {
-            console.log(listOfCategories);
             res.render('bolo-create', {categories: listOfCategories});
         }
     })
@@ -556,7 +425,6 @@ exports.getCreateBolo = function (req, res) {
 exports.postCreateBolo = function (req, res) {
     console.log(req.body);
     console.log(req.files);
-
     Category.findAllCategories(function (err, listOfCategories) {
         if (err) {
             req.flash('error_msg', 'Could not find categories');
@@ -748,23 +616,11 @@ exports.postEditBolo = function (req, res) {
  * List archived bolos
  */
 exports.renderArchivedBolos = function (req, res) {
-    var page = req.query.page || 1;
-    var limit = config.const.BOLOS_PER_QUERY;
-    var sortBy = req.query.sort || 'lastUpdated';
-    Bolo.findBolosByAgency(req.user.agency, true, true, limit, sortBy, function (err, listOfBolos) {
-        if (err) throw err;
-        Agency.findAllAgencies(function (err, listOfAgencies) {
-            if (err) throw err;
-            res.render('bolo-archive', {
-                bolos: listOfBolos,
-                agencies: listOfAgencies,
-                paging: {
-                    current: page,
-                    last: Math.ceil(listOfBolos.length / limit)
-                }
-            });
-        });
-    });
+    if (req.user.tier === 'ROOT') {
+        res.render('bolo-archive');
+    } else {
+        res.render('unauthorized');
+    }
 };
 
 /**
@@ -821,6 +677,9 @@ exports.deleteBolo = function (req, res) {
     })
 };
 
+/**
+ * Gets the bolo purge archive view
+ */
 exports.renderPurgeArchivedBolosPage = function (req, res) {
     res.render('bolo-archive-purge');
 };

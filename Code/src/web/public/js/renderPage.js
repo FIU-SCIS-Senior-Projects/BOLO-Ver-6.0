@@ -13,7 +13,7 @@ var renderPage = function (bolosPerPage, visibleNumbers) {
                 $('#purge').hide();
                 pagingDiv.hide();
                 boloDiv.empty();
-                boloDiv.append('<p class="text-success" style="font-size: xx-large">No Archived Bolos</p>');
+                boloDiv.append('<p class="text-success" style="font-size: xx-large">No Bolos To Show</p>');
             } else {
                 $('#purge').show();
                 pagingDiv.show();
