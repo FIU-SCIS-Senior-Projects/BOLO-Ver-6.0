@@ -15,6 +15,7 @@ var crypto = require('crypto');
 var Bolo = require('../models/bolo');
 var Agency = require('../models/agency');
 var Category = require('../models/category');
+var User = require('../models/user');
 
 var config = require('../config');
 
@@ -145,7 +146,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
                 'text': 'Your BOLO was created but not confirmed. \n' +
                 'Click on the link below to confirm: \n\n' +
                 config.appURL + '/bolo/confirm/' + token + '\n\n'
-            })
+            });
             return emailService.send({
                 'to': creatorEmail,
                 'bcc': subscribers,
@@ -638,16 +639,18 @@ exports.postCreateBolo = function (req, res) {
                     }
 
                     console.log("===================================");
-                    Agency.findAgencyByID(req.user.agency.id, function (err, agency)
-                    {
+                    Agency.findAgencyByID(req.user.agency.id, function (err, agency) {
                         console.log("NEW BOLO: " + newBolo);
-                        if(req.body.option === "preview")
-                        {
+                        if (req.body.option === "preview") {
 
-                            res.render('bolo-preview', {bolo: newBolo, category: category, agency: agency, buffer: buffer});
+                            res.render('bolo-preview', {
+                                bolo: newBolo,
+                                category: category,
+                                agency: agency,
+                                buffer: buffer
+                            });
                         }
-                        else
-                        {
+                        else {
                             newBolo.save(function (err) {
                                 if (err) {
                                     prevForm.errors = getErrorMessage(err);
@@ -657,7 +660,6 @@ exports.postCreateBolo = function (req, res) {
                                     sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
                                     req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
                                     res.redirect('/bolo');
-
 
 
                                 }
@@ -813,20 +815,32 @@ exports.deleteBolo = function (req, res) {
     }
 };
 
+exports.renderPurgeArchivedBolosPage = function (req, res) {
+    res.render('bolo-archive-purge');
+};
+
 /**
  * Deletes all archived bolos
  */
 exports.purgeArchivedBolos = function (req, res) {
     //Check if the current user is authorized to delete all archived bolos
     if (req.user.tier === 'ROOT') {
-        Bolo.deleteAllArchivedBolos(function (err, result) {
+        User.comparePassword(req.body.password, req.user.password, function (err, result) {
             if (err) throw err;
-            console.log(result);
-            req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.n + ' BOLOs');
-            res.redirect('/bolo/archive');
-        });
+            if (result) {
+                Bolo.deleteAllArchivedBolos(function (err, result) {
+                    if (err) throw err;
+                    console.log(result);
+                    req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.result.n + ' BOLOs');
+                    res.redirect('/bolo/archive');
+                });
+            } else {
+                req.flash('error_msg', 'Password was not correct');
+                res.redirect('/bolo/archive/purge');
+            }
+        })
     } else {
-        req.flash('error_msg', 'You are not authorized to purge all BOLOs');
+        req.flash('error_msg', 'You are not authorized to purge BOLOs');
         res.redirect('/bolo/archive');
     }
 };

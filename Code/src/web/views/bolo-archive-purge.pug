@@ -1,0 +1,24 @@
+extends layout
+
+block jumbo
+    .jumbotron
+        .container
+            h3 Purge Archived BOLOs
+            input#input.hidden(value='archived')
+
+block content
+    if (userTier === 'ROOT')
+        .col-md-12
+            .page-header
+                h2 WARNING. THIS CAN NOT BE UNDONE
+                p.text-danger
+                    | This will delete the archived bolos from the selected date
+
+        #bolo-list.row.text-center
+            .row.text-center
+                nav(aria-label="Page navigation")
+                    ul#bolo-paging.pagination
+        form(action= '/bolo/archive/purge'  method="post" )
+            +input_text('password', 'Enter Your Password and Click DELETE to remove archived bolos', 'Enter Password', false, '', 'password')
+            button.btn.btn-danger( type="submit" value="save" ) DELETE
+        script(src="/js/renderPage.js" )
