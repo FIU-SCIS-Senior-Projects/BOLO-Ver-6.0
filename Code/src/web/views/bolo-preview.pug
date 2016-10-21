@@ -46,8 +46,6 @@ block content
         //Render Images
         div.col-md-12
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                p I'M HERE
-                p #{buffer.featured}
                 img#featured.img-fluid( alt='featured_image',src='data:image/jpg;base64, #{featured}')
 
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
