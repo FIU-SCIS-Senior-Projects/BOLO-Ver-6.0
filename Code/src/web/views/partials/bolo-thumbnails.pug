@@ -22,9 +22,9 @@ for bolo in bolos
                 h4.strong(style = "text-align: center;") #{bolo.category.name}
 
             div.caption
-                if (Math.abs(bolo.lastUpdated - bolo.CreationDate) > 2000)
-                    p <b>Updated:</b> #{bolo.lastUpdated}
-                p <b>Created On:</b> #{bolo.createdOn}
+                //if (Math.abs(bolo.lastUpdated - bolo.createdOn) > 2000)
+                    p <b>Updated:</b> #{bolo.lastUpdated.toLocaleString()}
+                p <b>Created On:</b> #{bolo.createdOn.toLocaleString()}
                 p <b>Posted By:</b> #{bolo.author.rank} #{bolo.author.lastname}
             if bolo.isArchived
                 if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
@@ -55,7 +55,7 @@ for bolo in bolos
                             button.btn.btn-warning( type='submit' onclick="return confirm('Are you sure you want to archive this bolo?')")
                                 | Archive
 
-                else if (username === bolo.author.username )
+                else if (userName === bolo.author.username )
                     .pull-left
                         a.btn.btn-info( href="/bolo/edit/" + bolo.id role="button" )
                             | Edit

@@ -35,11 +35,11 @@ block content
                     +input_text( "timeReported", "Time Reported", "HH:MM", true, currTime )
             .cat
                 +select_options( "category", "Category", categoryNames, true)
-            div#newForms
+            div#categoryForms
             script.
                 var categorySelector = $('.cat');
                 categorySelector.change(function () {
-                    var newForms = document.getElementById('newForms')
+                    var newForms = document.getElementById('categoryForms')
                     while (newForms.firstChild) {
                         newForms.removeChild(newForms.firstChild);
                     }

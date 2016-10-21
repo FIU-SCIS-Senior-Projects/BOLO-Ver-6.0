@@ -36,42 +36,37 @@ block admin-content
         +select_options( "state", "State", states, false, agency.state )
         +input_text( "zip", "Zip Code", agency.zipcode, false )
         +input_text( "phone", "Phone Number", agency.phone, false )
+        hr
         .form-group
-            label.control-label( for="logo1" ) Upload New Logo Image
-            .row
-                .col-sm-6
-                    input#logo1( name="logo" type="file" accept="image/*" )
-                .col-sm-6.details-image
-                    if (agency.logo.data)
-                        p Current Logo
-                        img(src='/img/agency/logo/' + agency.id)
-                    else
-                        p.alert Error! No Image Found
-        br
+            .col-xs-12.col-sm-7
+                label.control-label( for="logo1" ) Upload New Logo Image
+                input#logo1( name="logo" type="file" accept="image/*" )
+            .col-xs-12.col-sm-5
+                if (agency.logo.data)
+                    p.strong.text-center Current Logo
+                    img.img-responsive(src='/img/agency/logo/' + agency.id)
+                else
+                    p.alert Error! No Image Found
         .form-group
-            label.control-label( for="shield" ) Upload New Shield Image
-            .row
-                .col-sm-6
-                    input#shield( name="shield" type="file" accept="image/*" )
-                .col-sm-6.details-image
-                    if (agency.shield.data)
-                        p Current Shield
-                        img(src='/img/agency/shield/' + agency.id)
-                    else
-                        i No Image Found
-        br
+            .col-xs-12.col-sm-7
+                label.control-label( for="shield" ) Upload New Shield Image
+                input#shield( name="shield" type="file" accept="image/*" )
+            .col-xs-12.col-sm-5
+                if (agency.shield.data)
+                    p.strong.text-center Current Shield
+                    img.img-responsive(src='/img/agency/shield/' + agency.id)
+                else
+                    i No Image Found
         .form-group
-            label.control-label( for="watermark" ) Upload New Watermark Image
-            .row
-                .col-sm-6
-                    input#watermark( name="watermark" type="file" accept="image/*" )
-                .col-sm-6.details-image
-                    if (agency.watermark.data)
-                        p Current Watermark
-                        img(src='/img/agency/watermark/' + agency.id)
-                    else
-                        i No Image Found
-        br
+            .col-xs-12.col-sm-7
+                label.control-label( for="watermark" ) Upload New Watermark Image
+                input#watermark( name="watermark" type="file" accept="image/*" )
+            .col-xs-12.col-sm-5
+                if (agency.watermark.data)
+                    p.strong.text-center Current Watermark
+                    img.img-responsive(src='/img/agency/watermark/' + agency.id)
+                else
+                    i No Image Found
         .form-group
             button.btn.btn-primary( type="submit" value="save" ) Submit
             if (userTier === 'ROOT')

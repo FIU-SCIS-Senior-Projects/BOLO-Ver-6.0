@@ -1,97 +1,101 @@
 extends layout
-include includes/mixins
-
 
 block jumbo
     .jumbotron
         .container
-            p Update BOLO Details
+            h3 Update BOLO Details
             button.btn.btn-primary(onclick='history.go(-1);') Go Back
 
-
 block content
-    include partials/global-alerts
-    include partials/options
-
     .row
-        .col-md-6
+        .col-xs-8.col-xs-offset-2
             .panel.panel-default
-                .panel-heading: h3.panel-title Details
+                .panel-heading: p.panel-title.strong.text-center Bolo Details
                 .panel-body
-                    p <b>Author:</b> #{bolo.authorFName} #{bolo.authorLName}
-                    p <b>Agency:</b>
-                        a( href="/agency/" + agency.id target="_blank" ) #{agency.name}
-                    p <b>Created:</b> #{bolo.createdOn}
-                    p <b>Updated:</b> #{bolo.lastUpdatedOn}
+                    dl.dl-horizontal
+                        dt ID:
+                        dd #{bolo.id}
+                        dt Author:
+                        dd #{bolo.author.firstname} #{bolo.author.lastname}
+                        dt Agency:
+                        dd #{bolo.agency.name}
+                        dt Created:
+                        dd #{bolo.createdOn}
+                        if (Math.abs(bolo.createdOn - bolo.lastUpdated) > 5000)
+                            dt Updated:
+                            dd #{bolo.lastUpdated}
 
     form( action="/bolo/edit/" + bolo.id enctype="multipart/form-data" method="post" )
-        input( type="hidden" name="id" value=bolo.id )
-        input( type="hidden" name="record" value=bolo.record)
-        input( type="hidden" name="agencyName" value=bolo.agencyName)
-        input( type="hidden" name="dateReported" value=bolo.data.dateReported )
-        input( type="hidden" name="timeReported" value=bolo.data.timeReported )
-
-        +select_options( "status", "Status", bolo_status_theft, false, bolo.status )
-
-        .row
-            .col-md-6
-                +input_text( "dateRecovered", "Date Recovered (DD/MM/YYYY)", "", false, bolo.dateRecovered )
-            .col-md-6
-                +input_text( "timeRecovered", "Time Recovered (HH:MM)", "", false, bolo.timeRecovered )
-
-
-        +input_text( "addressRecovered", "Address Recovered", "", false, bolo.addressRecovered )
-
-        .row
-            .col-md-6
-                +input_text( "zipCodeRecovered", "Zip Code", "", false, bolo.zipCodeRecovered )
-            .col-md-6
-                +input_text( "agencyRecovered", "Agency", "", false, bolo.agencyRecovered )
-
-        +input_text_static( "category", "Category", "", false, "THEFT - AUTO")
-
-        +input_text( "vehicleYear", "Year", "", false,  bolo.vehicleYear )
-        +select_options( "vehicleMake", "Make", vehicles_makes, false, bolo.vehicleMake  )
-        +input_text( "vehicleModel", "Model", "", false,  bolo.vehicleModel )
-        +select_options( "vehicleStyle", "Style", v_style, false, bolo.vehicleStyle )
-        +input_text( "vehicleColor", "Color", "", false, bolo.vehicleColor )
-        +input_text( "vehicleIdNumber", "Vehicle Identification Number", "", false,  bolo.vehicleIdNumber )
-        .row
-            .col-md-4
-                +select_options( "vehicleLicenseState", "Tag License Plate", states, false, bolo.vehicleLicenseState )
-            .col-md-8
-                +input_text( "vehicleLicensePlate", "", "", false, bolo.vehicleLicensePlate )
-
-        .form-group.row
-            .col-md-4
-                label.control-label( for="featured_image" ) Featured Image
-                input( name="featured_image" type="file" accept="image/*" )
-
-            .col-md-4
-                label.control-label( for="pic1" ) Image Upload
-                input( name="pic1" type="file" accept="image/*" )
-
-            .col-md-4
-                label.control-label( for="pic2" ) Image Upload
-                input( name="pic2" type="file" accept="image/*" )
-
         .form-group
-            label.control-label Remove Images
-            table.table
-                each name, uuid in bolo.images
-                    - var img = "/bolo/asset/" + bolo.id + "/" + uuid
-                    tr
-                        td: input( type="checkbox" name="image_remove[]" value=uuid )
-                        td: p
-                            a( href=img target="_blank" ) #{name}
-                            if 'featured' === uuid
-                                i ( Featured Image )
+            .col-xs-12.col-md-6
+                +input_text( "dateRecovered", "Date Recovered (DD/MM/YYYY)", bolo.dateRecovered, false, bolo.dateRecovered1 )
+            .col-xs-12.col-md-6
+                +input_text( "timeRecovered", "Time Recovered (HH:MM)", bolo.timeRecovered, false, bolo.timeRecovered1 )
 
-        +input_text( "video_url", "Video Link", "", false, bolo.video_url, "url" )
-        +input_textarea( "additional", "Additional Info", "", false, bolo.additional )
-        +input_textarea( "summary", "Summary", "", false, bolo.summary )
+            +input_text_static( "category", "Category", "", true, bolo.category.name)
+            div#categoryForms
+            script.
+                window.onload = function () {
+                    var newForms = document.getElementById('categoryForms')
+                    const category = !{JSON.stringify(bolo.category)};
+                    const boloFields = !{JSON.stringify(bolo.fields)};
+                    for (num in category.fields) {
+                        var newDiv = document.createElement('div'),
+                                newLabel = document.createElement('label'),
+                                newField = document.createElement('input');
+                        newDiv.className = 'form-group';
+                        newLabel.className = 'control-label';
+                        newLabel.htmlFor = category.fields[num];
+                        newLabel.innerHTML = category.fields[num];
+                        newField.id = category.fields[num];
+                        newField.className = 'form-control';
+                        newField.name = 'field';
+                        newField.value = boloFields[num];
+                        newDiv.appendChild(newLabel);
+                        newDiv.appendChild(newField);
+                        newForms.appendChild(newDiv);
+                    }
+                };
 
-        .form-group
-            button.btn.btn-primary( type="submit" value="save" id= "buttonClickEdit" disabled = false ) Publish
-            button.btn.btn-default( type="submit" disabled=true value="preview" ) Preview
-            //button.btn.btn-default( type="submit" disabled=false value="pdf" ) PDF
+            .form-group
+                .col-xs-12.col-sm-7
+                    label.control-label( for="featured1" ) Upload New Featured Image
+                    input#featured1( name="featured" type="file" accept="image/*" )
+                .col-xs-12.col-sm-5
+                    p.strong.text-center Current Featured Image
+                    if (bolo.featured.data)
+                        img.img-responsive(src='/img/bolo/featured/' + bolo.id)
+                    else
+                        p.alert Error! No Image Found
+            .form-group
+                .col-xs-12.col-sm-7
+                    label.control-label( for="other1" ) Upload New Other Picture 1
+                    input#other1( name="other1" type="file" accept="image/*" )
+                .col-xs-12.col-sm-5
+                    p.strong.text-center Current Other Picture 1
+                    if (bolo.other1.data)
+                        img.img-responsive(src='/img/bolo/other1/' + bolo.id)
+                    else
+                        i No Image Found
+            .form-group
+                .col-xs-12.col-sm-7
+                    label.control-label( for="other2" ) Upload New Other Picture 2
+                    input#other2( name="other2" type="file" accept="image/*" )
+                .col-xs-12.col-sm-5
+                    p.strong.text-center Current Other Picture 2
+                    if (bolo.other2.data)
+                        img.img-responsive(src='/img/bolo/other2/' + bolo.id)
+
+                    else
+                        i No Image Found
+
+            .col-xs-12
+                +input_text( "video_url", "Video Link", bolo.videoURL, false, vid1, "url" )
+            .col-xs-12
+                +input_textarea( "info", "Additional Info", bolo.info, false, info1)
+            .col-xs-12
+                +input_textarea( "summary", "Summary", bolo.summary, false, summary1)
+
+            .col-xs-12
+                button.btn.btn-primary( type="submit" value="save" id= "buttonClickEdit" disabled = false ) Update
+

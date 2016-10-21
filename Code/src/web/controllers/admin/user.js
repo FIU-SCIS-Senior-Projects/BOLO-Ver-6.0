@@ -71,7 +71,6 @@ exports.multiUserCreate = function (req, res) {
 
                     if (err) throw err;
                     console.log('******* index: %s, result.length: %s *******', index, result.length);
-                    var index2 = 0;
 
                     //console.log('******* index - 2: %s, result.length: %s *******', index, result.length);
                     var newUser = new User({
@@ -310,36 +309,40 @@ exports.getEditDetails = function (req, res) {
  * Process a request to update a user's details.
  */
 exports.postEditDetails = function (req, res) {
-    console.log(req.body);
-
     User.findUserByID(req.params.id, function (err, user) {
         if (err) throw err;
+        if (
+            (req.user.tier === 'ROOT') ||
+            (req.user.tier === 'ADMINISTRATOR' && req.user.agency === user.agency && user.tier !== 'ADMINISTRATOR')
+        ) {
 
-        //Update the user
-        if (req.body.username) user.username = req.body.username;
-        if (req.body.fname) user.firstname = req.body.fname;
-        if (req.body.lname) user.lastname = req.body.lname;
-        if (req.body.email)   user.email = req.body.email;
-        if (req.body.role)   user.tier = req.body.role;
-        if (req.body.badge)   user.badge = req.body.badge;
-        if (req.body.sectunit)   user.unit = req.body.sectunit;
-        if (req.body.ranktitle)   user.rank = req.body.ranktitle;
+            //Update the user
+            if (req.body.username) user.username = req.body.username;
+            if (req.body.fname) user.firstname = req.body.fname;
+            if (req.body.lname) user.lastname = req.body.lname;
+            if (req.body.email)   user.email = req.body.email;
+            if (req.body.role)   user.tier = req.body.role;
+            if (req.body.badge)   user.badge = req.body.badge;
+            if (req.body.sectunit)   user.unit = req.body.sectunit;
+            if (req.body.ranktitle)   user.rank = req.body.ranktitle;
 
-        console.log(user);
+            user.save(function (err) {
+                if (err) {
+                    console.log('User could not be updated');
+                    console.log(getErrorMessage(err)[0].msg);
+                    req.flash('error_msg', getErrorMessage(err)[0].msg);
+                    res.redirect('/admin/user/edit/' + req.params.id);
+                } else {
+                    console.log('User has been Updated');
 
-        user.save(function (err) {
-            if (err) {
-                console.log('User could not be updated');
-                console.log(getErrorMessage(err)[0].msg);
-                req.flash('error_msg', getErrorMessage(err)[0].msg);
-                res.redirect('/admin/user/edit/' + req.params.id);
-            } else {
-                console.log('User has been Updated');
-
-                req.flash('success_msg', 'User has been Updated!');
-                res.redirect('/admin/user/edit/' + req.params.id);
-            }
-        });
+                    req.flash('success_msg', 'User has been Updated!');
+                    res.redirect('/admin/user/edit/' + req.params.id);
+                }
+            });
+        } else {
+            req.flash('error_msg', 'You are not authorized to edit this user');
+            res.redirect('/admin/user')
+        }
     })
 };
 

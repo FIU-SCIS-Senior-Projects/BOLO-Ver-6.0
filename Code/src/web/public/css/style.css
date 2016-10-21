@@ -301,6 +301,19 @@ a.thumbnail.active {
     left: 18%;
 }
 
+.panel-body dl{
+    margin-bottom: 0;
+}
+
+.panel-body .dl-horizontal dt{
+    text-align: left;
+    margin-bottom: 4px;
+}
+.panel-body .dl-horizontal dd{
+    text-align: right;
+    margin-bottom: 4px;
+}
+
 .dl-horizontal dt {
     text-align: left;
     margin-bottom: 8px;
@@ -309,6 +322,10 @@ a.thumbnail.active {
 .dl-horizontal dd {
     text-align: right;
     margin-bottom: 8px;
+}
+
+dt {
+    font-weight: 700;
 }
 
 #created {

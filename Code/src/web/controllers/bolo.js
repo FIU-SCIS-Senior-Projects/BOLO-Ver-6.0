@@ -44,10 +44,10 @@ function getErrorMessage(err) {
 /**
  * Sends an email to a subscriber of a bolo
  *
- * @param bolo a bolo object
- * @param template
+ * @param boloID a bolos id
  */
-function sendBoloToDataSubscriber(bolo, template) {
+function sendBoloToDataSubscribers(boloID) {
+    return boloID;
     var someData = {};
 
     console.log('in email function');
@@ -132,7 +132,7 @@ function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
         'subject': 'BOLO Alert: Confirm BOLO ' + firstname + " " + lastname,
         'text': 'Your BOLO was updated but not confirmed. \n' +
         'Click on the link below to confirm: \n\n' +
-        config.appURL + '/bolo/confirmBoloUpdate/' + token + '\n\n'
+        config.appURL + '/bolo/confirm/' + token + '\n\n'
     })
 }
 
@@ -438,7 +438,6 @@ exports.postCreateBolo = function (req, res) {
                 categories: listOfCategories
             };
 
-
             //Validation of form
             var errors = [];
             req.checkBody('category', 'Please select a category').notEmpty();
@@ -588,6 +587,7 @@ exports.confirmBolo = function (req, res) {
             boloToConfirm.isConfirmed = true;
             boloToConfirm.save(function (err) {
                 if (err) throw err;
+                sendBoloToDataSubscribers(boloToConfirm.id);
                 req.flash('success_msg', 'Bolo has been confirmed');
                 res.redirect('/bolo');
             });
@@ -599,17 +599,99 @@ exports.confirmBolo = function (req, res) {
  * Render the bolo edit form
  */
 exports.getEditBolo = function (req, res) {
-    req.flash('error_msg', 'Not yet Implemented');
-    res.redirect('/bolo');
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+        if (err) throw err;
+        if (req.user.tier === 'ROOT' ||
+            ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
+            req.user.agency.id === bolo.agency.id) ||
+            (req.user.id === bolo.author.id)) {
+            res.render('bolo-edit', {bolo: bolo});
+        } else {
+            req.flash('error_msg', 'You can not edit this Bolo');
+            res.redirect('/bolo');
+        }
+    });
 };
 
 /**
  * Process edits on a specific bolo
  */
 exports.postEditBolo = function (req, res) {
-    //var token = crypto.random(20);
-    req.flash('error_msg', 'Not yet Implemented');
-    res.redirect('/bolo');
+    console.log(req.body);
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+        if (err) throw err;
+        if (req.user.tier === 'ROOT' ||
+            ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
+            req.user.agency.id === bolo.agency.id) ||
+            (req.user.id === bolo.author.id)) {
+            //Validation of form
+            var errors = [];
+            req.checkBody('category', 'Please select a category').notEmpty();
+            var valErrors = req.validationErrors();
+            for (var x in valErrors)
+                errors.push(valErrors[x]);
+            //If there are validation errors
+            if (errors.length) {
+                console.log(errors);
+                //Remove uploads
+                if (req.files) {
+                    if (req.files['featured']) fs.unlinkSync(req.files['featured'][0].path);
+                    if (req.files['other1']) fs.unlinkSync(req.files['other1'][0].path);
+                    if (req.files['other2']) fs.unlinkSync(req.files['other2'][0].path);
+                }
+                //Render back page
+                bolo.errors = errors;
+                res.render('bolo-edit', bolo);
+            }
+            //If no errors were found
+            else {
+                const token = crypto.randomBytes(20).toString('hex');
+                if (req.body.videoURL) bolo.videoURL = req.body.videoURL;
+                if (req.body.info) bolo.info = req.body.info;
+                if (req.body.summary) bolo.summary = req.body.summary;
+                if (req.body.status) bolo.status = req.body.status;
+                if (req.body.field) bolo.fields = req.body.field;
+                bolo.conformationToken = token;
+                bolo.isConfirmed = false;
+                bolo.lastUpdated = Date.now();
+
+                if (req.files['featured']) {
+                    bolo.featured = {
+                        data: fs.readFileSync(req.files['featured'][0].path),
+                        contentType: req.files['featured'][0].mimeType
+                    };
+                }
+                if (req.files['other1']) {
+                    bolo.other1 = {
+                        data: fs.readFileSync(req.files['other1'][0].path),
+                        contentType: req.files['other1'][0].mimeType
+                    };
+                }
+                if (req.files['other2']) {
+                    bolo.other2 = {
+                        data: fs.readFileSync(req.files['other2'][0].path),
+                        contentType: req.files['other2'][0].mimeType
+                    };
+                }
+                bolo.save(function (err) {
+                    if (err) {
+                        console.log('Agency could not be updated');
+                        console.log(getErrorMessage(err)[0].msg);
+                        req.flash('error_msg', getErrorMessage(err)[0].msg);
+                        res.redirect('/bolo/edit/' + req.params.id);
+                    } else {
+                        console.log('Sending email using Sendgrid');
+                        sendBoloUpdateConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
+                        req.flash('success_msg', 'BOLO successfully updated, Please check your email in order to confirm it.');
+                        res.redirect('/bolo');
+                    }
+                });
+            }
+        } else {
+            req.flash('error_msg', 'You can not edit this Bolo');
+            res.redirect('/bolo');
+        }
+    })
 };
 
 /**

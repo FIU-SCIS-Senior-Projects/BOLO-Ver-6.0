@@ -24,7 +24,7 @@ router.post('/archive/:id', control.archiveBolo);
 router.post('/unarchive/:id', control.unArchiveBolo);
 router.get('/confirm/:token', control.confirmBolo);
 router.get('/edit/:id', control.getEditBolo);
-router.post('/edit/:id', control.postEditBolo);
+router.post('/edit/:id', boloImages, control.postEditBolo);
 router.post('/delete/:id', control.deleteBolo);
 
 
