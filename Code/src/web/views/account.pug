@@ -1,8 +1,5 @@
 extends account-layout
 
-block styles
-    link(href="/css/vendor/callouts.css" rel="stylesheet")
-
 block jumbo-desc
     h3 Account Management
 
@@ -36,4 +33,4 @@ block account-content
             | Please contact your Agency administrator to
             | make changes to your account details.
     else
-        a.btn.btn-info( href='/admin/user/edit/' + user.id ) Update Details
+        a.btn.btn-primary( href='/admin/user/edit/' + user.id ) Update Details

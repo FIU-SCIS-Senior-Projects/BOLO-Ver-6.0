@@ -7,14 +7,13 @@ block jumbo
 
 block content
     .row
-        .col-sm-3
+        .col-xs-12.col-sm-3
             ul.nav.nav-pills.nav-stacked( role="nav" )
-                li( class=( account_nav === 'account-home' ? 'active' : '' ) )
+                li
                     a( href="/account" ) Account Details
-                li( class=( account_nav === 'account-password' ? 'active' : '' ) )
+                li
                     a( href="/account/password" ) Change Password
-                li( class=( account_nav === 'account-notification' ? 'active' : '' ) )
+                li
                     a( href="/account/notifications" ) Notifications
-        .col-sm-9
-            include partials/global-alerts
+        .col-xs-12.col-sm-9
             block account-content

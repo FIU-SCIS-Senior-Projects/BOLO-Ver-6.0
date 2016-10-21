@@ -1,10 +1,5 @@
 'use strict';
 
-var jade = require('jade');
-var moment = require('moment');
-//var tz = require('moment-timezone'); //Do Not Remove
-var path = require('path');
-var util = require('util');
 var uuid = require('node-uuid');
 var PDFDocument = require('pdfkit');
 //var blobStream = require('blob-stream'); // added blobstream dependency
@@ -245,6 +240,14 @@ function sendBoloConfirmationEmail(email, firstname, lastname, token) {
     })
 }
 
+/**
+ * Sends an email to the loggedin user to confirm an updated bolo
+ *
+ * @param email the users email address
+ * @param firstname the users first name
+ * @param lastname the users last name
+ * @param token the bolo's random generated token
+ */
 function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
     emailService.send({
         'to': email,
@@ -746,7 +749,7 @@ exports.postEditBolo = function (req, res) {
  */
 exports.renderArchivedBolos = function (req, res) {
     var page = req.query.page || 1;
-    var limit = config.const.BOLOS_PER_PAGE;
+    var limit = config.const.BOLOS_PER_QUERY;
     var sortBy = req.query.sort || 'lastUpdated';
     Bolo.findBolosByAgency(req.user.agency, true, true, limit, sortBy, function (err, listOfBolos) {
         if (err) throw err;
@@ -801,18 +804,21 @@ exports.unArchiveBolo = function (req, res) {
  */
 exports.deleteBolo = function (req, res) {
     var shortID = req.params.id.substring(0, 8) + '...';
-    //Check if the current user is authorized to delete the bolo
-    if (req.user.tier === 'ROOT' ||
-        (req.user.tier === 'ADMINISTRATOR' && req.user.agency.id === bolo.agency.id)) {
-        Bolo.deleteBolo(req.params.id, function (err, bolo) {
-            if (err) throw err;
-            req.flash('success_msg', 'BOLO ' + shortID + ' has been deleted');
+    Bolo.findBoloByID(req.params.id, function (err, bolo) {
+        if (err) throw err;
+        //Check if the current user is authorized to delete the bolo
+        if (req.user.tier === 'ROOT' ||
+            (req.user.tier === 'ADMINISTRATOR' && req.user.agency.id === bolo.agency.id)) {
+            Bolo.deleteBolo(req.params.id, function (err) {
+                if (err) throw err;
+                req.flash('success_msg', 'BOLO ' + shortID + ' has been deleted');
+                res.redirect('/bolo/archive');
+            });
+        } else {
+            req.flash('error_msg', 'You are not authorized to delete BOLO ' + shortID);
             res.redirect('/bolo/archive');
-        });
-    } else {
-        req.flash('error_msg', 'You are not authorized to delete BOLO ' + shortID);
-        res.redirect('/bolo/archive');
-    }
+        }
+    })
 };
 
 exports.renderPurgeArchivedBolosPage = function (req, res) {
