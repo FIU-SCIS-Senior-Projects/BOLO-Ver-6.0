@@ -7,10 +7,16 @@ block jumbo
             input#input.hidden(value='default')
             label.label(for='filter')
                 | Filter BOLOs By:
-            select#filter.selectpicker(title="Filter By" data-width="fit")
-                option(value="allBolos" selected="selected") All Bolos
-                option(value="myAgency") My Agency
-                option(value="myBolos") My Bolos
+            div(style='display:inline-block')
+                select#filter.selectpicker(title="Filter By" data-width="fit" style='display:inline-block')
+                    option(value="allBolos" selected="selected") All Bolos
+                    option(value="myAgency") My Agency
+                    option(value="myBolos") My Bolos
+                    option(value="selectedAgency") Choose Agency
+            div#agencyFilterDiv(style='display:inline-block')
+                select#agencyFilter.selectpicker(title="Select Agency" data-width="fit")
+                    each agency in agencies
+                        option(value=agency.id) #{agency.name}
 
 block content
     #bolo-list.row.text-center

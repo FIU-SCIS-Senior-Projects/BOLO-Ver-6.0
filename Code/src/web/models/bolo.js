@@ -94,7 +94,7 @@ module.exports.findBolosByAuthor = function (authorID, isConfirmed, isArchived, 
         .sort([[sortBy, -1]])
         .exec(callback);
 };
-module.exports.findBolosByAgency = function (agencyID, isConfirmed, isArchived, limit, sortBy, callback) {
+module.exports.findBolosByAgencyID = function (agencyID, isConfirmed, isArchived, limit, sortBy, callback) {
     Bolo.find({agency: agencyID, isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)

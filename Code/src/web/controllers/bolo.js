@@ -141,9 +141,10 @@ function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
  */
 exports.listBolos = function (req, res) {
     console.log(req.query);
-    var limit = config.const.BOLOS_PER_QUERY;
-    var filter = req.query.filter || 'allBolos';
-    var isArchived = req.query.archived || false;
+    const limit = config.const.BOLOS_PER_QUERY;
+    const filter = req.query.filter || 'allBolos';
+    const isArchived = req.query.archived || false;
+    const agency = req.query.agency || '';
     switch (filter) {
         case 'allBolos':
             Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
@@ -153,7 +154,7 @@ exports.listBolos = function (req, res) {
             });
             break;
         case 'myAgency':
-            Bolo.findBolosByAgency(req.user.agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+            Bolo.findBolosByAgencyID(req.user.agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
                 if (err) throw err;
                 console.log('myAgency Bolos: num = ' + listOfBolos.length);
                 res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
@@ -161,6 +162,13 @@ exports.listBolos = function (req, res) {
             break;
         case 'myBolos':
             Bolo.findBolosByAuthor(req.user.id, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
+                if (err) throw err;
+                console.log('myBolos Bolos: num = ' + listOfBolos.length);
+                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+            });
+            break;
+        case 'selectedAgency':
+            Bolo.findBolosByAgencyID(agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
                 if (err) throw err;
                 console.log('myBolos Bolos: num = ' + listOfBolos.length);
                 res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
@@ -180,7 +188,10 @@ exports.listBolos = function (req, res) {
  * Gets the bolo view
  */
 exports.renderBoloPage = function (req, res) {
-    res.render('bolo');
+    Agency.findAllAgencies(function (err, listOfAgencies) {
+        if (err) throw err;
+        res.render('bolo', {agencies: listOfAgencies});
+    });
 };
 
 /**
@@ -486,7 +497,7 @@ exports.postCreateBolo = function (req, res) {
                             data: fs.readFileSync(req.files['featured'][0].path),
                             contentType: req.files['featured'][0].mimeType
                         };
-                        buffer.featured = newBolo.featured.data.toString('base64');
+                        buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
 
                         console.log("Featured: " + newBolo.featured);
 
@@ -496,7 +507,7 @@ exports.postCreateBolo = function (req, res) {
                             data: fs.readFileSync(req.files['other1'][0].path),
                             contentType: req.files['other1'][0].mimeType
                         };
-                        buffer.other1 = newBolo.other1.data.toString('base64');
+                        buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
                         console.log("Other1: " + newBolo.other1);
                     }
                     if (req.files['other2']) {
@@ -504,7 +515,7 @@ exports.postCreateBolo = function (req, res) {
                             data: fs.readFileSync(req.files['other2'][0].path),
                             contentType: req.files['other2'][0].mimeType
                         };
-                        buffer.other2 = newBolo.other2.data.toString('base64');
+                        buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
                         console.log("Other2: " + newBolo.other2);
                     }
 

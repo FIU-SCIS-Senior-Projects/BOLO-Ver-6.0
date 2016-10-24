@@ -3,9 +3,11 @@ include ../includes/mixins
 +nav( "Home", "bolo-nav" )
     if userLoggedIn
         ul.nav.navbar-nav
-            li: a( href="/bolo/create" ) Create A BOLO
+            li: a( href="/bolo/create" ) Create
+            //TODO: Find scope of Archive
             if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
-                li: a( href="/bolo/archive" ) Archived BOLOs
+                li: a( href="/bolo/archive" ) Archive
+            li: a( href="/agency" ) Agency Directory
             li: a( href="/bolo/search" ) Search
             if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
                 li: a( href="/admin" ) Admin
