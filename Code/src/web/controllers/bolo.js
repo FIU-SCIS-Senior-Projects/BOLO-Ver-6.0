@@ -332,12 +332,13 @@ exports.renderBoloAsPDF = function (req, res) {
                 //Write all of the fields and details to the PDF Document
                 for (var i = 0; i < bolo.fields.length; i++) {
                     console.log("I am trying to print the text!");
+                    console.log("The index is: " + i + " -- At this index the element is: " + bolo.fields[i]);
                     doc.fillColor('black');
                     doc.fontSize(12);
                     doc.font('Times-Roman')
                         .text(bolo.category.fields[i] + ": ", 200)
                         .moveUp()
-                        .text(bolo.fields[1], 400)
+                        .text(bolo.fields[i], 400)
                         .moveDown();
 
                 }
