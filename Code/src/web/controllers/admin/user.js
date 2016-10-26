@@ -5,7 +5,7 @@ var fs = require('fs');
 var Converter = require('csvtojson').Converter;
 var config = require('../../config');
 var user = require('../../routes/admin/user');
-
+var hat = require('hat');
 var request = require("request");
 
 var User = require('../../models/user');
@@ -133,6 +133,8 @@ exports.getCreateForm = function (req, res) {
 exports.postCreateForm = function (req, res) {
 
     //Holds previously entered form data
+
+    var passwordToken = hat();
     var prevForm = {
         user1: req.body.username,
         fname1: req.body.fname,
@@ -150,8 +152,8 @@ exports.postCreateForm = function (req, res) {
     req.checkBody('username', 'Username is required').notEmpty();
     req.checkBody('email', 'Email is required').notEmpty();
     req.checkBody('email', 'Email is not valid').isEmail();
-    req.checkBody('password', 'Password is required').notEmpty();
-    req.checkBody('confirm', 'Passwords do not match').equals(req.body.password);
+    //req.checkBody('password', 'Password is required').notEmpty();
+    //req.checkBody('confirm', 'Passwords do not match').equals(req.body.password);
     var valErrors = req.validationErrors();
     for (var x in valErrors)
         errors.push(valErrors[x]);
@@ -196,14 +198,16 @@ exports.postCreateForm = function (req, res) {
                 username: req.body.username,
                 firstname: req.body.fname,
                 lastname: req.body.lname,
-                password: req.body.password,
+                password: passwordToken,
                 email: req.body.email,
                 tier: req.body.role,
                 badge: req.body.badge,
                 unit: req.body.sectunit,
                 rank: req.body.ranktitle,
-                agency: userAgency._id
+                agency: userAgency._id,
+                isActive: false
             });
+            console.log("User: " + newUser.username + "'s Password: " + newUser.password);
             //Save the user
             User.createUser(newUser, function (err, user) {
                 if (err) {

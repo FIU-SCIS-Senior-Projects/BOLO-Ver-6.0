@@ -11,8 +11,8 @@ block admin-content
         +input_text( "email", "Email", "", true, email1 )
         +input_text( "fname", "First Name", "", true, fname1 )
         +input_text( "lname", "Last Name", "", true,  lname1 )
-        +input_text( "password", "Password", "", true,  "", "password" )
-        +input_text( "confirm", "Repeat Password", "", true,  "", "password" )
+        //+input_text( "password", "Password", "", true,  "", "password" )
+        //+input_text( "confirm", "Repeat Password", "", true,  "", "password" )
 
         if (userTier === 'ROOT')
             +select_options("role", "Role", ['OFFICER', 'SUPERVISOR', 'ADMINISTRATOR', 'ROOT'], true, role1)
