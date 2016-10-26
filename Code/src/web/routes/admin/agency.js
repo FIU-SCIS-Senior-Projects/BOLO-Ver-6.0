@@ -6,7 +6,7 @@ var router = require('express').Router();
 var control = require('../../controllers/admin/agency');
 
 var multer = require('multer');
-var upload = multer({dest: './uploads/'});
+var upload = multer();
 var agencyImages = upload.fields([{name: 'logo', maxCount: 1},
     {name: 'shield', maxCount: 1}, {name: 'watermark', maxCount: 1}]);
 

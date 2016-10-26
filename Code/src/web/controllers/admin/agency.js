@@ -102,11 +102,6 @@ exports.postCreateForm = function (req, res) {
         console.log('Error on validation');
         console.log(errors);
 
-        //Remove uploads
-        if (req.files['logo']) fs.unlinkSync(req.files['logo'][0].path);
-        if (req.files['shield']) fs.unlinkSync(req.files['shield'][0].path);
-        if (req.files['watermark']) fs.unlinkSync(req.files['watermark'][0].path);
-
         //Render back the form with the entered information
         res.render('admin-agency-create', {
             errors: errors,
@@ -131,26 +126,21 @@ exports.postCreateForm = function (req, res) {
             phone: req.body.phone,
             rank: req.body.ranktitle,
             logo: {
-                data: fs.readFileSync(req.files['logo'][0].path),
+                data: req.files['logo'][0].buffer,
                 contentType: req.files['logo'][0].mimeType
             }
         });
-
-        //Save and get rid of uploaded images
-        fs.unlinkSync(req.files['logo'][0].path);
         if (req.files['shield']) {
             newAgency.shield = {
-                data: fs.readFileSync(req.files['shield'][0].path),
+                data: fs.readFileSync(req.files['shield'][0].buffer),
                 contentType: req.files['shield'][0].mimeType
             };
-            fs.unlinkSync(req.files['shield'][0].path);
         }
         if (req.files['watermark']) {
             newAgency.watermark = {
-                data: fs.readFileSync(req.files['watermark'][0].path),
+                data: fs.readFileSync(req.files['watermark'][0].buffer),
                 contentType: req.files['watermark'][0].mimeType
             };
-            fs.unlinkSync(req.files['watermark'][0].path);
         }
 
         //Try to save agency
