@@ -233,6 +233,15 @@ exports.renderForgotPasswordPage = function (req, res) {
     res.render('forgot-password');
 };
 
+
+exports.checkUserPassword = function (req, res)
+{
+    User.findUserByUsername('null', function (err, user)
+    {
+        user.password = req.body.newPassword;
+    })
+};
+
 router.post('/forgotPassword', function (req, res) {
 
     var email = req.body.email;

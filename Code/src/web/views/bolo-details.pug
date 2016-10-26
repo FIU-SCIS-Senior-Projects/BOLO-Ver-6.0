@@ -47,7 +47,8 @@ block content
         //Render Images
         div.col-md-12
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                    div
+                        img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
                     img#secondarysettingsleft(src="/img/bolo/other1/" + bolo.id)
                     img#featured(src="/img/bolo/featured/" + bolo.id)
