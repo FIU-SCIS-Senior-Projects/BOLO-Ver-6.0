@@ -200,12 +200,6 @@ exports.postEditForm = function (req, res) {
         console.log('Error on validation');
         console.log(errors);
 
-        //Remove uploads
-        if (req.files) {
-            if (req.files['logo']) fs.unlinkSync(req.files['logo'][0].path);
-            if (req.files['shield']) fs.unlinkSync(req.files['shield'][0].path);
-            if (req.files['watermark']) fs.unlinkSync(req.files['watermark'][0].path);
-        }
         //Render back the form with error
         req.flash('error_msg', errors[0].msg);
         res.redirect('/admin/agency/edit/' + req.params.id);
@@ -226,21 +220,21 @@ exports.postEditForm = function (req, res) {
 
             //Update and remove files
             if (req.files) {
-                if (req.files['logo'])   agency.logo = {
-                    data: fs.readFileSync(req.files['logo'][0].path),
-                    contentType: req.files['logo'][0].mimeType
-                };
-                if (req.files['shield'])   agency.shield = {
-                    data: fs.readFileSync(req.files['shield'][0].path),
-                    contentType: req.files['shield'][0].mimeType
-                };
-                if (req.files['watermark'])   agency.watermark = {
-                    data: fs.readFileSync(req.files['watermark'][0].path),
-                    contentType: req.files['watermark'][0].mimeType
-                };
-                if (req.files['logo']) fs.unlinkSync(req.files['logo'][0].path);
-                if (req.files['shield']) fs.unlinkSync(req.files['shield'][0].path);
-                if (req.files['watermark']) fs.unlinkSync(req.files['watermark'][0].path);
+                if (req.files['logo'])
+                    agency.logo = {
+                        data: req.files['logo'][0].buffer,
+                        contentType: req.files['logo'][0].mimeType
+                    };
+                if (req.files['shield'])
+                    agency.shield = {
+                        data: req.files['shield'][0].buffer,
+                        contentType: req.files['shield'][0].mimeType
+                    };
+                if (req.files['watermark'])
+                    agency.watermark = {
+                        data: req.files['watermark'][0].buffer,
+                        contentType: req.files['watermark'][0].mimeType
+                    };
             }
 
             console.log(agency);
@@ -287,7 +281,7 @@ exports.getDeleteAgency = function (req, res) {
                 });
             })
         });
-    }else {
+    } else {
         res.render('unauthorized');
     }
 };
