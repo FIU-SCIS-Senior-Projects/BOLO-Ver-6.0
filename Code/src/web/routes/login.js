@@ -3,7 +3,7 @@
  */
 
 var router = require('express').Router();
-var control = require('../controllers/auth');
+var control = require('../controllers/login');
 var boloControl = require('../controllers/bolo');
 
 router.get('/login', control.getLogIn);

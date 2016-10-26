@@ -1,4 +1,4 @@
-exports.auth = require('./auth');
+exports.auth = require('./login');
 exports.bolo = require('./bolo');
 exports.account = require('./account');
 exports.admin = require('./admin');
