@@ -460,11 +460,6 @@ exports.postCreateBolo = function (req, res) {
             if (errors.length) {
                 console.log(errors);
 
-                //Remove uploads
-                if (req.files['featured']) fs.unlinkSync(req.files['featured'][0].path);
-                if (req.files['other1']) fs.unlinkSync(req.files['other1'][0].path);
-                if (req.files['other2']) fs.unlinkSync(req.files['other2'][0].path);
-
                 //Render back page
                 prevForm.errors = errors;
                 res.render('bolo-create', prevForm);
@@ -495,7 +490,7 @@ exports.postCreateBolo = function (req, res) {
 
                     if (req.files['featured']) {
                         newBolo.featured = {
-                            data: fs.readFileSync(req.files['featured'][0].path),
+                            data: req.files['featured'][0].buffer,
                             contentType: req.files['featured'][0].mimeType
                         };
                         buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
@@ -505,7 +500,7 @@ exports.postCreateBolo = function (req, res) {
                     }
                     if (req.files['other1']) {
                         newBolo.other1 = {
-                            data: fs.readFileSync(req.files['other1'][0].path),
+                            data: req.files['other1'][0].buffer,
                             contentType: req.files['other1'][0].mimeType
                         };
                         buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
@@ -513,7 +508,7 @@ exports.postCreateBolo = function (req, res) {
                     }
                     if (req.files['other2']) {
                         newBolo.other2 = {
-                            data: fs.readFileSync(req.files['other2'][0].path),
+                            data: req.files['other2'][0].buffer,
                             contentType: req.files['other2'][0].mimeType
                         };
                         buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
@@ -542,14 +537,10 @@ exports.postCreateBolo = function (req, res) {
                                     sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
                                     req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
                                     res.redirect('/bolo');
-
-
                                 }
                             });
                         }
                     })
-
-
                 })
             }
         }
@@ -646,12 +637,7 @@ exports.postEditBolo = function (req, res) {
             //If there are validation errors
             if (errors.length) {
                 console.log(errors);
-                //Remove uploads
-                if (req.files) {
-                    if (req.files['featured']) fs.unlinkSync(req.files['featured'][0].path);
-                    if (req.files['other1']) fs.unlinkSync(req.files['other1'][0].path);
-                    if (req.files['other2']) fs.unlinkSync(req.files['other2'][0].path);
-                }
+
                 //Render back page
                 bolo.errors = errors;
                 res.render('bolo-edit', bolo);
@@ -670,19 +656,19 @@ exports.postEditBolo = function (req, res) {
 
                 if (req.files['featured']) {
                     bolo.featured = {
-                        data: fs.readFileSync(req.files['featured'][0].path),
+                        data: req.files['featured'][0].buffer,
                         contentType: req.files['featured'][0].mimeType
                     };
                 }
                 if (req.files['other1']) {
                     bolo.other1 = {
-                        data: fs.readFileSync(req.files['other1'][0].path),
+                        data: req.files['other1'][0].buffer,
                         contentType: req.files['other1'][0].mimeType
                     };
                 }
                 if (req.files['other2']) {
                     bolo.other2 = {
-                        data: fs.readFileSync(req.files['other2'][0].path),
+                        data: req.files['other2'][0].buffer,
                         contentType: req.files['other2'][0].mimeType
                     };
                 }

@@ -6,7 +6,7 @@ var router = require('express').Router();
 var control = require('../controllers/bolo');
 
 var multer = require('multer');
-var upload = multer({dest: './uploads/'});
+var upload = multer();
 var boloImages = upload.fields([{name: 'featured', maxCount: 1},
     {name: 'other1', maxCount: 1}, {name: 'other2', maxCount: 1}]);
 
