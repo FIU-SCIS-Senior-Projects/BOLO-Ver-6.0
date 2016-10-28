@@ -1,5 +1,3 @@
-var Agency = require('../models/agency');
-var Bolo = require('../models/bolo');
 var User = require('../models/user');
 var bcrypt = require('bcrypt-nodejs');
 

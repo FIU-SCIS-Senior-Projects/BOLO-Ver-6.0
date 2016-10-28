@@ -1,5 +1,4 @@
 extends admin-layout
-include includes/mixins
 
 block jumbo-desc
     h3 Agency Directory
@@ -34,5 +33,6 @@ block admin-content
                             td.hidden-xs.text-info Active
                         else
                             td.hidden-xs.text-warning Not Active
-                        td: a.text-large(href='/admin/agency/edit/' + agency.id)
-                            span.glyphicon.glyphicon-cog
+                        if(userTier === 'ROOT' || (userTier === 'ADMINISTRATOR' && userAgency.id === agency.id))
+                            td: a.text-large(href='/admin/agency/edit/' + agency.id)
+                                span.glyphicon.glyphicon-cog

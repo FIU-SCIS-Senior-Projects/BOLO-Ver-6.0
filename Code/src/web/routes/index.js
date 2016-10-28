@@ -1,4 +1,6 @@
 exports.auth = require('./login');
+exports.agency = require('./agency');
+
 exports.password = require('./resetPassword');
 exports.bolo = require('./bolo');
 exports.account = require('./account');
