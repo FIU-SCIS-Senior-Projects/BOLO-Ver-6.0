@@ -171,17 +171,14 @@ passport.use(new LocalStrategy(function (username, password, done) {
             return done(err);
         }
         //If no user was found
-        if (!user) {
+        if (!user)
+        {
             console.log('Username was not found');
             return done(null, false, {
                 message: 'Username *' + username + '* was not found on the database'
             });
         }
-        //If the user's password has expired
-        if (user.passwordDate - Date.now >= 600) {
-            //sendExpirationReminder(account.user, timeLeft);
-            return done(null, false, {message: 'Your Password has expired'});
-        }
+
         //if the agency is not active
         if (!user.agency.isActive) {
             return done(null, false, {
@@ -208,12 +205,13 @@ passport.use(new LocalStrategy(function (username, password, done) {
     })
 }));
 
+
 /**
  * Process Username and Password for Login.
  */
 exports.attemptLogIn = (passport.authenticate(
     'local', {
-        successRedirect: '/bolo',
+        successRedirect: '/password',
         failureRedirect: '/login',
         successFlash: 'Welcome ',
         failureFlash: true

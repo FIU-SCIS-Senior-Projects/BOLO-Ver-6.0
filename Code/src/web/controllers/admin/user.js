@@ -133,8 +133,6 @@ exports.getCreateForm = function (req, res) {
 exports.postCreateForm = function (req, res) {
 
     //Holds previously entered form data
-
-    var passwordToken = hat();
     var prevForm = {
         user1: req.body.username,
         fname1: req.body.fname,
@@ -194,6 +192,11 @@ exports.postCreateForm = function (req, res) {
                     }
                 })
             }
+            var passwordToken = req.body.username + req.body.badge;
+            var nintydaysinMins = 129600;
+            var todaysDate = new Date();
+            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins*60000);
+            console.log("THE USERS Pass will EXPIRE ON: " + expiredPasswordDate);
             var newUser = new User({
                 username: req.body.username,
                 firstname: req.body.fname,
@@ -205,7 +208,8 @@ exports.postCreateForm = function (req, res) {
                 unit: req.body.sectunit,
                 rank: req.body.ranktitle,
                 agency: userAgency._id,
-                isActive: false
+                isActive: false,
+                passwordDate: expiredPasswordDate
             });
             console.log("User: " + newUser.username + "'s Password: " + newUser.password);
             //Save the user
@@ -288,8 +292,7 @@ exports.getDetails = function (req, res) {
  * Responds with a form to reset a user's password
  */
 exports.getPasswordReset = function (req, res) {
-    req.flash('error_msg', 'Page is not yet ready');
-    res.redirect('/admin');
+    res.redirect('/password/resetPass');
 };
 
 /**

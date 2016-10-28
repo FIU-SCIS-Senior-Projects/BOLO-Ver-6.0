@@ -203,6 +203,7 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
+app.use('/password', mainRoutes.password);
 app.use('/bolo', mainRoutes.bolo);
 app.use('/account', mainRoutes.account);
 app.use('/userGuide', mainRoutes.userGuide);
