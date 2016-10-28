@@ -19,10 +19,11 @@ block jumbo
                         option(value=agency.id) #{agency.name}
 
 block content
-    #bolo-list.row.text-center
-    .row.text-center
-        nav(aria-label="Page navigation")
-            ul#bolo-paging.pagination
-    script(src="/js/renderPage.js" )
+    .container
+        #bolo-list.row.text-center
+        .row.text-center
+            nav(aria-label="Page navigation")
+                ul#bolo-paging.pagination
+        script(src="/js/renderPage.js" )
 
 

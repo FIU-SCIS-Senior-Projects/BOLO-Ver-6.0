@@ -3,110 +3,101 @@ extends layout
 block jumbo
     .jumbotron
         .container
-            .row
-                div.col-xs-12
-                    p BOLO Details
-            .row
-                .col-xs-14.col-md-6
-                    .pull-left
-                        a.btn.btn-default.pull-right( href="/bolo/pdf/" + bolo.id ,target="_blank" ) Generate PDF
-                        button.btn.btn-primary(onclick='history.go(-1);') Go Back
-                .col-xs-14.col-md-6
-                    .pull-right
-                        if((bolo.record) && (tier > 2))
-                            a.btn.btn-default.pull-right( href="/bolo/details/record/" + bolo.id) View Record
-
+            h3 BOLO Details
+            .pull-left
+                button.btn.btn-primary(onclick='history.go(-1);') Go Back
+                a.btn.btn-default( href="/bolo/pdf/" + bolo.id target="_blank" ) Generate PDF
 
 block content
+    .row
+        .col-xs-2
+            img.img-responsive( src='/img/agency/logo/' + bolo.agency.id alt="Agency Logo")
+        .col-xs-8.text-center
+            p.text-danger #{"UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE"}
+                p.strong #{bolo.agency.name} Police Department
+                p
+                    em #{bolo.agency.address}
+                p
+                    em #{bolo.agency.city}, #{bolo.agency.state}. #{bolo.agency.zip}
+                p
+                    em #{bolo.agency.phone}
+        .col-xs-2
+            img.img-responsive( src='/img/agency/shield/' + bolo.agency.id alt="Agency Shield" )
+    .row
+        if(bolo.status !== 'ACTIVE')
+            div#updatedstatus.col-xs-12
+                p.text-center.text-danger.strong #{bolo.status}
+        else
+            div.col-xs-12
+                p.text-center.text-danger.strong #{bolo.category.name} -- #{bolo.status}
 
-    include partials/global-alerts
-
-    div#boloPage.container-fluid
-        div.row
-            div.col-xs-2
-                img#logo.img-fluid( src='/img/agency/logo/' + bolo.agency.id alt="Agency Logo")
-            div.col-xs-8.text-center
-                p.text-danger #{"UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE"}
-                    p.strong #{bolo.agency.name} Police Department
-                    p
-                        em #{bolo.agency.address}
-                    p
-                        em #{bolo.agency.city}, #{bolo.agency.state}. #{bolo.agency.zip}
-                    p
-                        em #{bolo.agency.phone}
-            div.col-xs-2
-                img#badge.img-fluid( src='/img/agency/shield/' + bolo.agency.id alt="Agency Shield" )
-        .row
-            if(bolo.status !== 'ACTIVE')
-                div#updatedstatus.col-xs-12
-                    p.text-center.text-danger.strong #{bolo.status}
-            else
-                div.col-xs-12
-                    p.text-center.text-danger.strong #{bolo.category.name} -- #{bolo.status}
-
-        //Render Images
-        div.col-md-12
+    //Render Images
+    .row
+        .col-xs-12.col-md-12
             if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
-                    div
-                        img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                .col-xs-12.col-md-10.col-md-offset-1
+                    a(href="/img/bolo/featured/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
-                    img#secondarysettingsleft(src="/img/bolo/other1/" + bolo.id)
-                    img#featured(src="/img/bolo/featured/" + bolo.id)
-
+                .col-xs-12.col-md-6
+                    a(href="/img/bolo/other1/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/other1/" + bolo.id)
+                .col-xs-12.col-md-6
+                    a(href="/img/bolo/featured/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
             else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
-                    img#secondarysettingsright.img-responsive(src="/img/bolo/other2/" + bolo.id)
-                    img#featured.img-responsive(src="/img/bolo/featured/" + bolo.id)
+                .col-xs-12.col-md-6
+                    a(href="/img/bolo/other2/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/other2/" + bolo.id)
+                .col-xs-12.col-md-6.col-xs-12
+                    a(href="/img/bolo/featured/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
 
             else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
-                    img#secondaryimage(src="/img/bolo/other1/" + bolo.id)
-                    img#featured(src="/img/bolo/featured/" + bolo.id)
-                    img#tertiaryimage(src="/img/bolo/other2/" + bolo.id)
+                .col-xs-12.col-md-4
+                    a(href="/img/bolo/other1/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/other1/" + bolo.id)
+                .col-xs-12.col-md-4
+                    a(href="/img/bolo/featured/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
+                .col-xs-12.col-md-4
+                    a(href="/img/bolo/other2/" + bolo.id)
+                        img.img-responsive.boloPictures(src="/img/bolo/other2/" + bolo.id)
 
-
-        div.row
-            br
-            br
-            div.col-xs-8#boloDetails
-                form.form-horizontal
-                //+form_labels_row("Bolo ID", bolo.data.id )
-                br
-                br
-                div.col-xs-8#boloDetails
-                    p.strong BOLO ID :
-                div.row
-                    p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.id}
+    br
+    br
+    .row
+        .col-xs-12.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3.col-lg-4.col-lg-offset-4
+            dl.dl-horizontal
+                dt.strong BOLO ID:
+                dd #{bolo.id}
 
                 - for (var i = 0; i < bolo.fields.length; i++)
-                    div.col-xs-8#boloDetails
-                        p.strong #{bolo.category.fields[i]} :
-                    div.row
-                        p &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  #{bolo.fields[i]}
+                    dt.strong #{bolo.category.fields[i]}:
+                    dd #{bolo.fields[i]}
 
+                dt.strong Created:
+                dd #{bolo.createdOn}
 
-        div.row
-            div.col-xs-8
-        div.row
-            div.col-xs-8#created
-                p.strong Created: #{bolo.createdOn}
-        div.col-xs-8#additionalDetails
-            form.form-horizontal
-            | &nbsp;
-            p.strong Additional Info:
-            if bolo.info.length
-                p #{bolo.info}
-            else
-                | &nbsp;
-            | &nbsp;
-            if bolo.videoURL.length
-                p.strong Video Link:
-                a(href=bolo.videoURL) #{bolo.videoURL}
-                p
-            | &nbsp;
-            p.strong Summary:
-            if bolo.summary.length
-                p #{bolo.summary}
-            else
-                | &nbsp;
+                dt.strong Additional Info:
+                if bolo.info.length
+                    dd #{bolo.info}
+                else
+                    dd N/A
+
+                dt.strong Video Link:
+                if bolo.videoURL.length
+                    a(href=bolo.videoURL target="_blank")
+                        dd #{bolo.videoURL}
+                else
+                    dd N/A
+                dt.strong Summary:
+                if bolo.summary.length
+                    dd #{bolo.summary}
+                else
+                    dd N/A
+    .row
+        .col-xs-8.col-xs-offset-2.text-center
             if bolo.author.firstname != null || bolo.author.lastname != null
                 p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
                 p.strong Please contact the agency should clarification be required.
