@@ -498,6 +498,7 @@ exports.postCreateBolo = function (req, res) {
                         console.log("Featured: " + newBolo.featured);
 
                     }
+                    //http://www.hacksparrow.com/node-js-image-processing-and-manipulation.html
                     if (req.files['other1']) {
                         newBolo.other1 = {
                             data: req.files['other1'][0].buffer,
