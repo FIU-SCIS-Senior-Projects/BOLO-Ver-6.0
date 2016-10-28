@@ -197,7 +197,9 @@ app.use('/img', mainRoutes.img);
  */
 app.use(function (req, res, next) {
     if (req.user) {
+
         next();
+
     } else {
         req.session.login_redirect = req.originalUrl;
         res.redirect('/login');
@@ -207,6 +209,7 @@ app.use('/password', mainRoutes.password);
 app.use('/bolo', mainRoutes.bolo);
 app.use('/account', mainRoutes.account);
 app.use('/userGuide', mainRoutes.userGuide);
+app.use('/agency', mainRoutes.agency);
 
 /**
  * Only Admins and root users can use these routes

@@ -3,6 +3,8 @@ extends layout
 block scripts
     script(src="/jquery-validation-1.15.0/jquery.validate.js")
     script(src="/jquery-validation-1.15.0/form-validation.js")
+    script(src="/js/JIC.min.js")
+    script(src="/js/imageCompression.js")
 
 block jumbo
     .jumbotron
@@ -19,21 +21,15 @@ block content
     form#create-bolo-form(name='createBoloForm' action= "/bolo/create" enctype="multipart/form-data" method="post")
         .form-group
             .row
+                .col-sm-6
+                    +input_text( "dateReported", "Date Reported", "DD/MM/YYYY", true )
+                .col-sm-6
+                    +input_text( "timeReported", "Time Reported", "HH:MM", true )
+            .cat
                 -
-                    var date = new Date();
-                    var day = date.getDate() < 10 ? '0' + date.getDate():date.getDate();
-                    var month = date.getMonth() < 10 ? '0' + date.getMonth():date.getMonth();
-                    var currDate = day + '/' + month + '/' + date.getFullYear();
-                    var currTime = (date.getHours() < 10 ? '0' + date.getHours():date.getHours()) + ':' +
-                                    (date.getMinutes() < 10 ? '0' + date.getMinutes():date.getMinutes());
                     var categoryNames = ['']
                     for (var num in categories)
                     categoryNames.push(categories[num].name);
-                .col-sm-6
-                    +input_text( "dateReported", "Date Reported", "DD/MM/YYYY", true, currDate )
-                .col-sm-6
-                    +input_text( "timeReported", "Time Reported", "HH:MM", true, currTime )
-            .cat
                 +select_options( "category", "Category", categoryNames, true)
             div#categoryForms
             script.
@@ -64,7 +60,6 @@ block content
                     }
                 });
 
-
             .row
                 .col-sm-4
                     label.control-label( for="main" ) Featured Image
@@ -77,6 +72,14 @@ block content
                 .col-sm-4
                     label.control-label( for="other2" ) Image Upload
                     input#other2( name="other2" type="file" accept="image/*" )
+            .row
+                #compressedFeaturedPrev.col-sm-4
+                #compressedOther1Prev.col-sm-4
+                #compressedOther2Prev.col-sm-4
+
+            input#compressedFeatured( name = 'compressedFeatured' type='hidden' )
+            input#compressedOther1( name = 'compressedOther1' type='hidden' )
+            input#compressedOther2( name = 'compressedOther2' type='hidden' )
 
             +input_text( "videoURL", "Video Link", "", false, vid1, "url" )
             +input_textarea( "info", "Additional Info", "", false, info1 )
