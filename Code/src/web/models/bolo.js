@@ -11,6 +11,10 @@ var Schema = new mongoose.Schema({
         ref: 'agency',
         required: true
     },
+    reportedOn: {
+        type: Date,
+        required: true
+    },
     createdOn: {
         type: Date,
         default: Date.now,

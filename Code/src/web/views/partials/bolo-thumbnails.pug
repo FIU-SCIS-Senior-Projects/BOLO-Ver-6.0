@@ -15,8 +15,13 @@ for bolo in bolos
                 if !(bolo.status === 'ACTIVE')
                     div#thumbnailstatus.col-xs-12
                         p.text-center.text-danger.strong #{bolo.status}
-                a(href="/bolo/" + bolo.id)
-                    img.img-thumbnail( src="/img/bolo/featured/" + bolo.id alt='Featured Image')
+                if (bolo.featured.data)
+                    a(href="/bolo/" + bolo.id)
+                        img.img-thumbnail( src="/img/bolo/featured/" + bolo.id alt='Featured Image')
+                else
+                    p #{bolo.featured.data}
+                    a(href="/bolo/" + bolo.id)
+                        img.img-thumbnail( src="/img/nopic.png" alt='Featured Image')
 
             div.category
                 h4.strong(style = "text-align: center;") #{bolo.category.name}

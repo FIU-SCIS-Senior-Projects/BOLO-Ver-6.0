@@ -13,6 +13,7 @@ $(function () {
             },
             timeReported: {
                 required: true,
+                time: true
             },
             videoURL: {
                 url: true
@@ -22,10 +23,10 @@ $(function () {
         messages: {
             dateReported: {
                 required: 'Please enter a date',
-                dateITA: 'Please enter a valid date (MM/DD/YYYY)',
+                dateITA: 'Please enter a valid date (DD/MM/YYYY)'
             },
             timeReported: {
-                required: 'Please enter a time',
+                required: 'Please enter a time'
             },
             videoURL: {
                 url: 'Please enter a valid URL (http://www.abc.com)'
