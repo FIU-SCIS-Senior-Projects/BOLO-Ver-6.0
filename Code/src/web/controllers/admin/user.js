@@ -195,7 +195,7 @@ exports.postCreateForm = function (req, res) {
             var passwordToken = req.body.username + req.body.badge;
             var nintydaysinMins = 129600;
             var todaysDate = new Date();
-            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins*60000);
+            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
             console.log("THE USERS Pass will EXPIRE ON: " + expiredPasswordDate);
             var newUser = new User({
                 username: req.body.username,
@@ -372,18 +372,15 @@ exports.postDeleteUser = function (req, res) {
         if (req.user.tier === 'ROOT' ||
             (req.user.tier === 'ADMINISTRATOR' && req.user.agency._id === user.agency._id)) {
             User.comparePassword(req.body.password, req.user.password, function (err, result) {
+                if (err) throw err;
                 if (result) {
-                    User.findUserByUsername('null', function (err, nullUser) {
-                        Bolo.removeAuthorFromBolos(req.params.id, nullUser.id, function (err, result) {
-                            if (err) throw err;
-                            console.log(result);
-                            User.removeUserByID(req.params.id, function (err, result) {
-                                if (err) throw err;
-                                console.log(result);
-                                req.flash('success_msg', 'User has been deleted');
-                                res.redirect('/admin/user');
-                            })
-                        })
+                    console.log(result);
+                    //TODO should we remove all BOLOs associated with the agency?
+                    User.removeUserByID(req.params.id, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        req.flash('success_msg', 'User has been deleted');
+                        res.redirect('/admin/user');
                     })
                 } else {
                     req.flash('error_msg', 'Password was not correct');

@@ -28,9 +28,9 @@ block content
     form( action="/bolo/edit/" + bolo.id enctype="multipart/form-data" method="post" )
         .form-group
             .col-xs-12.col-md-6
-                +input_text( "dateRecovered", "Date Recovered (DD/MM/YYYY)", bolo.dateRecovered, false, bolo.dateRecovered1 )
+                +input_text( "dateReported", "Date Reported (DD/MM/YYYY)", bolo.dateRecovered, false, bolo.dateRecovered1 )
             .col-xs-12.col-md-6
-                +input_text( "timeRecovered", "Time Recovered (HH:MM)", bolo.timeRecovered, false, bolo.timeRecovered1 )
+                +input_text( "timeReported", "Time Reported (HH:MM)", bolo.timeRecovered, false, bolo.timeRecovered1 )
 
             +input_text_static( "category", "Category", "", true, bolo.category.name)
             div#categoryForms
@@ -66,7 +66,7 @@ block content
                     if (bolo.featured.data)
                         img.img-responsive(src='/img/bolo/featured/' + bolo.id)
                     else
-                        p.alert Error! No Image Found
+                        i No Image Found
             .form-group
                 .col-xs-12.col-sm-7
                     label.control-label( for="other1" ) Upload New Other Picture 1

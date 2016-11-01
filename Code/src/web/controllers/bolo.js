@@ -444,6 +444,8 @@ exports.postCreateBolo = function (req, res) {
         } else {
             //Holds previously entered form data
             var prevForm = {
+                dateReported1: req.body.dateReported,
+                timeReported1: req.body.timeReported,
                 vid1: req.body.videoURL,
                 info1: req.body.info,
                 summary1: req.body.summary,
@@ -453,9 +455,21 @@ exports.postCreateBolo = function (req, res) {
             //Validation of form
             var errors = [];
             req.checkBody('category', 'Please select a category').notEmpty();
+            req.checkBody('dateReported', 'Please enter a date').notEmpty();
+            req.checkBody('timeReported', 'Please enter a time').notEmpty();
             var valErrors = req.validationErrors();
             for (var x in valErrors)
                 errors.push(valErrors[x]);
+            //Create a date object using date and time reported
+            const reportedDate = req.body.dateReported.split('/');
+            const reportedTime = req.body.timeReported.split(':');
+            const newDate = new Date(reportedDate[2], reportedDate[1] - 1, reportedDate[0],
+                reportedTime[0], reportedTime[1], 0, 0);
+            console.log(reportedDate);
+            console.log(reportedTime);
+            console.log(newDate);
+            if (isNaN(newDate.getTime()))
+                errors.push('Please Enter a Valid Date');
             // If there are errors
             if (errors.length) {
                 console.log(errors);
@@ -468,10 +482,11 @@ exports.postCreateBolo = function (req, res) {
             else {
                 Category.findCategoryByName(req.body.category, function (err, category) {
                     if (err) throw err;
-                    var token = crypto.randomBytes(20).toString('hex');
+                    const token = crypto.randomBytes(20).toString('hex');
                     var newBolo = new Bolo({
                         author: req.user.id,
                         agency: req.user.agency.id,
+                        reportedOn: newDate,
                         category: category.id,
                         videoURL: req.body.videoURL,
                         info: req.body.info,
@@ -482,11 +497,6 @@ exports.postCreateBolo = function (req, res) {
                     });
                     newBolo.fields = req.body.field;
                     var buffer = {};
-                    console.log("THESE ARE THE NEW BOLO FIELDS: " + req.body.field);
-                    console.log("THESE ARE THE CATEGORY FIELDS: " + category.fields);
-                    console.log("THIS IS THE CATEGORY: " + category);
-                    console.log("HERE IS THE IMAGE INFORMATION:");
-                    console.log("===================================");
 
                     if (req.files['featured']) {
                         newBolo.featured = {
@@ -494,9 +504,6 @@ exports.postCreateBolo = function (req, res) {
                             contentType: req.files['featured'][0].mimeType
                         };
                         buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
-
-                        console.log("Featured: " + newBolo.featured);
-
                     }
                     //http://www.hacksparrow.com/node-js-image-processing-and-manipulation.html
                     if (req.files['other1']) {
@@ -505,7 +512,6 @@ exports.postCreateBolo = function (req, res) {
                             contentType: req.files['other1'][0].mimeType
                         };
                         buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
-                        console.log("Other1: " + newBolo.other1);
                     }
                     if (req.files['other2']) {
                         newBolo.other2 = {
@@ -513,10 +519,8 @@ exports.postCreateBolo = function (req, res) {
                             contentType: req.files['other2'][0].mimeType
                         };
                         buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
-                        console.log("Other2: " + newBolo.other2);
                     }
 
-                    console.log("===================================");
                     Agency.findAgencyByID(req.user.agency.id, function (err, agency) {
                         console.log("NEW BOLO: " + newBolo);
                         if (req.body.option === "preview") {
@@ -635,6 +639,19 @@ exports.postEditBolo = function (req, res) {
             var valErrors = req.validationErrors();
             for (var x in valErrors)
                 errors.push(valErrors[x]);
+            //Validation of the date object
+            var newDate;
+            if (req.body.dateReported && req.body.timeReported) {
+                var reportedDate = req.body.dateReported.split('/');
+                var reportedTime = req.body.timeReported.split(':');
+                newDate = new Date(reportedDate[2], reportedDate[1] - 1, reportedDate[0],
+                    reportedTime[0], reportedTime[1], 0, 0);
+                console.log(reportedDate);
+                console.log(reportedTime);
+                console.log(newDate);
+                if (isNaN(newDate.getTime()))
+                    errors.push('Please Enter a Valid Date');
+            }
             //If there are validation errors
             if (errors.length) {
                 console.log(errors);
@@ -645,12 +662,15 @@ exports.postEditBolo = function (req, res) {
             }
             //If no errors were found
             else {
-                const token = crypto.randomBytes(20).toString('hex');
+                var token = crypto.randomBytes(20).toString('hex');
                 if (req.body.videoURL) bolo.videoURL = req.body.videoURL;
                 if (req.body.info) bolo.info = req.body.info;
                 if (req.body.summary) bolo.summary = req.body.summary;
                 if (req.body.status) bolo.status = req.body.status;
                 if (req.body.field) bolo.fields = req.body.field;
+                if (req.body.dateReported && req.body.timeReported) {
+                    bolo.reportedOn = newDate;
+                }
                 bolo.conformationToken = token;
                 bolo.isConfirmed = false;
                 bolo.lastUpdated = Date.now();
@@ -673,9 +693,10 @@ exports.postEditBolo = function (req, res) {
                         contentType: req.files['other2'][0].mimeType
                     };
                 }
+                console.log(bolo);
                 bolo.save(function (err) {
                     if (err) {
-                        console.log('Agency could not be updated');
+                        console.log('Bolo could not be updated');
                         console.log(getErrorMessage(err)[0].msg);
                         req.flash('error_msg', getErrorMessage(err)[0].msg);
                         res.redirect('/bolo/edit/' + req.params.id);

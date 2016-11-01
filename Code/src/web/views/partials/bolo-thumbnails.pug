@@ -1,14 +1,12 @@
 for bolo in bolos
     div.col-lg-3.col-md-4.col-sm-6.col-xs-12
         div.col-xs-12.thumbnail
-            -
-                var boloStatus;
-                if (bolo.createdOn < bolo.lastUpdated && Date.now() - bolo.lastUpdated <= 604800000)
-                boloStatus = 'Updated';
-                else if (Date.now() - bolo.createdOn <= 604800000)
-                boloStatus = 'New';
-            div.status
-                h3.text-uppercase.text-center.text-danger.strong #{boloStatus}
+            if (bolo.createdOn < bolo.lastUpdated && Date.now() - bolo.lastUpdated <= 604800000)
+                h3.text-uppercase.text-center.text-danger.strong Updated
+            else if (Date.now() - bolo.createdOn <= 604800000)
+                h3.text-uppercase.text-center.text-danger.strong &nbsp
+            else
+                h3.text-uppercase.text-center.text-danger.strong
 
             div.boloImageContainer.boloImageCenterer
 
@@ -27,10 +25,12 @@ for bolo in bolos
                 h4.strong(style = "text-align: center;") #{bolo.category.name}
 
             div.caption
-                //if (Math.abs(bolo.lastUpdated - bolo.createdOn) > 2000)
-                    p <b>Updated:</b> #{bolo.lastUpdated.toLocaleString()}
-                p <b>Created On:</b> #{bolo.createdOn.toLocaleString()}
-                p <b>Posted By:</b> #{bolo.author.rank} #{bolo.author.lastname}
+                p <b>Last Updated:</b> #{bolo.lastUpdated.toLocaleString()}
+                p <b>Reported On:</b> #{bolo.reportedOn.toLocaleString()}
+                if bolo.author
+                    p <b>Posted By:</b> #{bolo.author.rank} #{bolo.author.lastname}
+                else
+                    p <b>Posted By:</b> User has been Removed
             if bolo.isArchived
                 if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR')
                     .pull-left

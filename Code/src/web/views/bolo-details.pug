@@ -101,6 +101,10 @@ block content
                     dd N/A
     .row
         .col-xs-8.col-xs-offset-2.text-center
-            if bolo.author.firstname != null || bolo.author.lastname != null
-                p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
+            if (bolo.author)
+                if bolo.author.firstname != null || bolo.author.lastname != null
+                    p.strong This BOLO was created by #{bolo.author.unit}  #{bolo.author.rank} #{bolo.author.firstname} #{bolo.author.lastname}.
+                    p.strong Please contact the agency should clarification be required.
+            else
+                p.strong The author of this bolo has been removed.
                 p.strong Please contact the agency should clarification be required.
