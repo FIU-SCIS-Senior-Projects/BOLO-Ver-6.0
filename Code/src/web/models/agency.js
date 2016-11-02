@@ -57,7 +57,7 @@ var Agency = module.exports = mongoose.model('agency', Schema);
  * parameter is the list of all agencies
  */
 module.exports.findAllAgencies = function (callback) {
-    Agency.find({}, callback);
+    Agency.find({name: {$ne: 'NULL'}}, callback);
 };
 
 /**
