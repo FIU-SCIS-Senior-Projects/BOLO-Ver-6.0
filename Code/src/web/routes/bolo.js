@@ -14,6 +14,7 @@ router.get('/', control.renderBoloPage);
 router.get('/create', control.getCreateBolo);
 router.post('/create', boloImages, control.postCreateBolo);
 router.get('/search', control.getBoloSearch);
+router.post('/search', control.postBoloSearch);
 router.get('/archive', control.renderArchivedBolos);
 router.get('/list', control.listBolos);
 router.get('/:id', control.getBoloDetails);

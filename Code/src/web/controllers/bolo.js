@@ -496,6 +496,11 @@ exports.postCreateBolo = function (req, res) {
                         fields: req.body.field
                     });
                     newBolo.fields = req.body.field;
+                    for (var i in newBolo.fields) {
+                        if (newBolo.fields[i] === '') {
+                            newBolo.fields[i] = 'N/A';
+                        }
+                    }
                     var buffer = {};
 
                     if (req.files['featured']) {
@@ -817,6 +822,39 @@ exports.purgeArchivedBolos = function (req, res) {
  * Searches though all bolos where the user has access
  */
 exports.getBoloSearch = function (req, res) {
-    req.flash('error_msg', 'Not Yet Implemented');
-    res.redirect('/bolo');
+    Agency.findAllAgencies(function (err, listOfAgencies) {
+        if (err) throw err;
+        var listOfAgencyNames = [];
+        listOfAgencyNames.push('N/A');
+        for (const i in listOfAgencies) {
+            listOfAgencyNames.push(listOfAgencies[i].name);
+        }
+        Category.findAllCategories(function (err, listOfCategories) {
+            if (err) throw err;
+            res.render('bolo-search', {agencies: listOfAgencyNames, categories: listOfCategories});
+        });
+    })
+};
+
+/**
+ * Searches though all bolos based on the req.body input
+ */
+exports.postBoloSearch = function (req, res) {
+    Agency.findAgencyByName(req.body.agencyName, function (err, agency) {
+        if (err) throw err;
+        Category.findCategoryByName(req.body.categoryName, function (err, category) {
+            if (err) throw err;
+            if (!agency) {
+                Bolo.searchAllBolosByCategory(category._id, req.body.field, function (err, listOfBolos) {
+                    if (err) throw err;
+                    res.render('bolo-search-results', {bolos: listOfBolos});
+                });
+            } else {
+                Bolo.searchAllBolosByAgencyAndCategory(agency._id, category._id, req.body.field, function (err, listOfBolos) {
+                    if (err) throw err;
+                    res.render('bolo-search-results', {bolos: listOfBolos});
+                });
+            }
+        });
+    });
 };

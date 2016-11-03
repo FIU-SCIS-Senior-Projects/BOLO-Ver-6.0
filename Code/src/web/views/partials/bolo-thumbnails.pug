@@ -26,7 +26,7 @@ for bolo in bolos
 
             div.caption
                 p <b>Last Updated:</b> #{bolo.lastUpdated.toLocaleString()}
-                p <b>Reported On:</b> #{bolo.reportedOn.toLocaleString()}
+                p <b>Reported On:</b> #{bolo.reportedOn}
                 if bolo.author
                     p <b>Posted By:</b> #{bolo.author.rank} #{bolo.author.lastname}
                 else

@@ -110,6 +110,20 @@ module.exports.findBoloByToken = function (token, callback) {
     Bolo.findOne({conformationToken: token}).exec(callback);
 };
 
+module.exports.searchAllBolosByAgencyAndCategory = function (agencyID, categoryID, fieldsArray, callback) {
+    console.log('Searching for AgencyID: ' + agencyID + ', categoryID: ' + categoryID + ', fieldsArray: ' + fieldsArray);
+    if (!Array.isArray(fieldsArray))
+        fieldsArray = [fieldsArray];
+    Bolo.find({agency: agencyID, category: categoryID, fields: {$in: fieldsArray}}).exec(callback);
+};
+
+module.exports.searchAllBolosByCategory = function (categoryID, fieldsArray, callback) {
+    console.log('Searching for categoryID: ' + categoryID + ', fieldsArray: ' + fieldsArray);
+    if (!Array.isArray(fieldsArray))
+        fieldsArray = [fieldsArray];
+    Bolo.find({category: categoryID, fields: {$in: fieldsArray}}).exec(callback);
+};
+
 module.exports.deleteBolo = function (id, callback) {
     Bolo.remove({_id: id}).exec(callback);
 };

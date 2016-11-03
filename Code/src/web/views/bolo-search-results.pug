@@ -1,38 +1,18 @@
-//
-   Created by Ed on 1/24/2016.
-
 extends layout
 
 
 block jumbo
     .jumbotron
         .container
-            p BOLO Search Results
+            h3 BOLO Search Results
+            input#input.hidden(value='default')
 
 
 block content
-    include ./partials/global-alerts.jade
-
     if bolos && 0 === bolos.length
         p.lead No bolos were found matching the specified criteria.
+    else
+        .container
+            #bolo-list.row.text-center
+                include partials/bolo-thumbnails
 
-    .row
-        for bolo in bolos
-                include ./partials/bolo-thumbnail.jade
-                    if (tier === 'ROOT' || tier === 'ADMINISTRATOR' )
-                        .actions
-                            a.btn.btn-info( href="/bolo/edit/" + bolo.id, role="button" ) Edit
-                            a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) Details
-                            a.btn.btn-warning( href="/bolo/archive/" + bolo.id role="button" onclick="return confirm('Are you sure you want to archive this bolo?')"
-                            ) Archive
-                    else if (username  === bolo.authorUName )
-                        .actions
-                            a.btn.btn-info( href="/bolo/edit/" + bolo.id, role="button" ) Edit
-                            a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) Details
-                    else
-                        .actions
-                            a.btn.btn-primary( href="/bolo/details/" + bolo.id role="button" ) Details
-
-    .row.text-center
-        - var route = '/bolo/search/results'
-        include ./partials/search-paging.jade

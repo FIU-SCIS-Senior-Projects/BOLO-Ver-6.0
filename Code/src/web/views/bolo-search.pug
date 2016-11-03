@@ -1,38 +1,50 @@
-
-include ./includes/mixins.jade
-extends ./layout.jade
-
+extends layout
 
 block jumbo
     .jumbotron
         .container
-            p Search BOLOs
+            h3 Search BOLOs
 
 block content
-    include ./partials/global-alerts.jade
+    .container
 
-    include partials/options
+        form#create-bolo-form(action="/bolo/search" method="post")
 
-    form#create-bolo-form(action="/bolo/search" enctype="multipart/form-data" method="post")
-        input( type="hidden" name="status" value="New" )
+            +select_options( "agencyName", "Agency", agencies, true, "" )
 
-        div.text-danger.strong.h4 Search Theft - Auto
-
-        +select_options( "agencyName", "Agency", agencies, true, "" )
-
-        +input_text( "vehicleYear", "Year", "", false,  "" )
-        +select_options( "vehicleMake", "Make", vehicles_makes, false, "" )
-        +input_text( "vehicleModel", "Model", "", false,  "" )
-        +select_options( "vehicleStyle", "Style", v_style, false, "" )
-        +input_text( "vehicleColor", "Color", "", false, "" )
-        +input_text( "vehicleIdNumber", "Vehicle Identification Number", "", false,  "" )
-        .row
-            .col-md-4
-                +select_options( "vehicleLicenseState", "Tag License Plate", states, false, "" )
-            .col-md-8
-                +input_text( "vehicleLicensePlate", "", "", false, "" )
-
-        +input_text( "wildcard", "Wildcard Search", "", false, "" )
-        +check_box("matchFields","Match Fields",true)
-        .form-group
-            button.btn.btn-primary( type="submit" value="save") Search
+            div#category
+                -
+                    var categoryNames = ['Select a Category']
+                    for (var num in categories)
+                    categoryNames.push(categories[num].name);
+                +select_options( "categoryName", "Category", categoryNames)
+            div#categoryForms
+            script.
+                var categorySelectorDiv = $('#category');
+                categorySelectorDiv.change(function () {
+                    var newForms = document.getElementById('categoryForms')
+                    while (newForms.firstChild) {
+                        newForms.removeChild(newForms.firstChild);
+                    }
+                    var val = categorySelectorDiv.find("option:selected").index() - 1;
+                    if (val !== -1) {
+                        var categories = !{JSON.stringify(categories)};
+                        var selectedCategory = categories[val];
+                        for (num in selectedCategory.fields) {
+                            var newDiv = document.createElement('div'),
+                                    newLabel = document.createElement('label'),
+                                    newField = document.createElement('input');
+                            newDiv.className = 'form-group';
+                            newLabel.className = 'control-label';
+                            newLabel.htmlFor = selectedCategory.fields[num];
+                            newLabel.innerHTML = selectedCategory.fields[num];
+                            newField.className = 'form-control';
+                            newField.name = 'field';
+                            newDiv.appendChild(newLabel);
+                            newDiv.appendChild(newField);
+                            newForms.appendChild(newDiv);
+                        }
+                    }
+                });
+            .form-group
+                button.btn.btn-primary( type="submit" value="save") Search

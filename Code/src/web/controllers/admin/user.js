@@ -119,8 +119,6 @@ exports.getCreateForm = function (req, res) {
         var listOfAgencyNames = [];
         for (const i in listOfAgencies)
             listOfAgencyNames.push(listOfAgencies[i].name);
-        console.log(listOfAgencies);
-        console.log(listOfAgencyNames);
         res.render('admin-user-create', {
             agencies: listOfAgencyNames
         })
@@ -150,8 +148,6 @@ exports.postCreateForm = function (req, res) {
     req.checkBody('username', 'Username is required').notEmpty();
     req.checkBody('email', 'Email is required').notEmpty();
     req.checkBody('email', 'Email is not valid').isEmail();
-    //req.checkBody('password', 'Password is required').notEmpty();
-    //req.checkBody('confirm', 'Passwords do not match').equals(req.body.password);
     var valErrors = req.validationErrors();
     for (var x in valErrors)
         errors.push(valErrors[x]);
