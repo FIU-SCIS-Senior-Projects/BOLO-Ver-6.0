@@ -17,6 +17,7 @@ exports.checkPassword = function (req, res)
     if (todaysDate.getTime() >= user.passwordDate.getTime())
     {
         console.log("***The password is expired -- login.js 187");
+
         //If The User is actually just a new user they need to create a new password (24 hour period to do so)
         if(aDaySinceUserWasCreated.getTime() >= todaysDate.getTime())
         {
@@ -28,6 +29,7 @@ exports.checkPassword = function (req, res)
         else
         {
             console.log("This user just has an expired password");
+
             req.flash("error_msg", "Hey " + req.user.username + " Your Password Has Expired, Please Change Your Password.");
             res.redirect('/password/resetPass');
         }
@@ -39,13 +41,16 @@ exports.checkPassword = function (req, res)
 
     }
 };
+
 exports.newPassword = function (req, res)
 {
     console.log("THIS IS THE USER newPassword received: " + req.user);
+
     var user = req.user;
     var todaysDate = new Date();
     var nintydaysinMins = 129600;
     var newPasswordDate = new Date(todaysDate.getTime() + nintydaysinMins*60000);
+
     if (req.body.password)
     {
         console.log("The New Password is: " + req.body.password);
@@ -64,7 +69,7 @@ exports.newPassword = function (req, res)
                         req.flash('error_msg', getErrorMessage(err)[0].msg);
                         res.redirect('/password/resetPass');
                     } else {
-                        req.flash('success_msg', 'Password Has Been Updated');
+                        req.flash('success_msg', 'Password Has Been Updated for ' + req.user.username);
                         res.redirect('/bolo');
                     }
                 });
@@ -81,5 +86,5 @@ exports.newPassword = function (req, res)
 exports.resetPassword = function (req, res)
 {
 
-    res.render('passwordReset');
+    res.render('passwordReset', {user: req.user});
 };

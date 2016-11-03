@@ -7,7 +7,7 @@ var control = require('../controllers/resetPassword');
 
 router.get('/', control.checkPassword);
 router.post('/newPass', control.newPassword);
-router.get('/resetPass/', control.resetPassword);
+router.get('/resetPass', control.resetPassword);
 
 
 module.exports = router;

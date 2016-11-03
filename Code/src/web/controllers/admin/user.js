@@ -5,8 +5,10 @@ var fs = require('fs');
 var Converter = require('csvtojson').Converter;
 var config = require('../../config');
 var user = require('../../routes/admin/user');
-var hat = require('hat');
+var crypto = require('crypto');
 var request = require("request");
+var bcrypt = require('bcrypt-nodejs');
+var emailService = require('../../services/email-service');
 
 var User = require('../../models/user');
 var Agency = require('../../models/agency');
@@ -188,7 +190,7 @@ exports.postCreateForm = function (req, res) {
                     }
                 })
             }
-            var passwordToken = req.body.username + req.body.badge;
+            var passwordToken = crypto.randomBytes(20).toString('hex');
             var nintydaysinMins = 129600;
             var todaysDate = new Date();
             var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
@@ -226,9 +228,9 @@ exports.postCreateForm = function (req, res) {
                 }
                 //If no errors, user has been saved
                 else {
+                    sendNewUserNotification(newUser.email, newUser.firstname, newUser.lastname, passwordToken, newUser.username);
                     console.log(user);
                     console.log('User has been registered');
-
                     req.flash('success_msg', 'User ' + user.username + ' has been registered!');
                     res.redirect('/admin/user/create');
                 }
@@ -237,6 +239,23 @@ exports.postCreateForm = function (req, res) {
     }
 };
 
+
+function sendNewUserNotification(useremail, firstname, lastname, passwordToken, username)
+{
+    return emailService.send({
+        'to': useremail,
+        'from': config.email.from,
+        'fromName': config.email.fromName,
+        'subject': 'NEW BOLO Account Has Been Created For ' + firstname + ' ' + lastname ,
+        'text': 'Congratulations! An account has been made for you on our system!  \n' +
+        'Please click on the link below to login to our system: \n\n' +
+        config.appURL + '\n\n' +
+        '***The following information is deemed sensitive***: ' + '\n\n' +
+        'Your username is: ' + username   + '\n\n' +
+        'Your first time password is: ' + passwordToken  + '\n\n' +
+        'Please login to the BOLO System and follow the instructions to finish setting up your account '
+    });
+};
 /**
  * Responds with a list of all system users.
  *
