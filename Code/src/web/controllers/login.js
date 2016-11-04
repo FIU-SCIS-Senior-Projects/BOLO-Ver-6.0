@@ -6,7 +6,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/user');
 var Agency = require('../models/agency');
-
+var password = require('../controllers/resetPassword');
 var passwordUtil = require('./../lib/password-util');
 var config = require('../config');
 var users = require('../routes/admin/user');
@@ -228,7 +228,7 @@ exports.LogOut = function (req, res) {
 };
 
 exports.renderForgotPasswordPage = function (req, res) {
-    res.render('forgot-password');
+    res.render('passwordForgotten');
 };
 
 
@@ -240,8 +240,9 @@ exports.checkUserPassword = function (req, res)
     })
 };
 
-router.post('/forgotPassword', function (req, res) {
-
+router.post('/forgotPassword', function (req, res)
+{
+    console.log("I MADE IT TO FORGOT PASSWORD");
     var email = req.body.email;
     crypto.randomBytes(20, function (err, buf) {
 
@@ -261,26 +262,51 @@ router.post('/forgotPassword', function (req, res) {
                 return res.redirect('back');
             }
 
-            var token = buf.toString('hex');
-            console.log(token);
-            user.resetPasswordToken = token;
-            user.resetPasswordExpires = Date.now() + 3600000;
-            userService.updateUser(user.id, user);
 
-            emailService.send({
-                'to': email,
+            var passwordToken = crypto.randomBytes(20).toString('hex');
+            var nintydaysinMins = 129600;
+            var todaysDate = new Date();
+            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
+
+            bcrypt.genSalt(10, function (err, salt)
+            {
+                if (err) throw (err);
+                bcrypt.hash(passwordToken, salt, null, function (err, hash)
+                {
+                    console.log("The new Password salt is: " + hash);
+                    user.password = hash;
+                    user.passwordDate = expiredPasswordDate;
+                    user.isActive = true;
+                    user.save(function (err)
+                    {
+                        if (err) {
+                            req.flash('error_msg', getErrorMessage(err)[0].msg);
+                            res.redirect('/admin/user');
+                        } else {
+                            req.flash('success_msg', 'Password Has Been Reset For ' + user.username);
+                            res.redirect('/bolo');
+                        }
+                    });
+                })
+            });
+            return emailService.send({
+                'to': useremail,
                 'from': config.email.from,
                 'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: Reset password requested',
-                'text': 'A password reset has been requested for the account registered to this email.\n' +
-                'To change your password, follow this link: \n\n' +
-                config.appURL + '/changepassword/' + token + '\n\n' +
-                'If you did not request to change your password, please contact a system administrator and immediately change your password.'
-            }).then(function (json) {
-                req.flash('messages', 'Reset information successfully sent to %s.', email);
-                res.redirect('login');
-            });
-
+                'subject': 'Password Has Been Reset For ' + firstname + ' ' + lastname ,
+                'text': 'Your password has been reset by your administrator!  \n' +
+                'Please click on the link below to login to our system: \n\n' +
+                config.appURL + '\n\n' +
+                'If you did not request a password reset please inform your administrator immediately! \n\n' +
+                '***The following information is deemed sensitive***: ' + '\n\n' +
+                'Your username is: ' + username   + '\n\n' +
+                'Your first time password is: ' + passwordToken  + '\n\n' +
+                'Please login to the BOLO System and follow the instructions to create a new password for your account '
+            })
+                .then(function () {
+                    req.flash('messages', 'Reset information successfully sent to %s.', email);
+                    res.redirect('login');
+                })
         });
 
     });

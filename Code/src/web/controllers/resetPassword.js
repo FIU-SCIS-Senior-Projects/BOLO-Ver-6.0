@@ -140,6 +140,7 @@ function sendUserPassResetNotification(useremail, firstname, lastname, passwordT
         'text': 'Your password has been reset by your administrator!  \n' +
         'Please click on the link below to login to our system: \n\n' +
         config.appURL + '\n\n' +
+        'If you did not request a password reset please inform your administrator immediately! \n\n' +
         '***The following information is deemed sensitive***: ' + '\n\n' +
         'Your username is: ' + username   + '\n\n' +
         'Your first time password is: ' + passwordToken  + '\n\n' +
