@@ -115,8 +115,6 @@ module.exports.removeUsersByAgencyID = function (agencyID, callback) {
 };
 
 module.exports.comparePassword = function (passwordToCheck, userHash, callback) {
-    console.log("Comparing entered password: " + passwordToCheck);
-    console.log("To stored password: " + userHash);
     bcrypt.compare(passwordToCheck, userHash, function (err, result) {
         if (err) throw err;
         callback(null, result);

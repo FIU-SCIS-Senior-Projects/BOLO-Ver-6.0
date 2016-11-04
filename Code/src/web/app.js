@@ -246,31 +246,38 @@ app.use('/admin/user', adminRoutes.user);
 app.use('/admin/agency', adminRoutes.agency);
 
 /**
- * 404 Page
- * if the app went though all routes and could not find a page
- */
-app.use(function (req, res) {
-    console.error('404 encountered at %s, request ip = %s', req.originalUrl, req.ip);
-    res.status(404).render('404');
-});
-
-/**
  * Error Handling
  * if inDevelopmentMode, navagate to the error page.
  * if not, go back to the previous page and display the error message
  */
 if (inDevelopmentMode) {
     app.use(function (err, req, res, next) {
-        console.error('Error occurred at %s\n%s', req.originalUrl, err.stack);
-        res.render('error', {message: err.message, error: err});
+        if (err) {
+            console.error('Error occurred at %s\n%s', req.originalUrl, err.stack);
+            res.render('error', {message: err.message, status: err.status, stack: err.stack});
+        } else {
+            next();
+        }
     });
 } else {
     app.use(function (err, req, res, next) {
-        console.error('Error occurred at %s >>> %s', req.originalUrl, err.message);
-        req.flash(error_msg, 'Internal server error occurred, please try again');
-        res.redirect('back');
+        if (err) {
+            console.error('Error occurred at %s\n%s', req.originalUrl, err.stack);
+            res.render('error', {message: err.message, status: err.status});
+        } else {
+            next();
+        }
     });
 }
+
+/**
+ * 404 Page / Catch all
+ * if the app went though all routes and could not find a page
+ */
+app.use(function (req, res) {
+    console.error('404 encountered at %s, request IP = %s', req.originalUrl, req.ip);
+    res.status(404).render('404');
+});
 
 /**
  * Server Starting
