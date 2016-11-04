@@ -313,7 +313,7 @@ router.post('/changepassword/:userID', function (req, res) {
             throw new FormError();
         }
 
-        return userService.resetPassword(userID, formDTO.fields.password);
+        return userService.renderResetPassword(userID, formDTO.fields.password);
     }, function (error) {
         console.error('Error at /users/:id/reset-password >>> ', error.message);
         req.flash(FERR, 'Error processing form, please try again.');
@@ -370,7 +370,7 @@ router.post('/expiredpasswrd/:userID', function (req, res) {
             throw new FormError();
         }
 
-        return userService.resetPassword(userID, formDTO.fields.password);
+        return userService.renderResetPassword(userID, formDTO.fields.password);
     }, function (error) {
         console.error('Error at /users/:id/reset-password >>> ', error.message);
         req.flash(FERR, 'Error processing form, please try again.');

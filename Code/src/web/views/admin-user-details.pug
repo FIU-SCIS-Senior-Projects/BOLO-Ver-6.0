@@ -33,6 +33,6 @@ block admin-content
             td #{user.userDate}
 
     a.btn.btn-default(href="/admin/user/edit/" + user.id) Edit Account Details
-    a.btn.btn-default(href="/password/resetPass/" + user) Reset Password
+    a.btn.btn-default(href="/password/resetUserPass/" + user.id) Reset Password
     if(userAgency._id === user.agency._id)
         a.btn.btn-danger(href="/admin/user/delete/" + user.id) Delete User
