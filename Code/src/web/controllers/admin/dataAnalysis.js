@@ -39,18 +39,26 @@ module.exports.downloadCsv = function(req, res)
 {
 
     var agenciesToFilterBy = req.query['agencies'];
+    const limit = config.const.BOLOS_PER_QUERY;
+    const isArchived = req.query.archived || false;
     console.log("I Made it To the Method");
-    BOLO.findBolosByAgencyID( agenciesToFilterBy[0].id, function (err, listOfBOLOS)
+    console.log("THis is the first agency:" + agenciesToFilterBy[0]);
+    Agency.findAgencyByName(agenciesToFilterBy[0], function(err, agency)
     {
-        console.log("Found Agency");
-        if (err) throw err;
-        var csv = json2csv({ data: listOfBOLOS, fields: all_fields});
-        console.log("Downloading CSV");
-        fs.writeFile('./src/web/public/csv/bolos.csv', csv, function(err) {
-            if (err) {console.log(err)}
-            res.send("/csv/bolos.csv");
-        })
+        console.log("The entire details of the agency are: " + agency);
+        BOLO.findBolosByAgencyID( agency.id, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS)
+        {
+            console.log("Finding All BOLOS");
+            if (err) throw err;
+            var csv = json2csv({ data: listOfBOLOS, fields: all_fields});
+            console.log("Downloading CSV");
+            fs.writeFile('./src/web/public/csv/bolos.csv', csv, function(err) {
+                if (err) {console.log(err)}
+                res.send("/csv/bolos.csv");
+            })
+        });
     });
+
 
 //    boloService.getBolosFromAgencies(agenciesToFilterBy, 2000000, 0).then(function(results)
 //   {
