@@ -75,17 +75,24 @@ exports.multiUserCreate = function (req, res) {
                     console.log('******* index: %s, result.length: %s *******', index, result.length);
 
                     //console.log('******* index - 2: %s, result.length: %s *******', index, result.length);
+                    var passwordToken = crypto.randomBytes(20).toString('hex');
+                    var nintydaysinMins = 129600;
+                    var todaysDate = new Date();
+                    var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
+                    console.log("THE USERS Pass will EXPIRE ON: " + expiredPasswordDate);
                     var newUser = new User({
                         username: result[index].Username,
                         firstname: result[index].Firstname,
                         lastname: result[index].Lastname,
-                        password: result[index].Password,
+                        password: passwordToken,
                         email: result[index].Email,
                         tier: result[index].Role,
                         badge: result[index].BadgeNumber,
                         unit: result[index].Unit,
                         rank: result[index].Title,
-                        agency: userAgency.id
+                        agency: userAgency.id,
+                        isActive: false,
+                        passwordDate: expiredPasswordDate
                     });
                     //Save the user
                     User.createUser(newUser, function (err, user) {
@@ -94,6 +101,7 @@ exports.multiUserCreate = function (req, res) {
                         }
                         //If no errors, user has been saved
                         else {
+                            sendNewUserNotification(newUser.email, newUser.firstname, newUser.lastname, passwordToken, newUser.username);
                             console.log(user);
                             console.log('User has been registered');
                         }
