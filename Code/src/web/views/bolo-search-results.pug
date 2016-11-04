@@ -9,10 +9,9 @@ block jumbo
 
 
 block content
-    if bolos && 0 === bolos.length
-        p.lead No bolos were found matching the specified criteria.
-    else
-        .container
-            #bolo-list.row.text-center
-                include partials/bolo-thumbnails
-
+    .container
+        if bolos && 0 === bolos.length
+            p.lead No bolos were found matching the specified criteria.
+        else
+                #bolo-list.row.text-center
+                    include partials/bolo-thumbnails
