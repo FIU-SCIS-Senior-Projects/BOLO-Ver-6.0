@@ -67,7 +67,7 @@ function sendBoloToDataSubscribers(boloID) {
 }
 
 /**
- * Sends an email to the loggedin user to confirm a created bolo
+ * Sends an email to the logged in user to confirm a created bolo
  *
  * @param email the users email address
  * @param firstname the users first name
@@ -110,7 +110,7 @@ function sendBoloUpdateConfirmationEmail(email, firstname, lastname, token) {
 /**
  * List active bolos based on query
  */
-exports.listBolos = function (req, res) {
+exports.listBolos = function (req, res, next) {
     console.log(req.query);
     const limit = config.const.BOLOS_PER_QUERY;
     const filter = req.query.filter || 'allBolos';
@@ -119,33 +119,43 @@ exports.listBolos = function (req, res) {
     switch (filter) {
         case 'allBolos':
             Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
-                if (err) throw err;
-                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                if (err) next(err);
+                else {
+                    res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                }
             });
             break;
         case 'myAgency':
             Bolo.findBolosByAgencyID(req.user.agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
-                if (err) throw err;
-                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                if (err) next(err);
+                else {
+                    res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                }
             });
             break;
         case 'myBolos':
             Bolo.findBolosByAuthor(req.user.id, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
-                if (err) throw err;
-                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                if (err) next(err);
+                else {
+                    res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                }
             });
             break;
         case 'selectedAgency':
             Bolo.findBolosByAgencyID(agency, true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
-                if (err) throw err;
-                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                if (err) next(err);
+                else {
+                    res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                }
             });
             break;
         default:
             Bolo.findAllBolos(true, isArchived, limit, 'createdOn', function (err, listOfBolos) {
-                if (err) throw err;
-                console.log('Error! default case was called');
-                res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                if (err) next(err);
+                else {
+                    console.log('Error! default case was called');
+                    res.render('partials/bolo-thumbnails', {bolos: listOfBolos});
+                }
             });
             break;
     }
@@ -154,10 +164,12 @@ exports.listBolos = function (req, res) {
 /**
  * Gets the bolo view
  */
-exports.renderBoloPage = function (req, res) {
+exports.renderBoloPage = function (req, res, next) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
-        if (err) throw err;
-        res.render('bolo', {agencies: listOfAgencies});
+        if (err) next(err);
+        else {
+            res.render('bolo', {agencies: listOfAgencies});
+        }
     });
 };
 
@@ -417,9 +429,7 @@ exports.getCreateBolo = function (req, res) {
 /**
  * Creates a BOLO
  */
-exports.postCreateBolo = function (req, res) {
-    console.log(req.body);
-    console.log(req.files);
+exports.postCreateBolo = function (req, res, next) {
     Category.findAllCategories(function (err, listOfCategories) {
         if (err) {
             req.flash('error_msg', 'Could not find categories');
@@ -448,9 +458,6 @@ exports.postCreateBolo = function (req, res) {
             const reportedTime = req.body.timeReported.split(':');
             const newDate = new Date(reportedDate[2], reportedDate[1] - 1, reportedDate[0],
                 reportedTime[0], reportedTime[1], 0, 0);
-            console.log(reportedDate);
-            console.log(reportedTime);
-            console.log(newDate);
             if (isNaN(newDate.getTime()))
                 errors.push('Please Enter a Valid Date');
             // If there are errors
@@ -464,76 +471,78 @@ exports.postCreateBolo = function (req, res) {
             //If no errors were found
             else {
                 Category.findCategoryByName(req.body.category, function (err, category) {
-                    if (err) throw err;
-                    const token = crypto.randomBytes(20).toString('hex');
-                    var newBolo = new Bolo({
-                        author: req.user.id,
-                        agency: req.user.agency.id,
-                        reportedOn: newDate,
-                        category: category.id,
-                        videoURL: req.body.videoURL,
-                        info: req.body.info,
-                        summary: req.body.summary,
-                        conformationToken: token,
-                        status: 'ACTIVE',
-                        fields: req.body.field
-                    });
-                    newBolo.fields = req.body.field;
-                    for (var i in newBolo.fields) {
-                        if (newBolo.fields[i] === '') {
-                            newBolo.fields[i] = 'N/A';
+                    if (err) next(err);
+                    else {
+                        const token = crypto.randomBytes(20).toString('hex');
+                        var newBolo = new Bolo({
+                            author: req.user.id,
+                            agency: req.user.agency.id,
+                            reportedOn: newDate,
+                            category: category.id,
+                            videoURL: req.body.videoURL,
+                            info: req.body.info,
+                            summary: req.body.summary,
+                            conformationToken: token,
+                            status: 'ACTIVE',
+                            fields: req.body.field
+                        });
+                        newBolo.fields = req.body.field;
+                        for (var i in newBolo.fields) {
+                            if (newBolo.fields[i] === '') {
+                                newBolo.fields[i] = 'N/A';
+                            }
                         }
-                    }
-                    var buffer = {};
+                        var buffer = {};
 
-                    if (req.files['featured']) {
-                        newBolo.featured = {
-                            data: req.files['featured'][0].buffer,
-                            contentType: req.files['featured'][0].mimeType
-                        };
-                        buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
-                    }
-                    //http://www.hacksparrow.com/node-js-image-processing-and-manipulation.html
-                    if (req.files['other1']) {
-                        newBolo.other1 = {
-                            data: req.files['other1'][0].buffer,
-                            contentType: req.files['other1'][0].mimeType
-                        };
-                        buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
-                    }
-                    if (req.files['other2']) {
-                        newBolo.other2 = {
-                            data: req.files['other2'][0].buffer,
-                            contentType: req.files['other2'][0].mimeType
-                        };
-                        buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
-                    }
-
-                    Agency.findAgencyByID(req.user.agency.id, function (err, agency) {
-                        console.log("NEW BOLO: " + newBolo);
-                        if (req.body.option === "preview") {
-
-                            res.render('bolo-preview', {
-                                bolo: newBolo,
-                                category: category,
-                                agency: agency,
-                                buffer: buffer
-                            });
+                        if (req.files['featured']) {
+                            newBolo.featured = {
+                                data: req.files['featured'][0].buffer,
+                                contentType: req.files['featured'][0].mimeType
+                            };
+                            buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
                         }
-                        else {
-                            newBolo.save(function (err) {
-                                if (err) {
-                                    prevForm.errors = getErrorMessage(err);
-                                    res.render('bolo-create', prevForm);
-                                } else {
-                                    console.log('Sending email using Sendgrid');
-                                    sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
-                                    req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
-                                    res.redirect('/bolo');
-                                }
-                            });
+                        //http://www.hacksparrow.com/node-js-image-processing-and-manipulation.html
+                        if (req.files['other1']) {
+                            newBolo.other1 = {
+                                data: req.files['other1'][0].buffer,
+                                contentType: req.files['other1'][0].mimeType
+                            };
+                            buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
                         }
-                    })
+                        if (req.files['other2']) {
+                            newBolo.other2 = {
+                                data: req.files['other2'][0].buffer,
+                                contentType: req.files['other2'][0].mimeType
+                            };
+                            buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
+                        }
+
+                        Agency.findAgencyByID(req.user.agency.id, function (err, agency) {
+                            console.log("NEW BOLO: " + newBolo);
+                            if (req.body.option === "preview") {
+
+                                res.render('bolo-preview', {
+                                    bolo: newBolo,
+                                    category: category,
+                                    agency: agency,
+                                    buffer: buffer
+                                });
+                            }
+                            else {
+                                newBolo.save(function (err) {
+                                    if (err) {
+                                        prevForm.errors = getErrorMessage(err);
+                                        res.render('bolo-create', prevForm);
+                                    } else {
+                                        console.log('Sending email using Sendgrid');
+                                        sendBoloConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
+                                        req.flash('success_msg', 'BOLO successfully created, Please check your email in order to confirm it.');
+                                        res.redirect('/bolo');
+                                    }
+                                });
+                            }
+                        })
+                    }
                 })
             }
         }
@@ -547,20 +556,24 @@ exports.loggedOutConfirmBolo = function (req, res, next) {
     if (!req.user) {
         //yep
         Bolo.findBoloByToken(req.params.token, function (err, boloToConfirm) {
-            if (err) throw err;
-            else if (!boloToConfirm) {
-                req.flash('error_msg', 'Bolo to confirm was not found on the database');
-                res.redirect('/login');
-            } else if (boloToConfirm.isConfirmed === true) {
-                req.flash('error_msg', 'That Bolo was already confirmed');
-                res.redirect('/login');
-            } else {
-                boloToConfirm.isConfirmed = true;
-                boloToConfirm.save(function (err) {
-                    if (err) throw err;
-                    req.flash('success_msg', 'Bolo has been confirmed');
+            if (err) next(err);
+            else {
+                if (!boloToConfirm) {
+                    req.flash('error_msg', 'Bolo to confirm was not found on the database');
                     res.redirect('/login');
-                });
+                } else if (boloToConfirm.isConfirmed === true) {
+                    req.flash('error_msg', 'That Bolo was already confirmed');
+                    res.redirect('/login');
+                } else {
+                    boloToConfirm.isConfirmed = true;
+                    boloToConfirm.save(function (err) {
+                        if (err) next(err);
+                        else {
+                            req.flash('success_msg', 'Bolo has been confirmed');
+                            res.redirect('/login');
+                        }
+                    });
+                }
             }
         });
     } else {
@@ -571,23 +584,26 @@ exports.loggedOutConfirmBolo = function (req, res, next) {
 /**
  * Confirms an emailed Bolo
  */
-exports.confirmBolo = function (req, res) {
+exports.confirmBolo = function (req, res, next) {
     Bolo.findBoloByToken(req.params.token, function (err, boloToConfirm) {
-        if (err) throw err;
-        else if (!boloToConfirm) {
-            req.flash('error_msg', 'Bolo to confirm was not found on the database');
-            res.redirect('/bolo');
-        } else if (boloToConfirm.isConfirmed === true) {
-            req.flash('error_msg', 'That Bolo was already confirmed');
-            res.redirect('/bolo');
-        } else {
-            boloToConfirm.isConfirmed = true;
-            boloToConfirm.save(function (err) {
-                if (err) throw err;
-                sendBoloToDataSubscribers(boloToConfirm.id);
-                req.flash('success_msg', 'Bolo has been confirmed');
+        if (err) next(err);
+        else {
+            if (!boloToConfirm) {
+                req.flash('error_msg', 'Bolo to confirm was not found on the database');
                 res.redirect('/bolo');
-            });
+            } else if (boloToConfirm.isConfirmed === true) {
+                req.flash('error_msg', 'That Bolo was already confirmed');
+                res.redirect('/bolo');
+            } else {
+                boloToConfirm.isConfirmed = true;
+                boloToConfirm.save(function (err) {
+                    if (err) next(err);
+                    else {
+                        req.flash('success_msg', 'Bolo has been confirmed');
+                        res.redirect('/bolo');
+                    }
+                });
+            }
         }
     });
 };
@@ -595,112 +611,119 @@ exports.confirmBolo = function (req, res) {
 /**
  * Render the bolo edit form
  */
-exports.getEditBolo = function (req, res) {
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) throw err;
-        if (req.user.tier === 'ROOT' ||
-            ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
-            req.user.agency.id === bolo.agency.id) ||
-            (req.user.id === bolo.author.id)) {
-            res.render('bolo-edit', {bolo: bolo});
-        } else {
-            req.flash('error_msg', 'You can not edit this Bolo');
-            res.redirect('/bolo');
-        }
-    });
+exports.getEditBolo = function (req, res, next) {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        Bolo.findBoloByID(req.params.id, function (err, bolo) {
+            if (err) next(err);
+            else {
+                if (req.user.tier === 'ROOT' ||
+                    ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
+                    req.user.agency.id === bolo.agency.id) ||
+                    (req.user.id === bolo.author.id)) {
+                    res.render('bolo-edit', {bolo: bolo});
+                } else {
+                    req.flash('error_msg', 'You can not edit this Bolo');
+                    res.redirect('/bolo');
+                }
+            }
+        });
+    } else {
+        next();
+    }
 };
 
 /**
  * Process edits on a specific bolo
  */
-exports.postEditBolo = function (req, res) {
-    console.log(req.body);
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) throw err;
-        if (req.user.tier === 'ROOT' ||
-            ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
-            req.user.agency.id === bolo.agency.id) ||
-            (req.user.id === bolo.author.id)) {
-            //Validation of form
-            var errors = [];
-            req.checkBody('category', 'Please select a category').notEmpty();
-            var valErrors = req.validationErrors();
-            for (var x in valErrors)
-                errors.push(valErrors[x]);
-            //Validation of the date object
-            var newDate;
-            if (req.body.dateReported && req.body.timeReported) {
-                var reportedDate = req.body.dateReported.split('/');
-                var reportedTime = req.body.timeReported.split(':');
-                newDate = new Date(reportedDate[2], reportedDate[1] - 1, reportedDate[0],
-                    reportedTime[0], reportedTime[1], 0, 0);
-                console.log(reportedDate);
-                console.log(reportedTime);
-                console.log(newDate);
-                if (isNaN(newDate.getTime()))
-                    errors.push('Please Enter a Valid Date');
-            }
-            //If there are validation errors
-            if (errors.length) {
-                console.log(errors);
-
-                //Render back page
-                bolo.errors = errors;
-                res.render('bolo-edit', bolo);
-            }
-            //If no errors were found
+exports.postEditBolo = function (req, res, next) {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        Bolo.findBoloByID(req.params.id, function (err, bolo) {
+            if (err) next(err);
             else {
-                var token = crypto.randomBytes(20).toString('hex');
-                if (req.body.videoURL) bolo.videoURL = req.body.videoURL;
-                if (req.body.info) bolo.info = req.body.info;
-                if (req.body.summary) bolo.summary = req.body.summary;
-                if (req.body.status) bolo.status = req.body.status;
-                if (req.body.field) bolo.fields = req.body.field;
-                if (req.body.dateReported && req.body.timeReported) {
-                    bolo.reportedOn = newDate;
-                }
-                bolo.conformationToken = token;
-                bolo.isConfirmed = false;
-                bolo.lastUpdated = Date.now();
-
-                if (req.files['featured']) {
-                    bolo.featured = {
-                        data: req.files['featured'][0].buffer,
-                        contentType: req.files['featured'][0].mimeType
-                    };
-                }
-                if (req.files['other1']) {
-                    bolo.other1 = {
-                        data: req.files['other1'][0].buffer,
-                        contentType: req.files['other1'][0].mimeType
-                    };
-                }
-                if (req.files['other2']) {
-                    bolo.other2 = {
-                        data: req.files['other2'][0].buffer,
-                        contentType: req.files['other2'][0].mimeType
-                    };
-                }
-                console.log(bolo);
-                bolo.save(function (err) {
-                    if (err) {
-                        console.log('Bolo could not be updated');
-                        console.log(getErrorMessage(err)[0].msg);
-                        req.flash('error_msg', getErrorMessage(err)[0].msg);
-                        res.redirect('/bolo/edit/' + req.params.id);
-                    } else {
-                        console.log('Sending email using Sendgrid');
-                        sendBoloUpdateConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
-                        req.flash('success_msg', 'BOLO successfully updated, Please check your email in order to confirm it.');
-                        res.redirect('/bolo');
+                if (req.user.tier === 'ROOT' ||
+                    ((req.user.tier === 'ADMINISTRATOR' || req.user.tier === 'SUPERVISOR') &&
+                    req.user.agency.id === bolo.agency.id) ||
+                    (req.user.id === bolo.author.id)) {
+                    //Validation of form
+                    var errors = [];
+                    req.checkBody('category', 'Please select a category').notEmpty();
+                    var valErrors = req.validationErrors();
+                    for (var x in valErrors)
+                        errors.push(valErrors[x]);
+                    //Validation of the date object
+                    var newDate;
+                    if (req.body.dateReported && req.body.timeReported) {
+                        var reportedDate = req.body.dateReported.split('/');
+                        var reportedTime = req.body.timeReported.split(':');
+                        newDate = new Date(reportedDate[2], reportedDate[1] - 1, reportedDate[0],
+                            reportedTime[0], reportedTime[1], 0, 0);
+                        if (isNaN(newDate.getTime()))
+                            errors.push('Please Enter a Valid Date');
                     }
-                });
+                    //If there are validation errors
+                    if (errors.length) {
+                        console.log(errors);
+
+                        //Render back page
+                        bolo.errors = errors;
+                        res.render('bolo-edit', bolo);
+                    }
+                    //If no errors were found
+                    else {
+                        var token = crypto.randomBytes(20).toString('hex');
+                        if (req.body.videoURL) bolo.videoURL = req.body.videoURL;
+                        if (req.body.info) bolo.info = req.body.info;
+                        if (req.body.summary) bolo.summary = req.body.summary;
+                        if (req.body.status) bolo.status = req.body.status;
+                        if (req.body.field) bolo.fields = req.body.field;
+                        if (req.body.dateReported && req.body.timeReported) {
+                            bolo.reportedOn = newDate;
+                        }
+                        bolo.conformationToken = token;
+                        bolo.isConfirmed = false;
+                        bolo.lastUpdated = Date.now();
+
+                        if (req.files['featured']) {
+                            bolo.featured = {
+                                data: req.files['featured'][0].buffer,
+                                contentType: req.files['featured'][0].mimeType
+                            };
+                        }
+                        if (req.files['other1']) {
+                            bolo.other1 = {
+                                data: req.files['other1'][0].buffer,
+                                contentType: req.files['other1'][0].mimeType
+                            };
+                        }
+                        if (req.files['other2']) {
+                            bolo.other2 = {
+                                data: req.files['other2'][0].buffer,
+                                contentType: req.files['other2'][0].mimeType
+                            };
+                        }
+                        bolo.save(function (err) {
+                            if (err) {
+                                console.log('Bolo could not be updated...');
+                                console.log(getErrorMessage(err)[0].msg);
+                                req.flash('error_msg', getErrorMessage(err)[0].msg);
+                                res.redirect('/bolo/edit/' + req.params.id);
+                            } else {
+                                console.log('Sending email using Sendgrid');
+                                sendBoloUpdateConfirmationEmail(req.user.email, req.user.firstname, req.user.lastname, token);
+                                req.flash('success_msg', 'BOLO successfully updated, Please check your email in order to confirm it.');
+                                res.redirect('/bolo');
+                            }
+                        });
+                    }
+                } else {
+                    req.flash('error_msg', 'You can not edit this Bolo');
+                    res.redirect('/bolo');
+                }
             }
-        } else {
-            req.flash('error_msg', 'You can not edit this Bolo');
-            res.redirect('/bolo');
-        }
-    })
+        })
+    } else {
+        next();
+    }
 };
 
 /**
@@ -718,56 +741,78 @@ exports.renderArchivedBolos = function (req, res) {
  * Handle requests to inactivate a specific bolo
  */
 exports.archiveBolo = function (req, res, next) {
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) next(err);
-        else {
-            bolo.isArchived = true;
-            var shortID = bolo.id.substring(0, 8) + '...';
-            bolo.save(function (err) {
-                if (err) throw err;
-                req.flash('error_msg', 'Bolo ' + shortID + ' has been archived');
-                res.redirect('/bolo');
-            });
-        }
-    });
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        Bolo.findBoloByID(req.params.id, function (err, bolo) {
+            if (err) next(err);
+            else {
+                bolo.isArchived = true;
+                var shortID = bolo.id.substring(0, 8) + '...';
+                bolo.save(function (err) {
+                    if (err) next(err);
+                    else {
+                        req.flash('error_msg', 'Bolo ' + shortID + ' has been archived');
+                        res.redirect('/bolo');
+                    }
+                });
+            }
+        });
+    } else {
+        next();
+    }
 };
 
 /**
  * Handle requests to activate a specific bolo
  */
-exports.unArchiveBolo = function (req, res) {
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) throw err;
-        bolo.isArchived = false;
-        var shortID = bolo.id.substring(0, 8) + '...';
-        bolo.save(function (err) {
-            if (err) throw err;
-            req.flash('success_msg', 'Bolo ' + shortID + ' has been restored');
-            res.redirect('/bolo/archive');
+exports.unArchiveBolo = function (req, res, next) {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        Bolo.findBoloByID(req.params.id, function (err, bolo) {
+            if (err) next(err);
+            else {
+                bolo.isArchived = false;
+                var shortID = bolo.id.substring(0, 8) + '...';
+                bolo.save(function (err) {
+                    if (err) next(err);
+                    else {
+                        req.flash('success_msg', 'Bolo ' + shortID + ' has been restored');
+                        res.redirect('/bolo/archive');
+                    }
+                });
+            }
         });
-    });
+    } else {
+        next();
+    }
 };
 
 /**
  * Deletes a specific bolo
  */
-exports.deleteBolo = function (req, res) {
-    var shortID = req.params.id.substring(0, 8) + '...';
-    Bolo.findBoloByID(req.params.id, function (err, bolo) {
-        if (err) throw err;
-        //Check if the current user is authorized to delete the bolo
-        if (req.user.tier === 'ROOT' ||
-            (req.user.tier === 'ADMINISTRATOR' && req.user.agency.id === bolo.agency.id)) {
-            Bolo.deleteBolo(req.params.id, function (err) {
-                if (err) throw err;
-                req.flash('success_msg', 'BOLO ' + shortID + ' has been deleted');
-                res.redirect('/bolo/archive');
-            });
-        } else {
-            req.flash('error_msg', 'You are not authorized to delete BOLO ' + shortID);
-            res.redirect('/bolo/archive');
-        }
-    })
+exports.deleteBolo = function (req, res, next) {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        var shortID = req.params.id.substring(0, 8) + '...';
+        Bolo.findBoloByID(req.params.id, function (err, bolo) {
+            if (err) next(err);
+            else {
+                //Check if the current user is authorized to delete the bolo
+                if (req.user.tier === 'ROOT' ||
+                    (req.user.tier === 'ADMINISTRATOR' && req.user.agency.id === bolo.agency.id)) {
+                    Bolo.deleteBolo(req.params.id, function (err) {
+                        if (err) next(err);
+                        else {
+                            req.flash('success_msg', 'BOLO ' + shortID + ' has been deleted');
+                            res.redirect('/bolo/archive');
+                        }
+                    });
+                } else {
+                    req.flash('error_msg', 'You are not authorized to delete BOLO ' + shortID);
+                    res.redirect('/bolo/archive');
+                }
+            }
+        })
+    } else {
+        next();
+    }
 };
 
 /**
@@ -780,21 +825,27 @@ exports.renderPurgeArchivedBolosPage = function (req, res) {
 /**
  * Deletes all archived bolos
  */
-exports.purgeArchivedBolos = function (req, res) {
+exports.purgeArchivedBolos = function (req, res, next) {
     //Check if the current user is authorized to delete all archived bolos
     if (req.user.tier === 'ROOT') {
         User.comparePassword(req.body.password, req.user.password, function (err, result) {
-            if (err) throw err;
-            if (result) {
-                Bolo.deleteAllArchivedBolos(function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.result.n + ' BOLOs');
-                    res.redirect('/bolo/archive');
-                });
-            } else {
-                req.flash('error_msg', 'Password was not correct');
-                res.redirect('/bolo/archive/purge');
+            if (err) {
+                next(err);
+            }
+            else {
+                if (result) {
+                    Bolo.deleteAllArchivedBolos(function (err, result) {
+                        if (err) next(err);
+                        else {
+                            console.log(result);
+                            req.flash('success_msg', 'All archived BOLOs have been deleted. Removed ' + result.result.n + ' BOLOs');
+                            res.redirect('/bolo/archive');
+                        }
+                    });
+                } else {
+                    req.flash('error_msg', 'Password was not correct');
+                    res.redirect('/bolo/archive/purge');
+                }
             }
         })
     } else {
@@ -806,40 +857,50 @@ exports.purgeArchivedBolos = function (req, res) {
 /**
  * Searches though all bolos where the user has access
  */
-exports.getBoloSearch = function (req, res) {
+exports.getBoloSearch = function (req, res, next) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
-        if (err) throw err;
-        var listOfAgencyNames = [];
-        listOfAgencyNames.push('N/A');
-        for (const i in listOfAgencies) {
-            listOfAgencyNames.push(listOfAgencies[i].name);
+        if (err) next(err);
+        else {
+            var listOfAgencyNames = [];
+            listOfAgencyNames.push('N/A');
+            for (const i in listOfAgencies) {
+                listOfAgencyNames.push(listOfAgencies[i].name);
+            }
+            Category.findAllCategories(function (err, listOfCategories) {
+                if (err) next(err);
+                else {
+                    res.render('bolo-search', {agencies: listOfAgencyNames, categories: listOfCategories});
+                }
+            });
         }
-        Category.findAllCategories(function (err, listOfCategories) {
-            if (err) throw err;
-            res.render('bolo-search', {agencies: listOfAgencyNames, categories: listOfCategories});
-        });
     })
 };
 
 /**
  * Searches though all bolos based on the req.body input
  */
-exports.postBoloSearch = function (req, res) {
+exports.postBoloSearch = function (req, res, next) {
     Agency.findAgencyByName(req.body.agencyName, function (err, agency) {
-        if (err) throw err;
-        Category.findCategoryByName(req.body.categoryName, function (err, category) {
-            if (err) throw err;
-            if (!agency) {
-                Bolo.searchAllBolosByCategory(category._id, req.body.field, function (err, listOfBolos) {
-                    if (err) throw err;
-                    res.render('bolo-search-results', {bolos: listOfBolos});
-                });
-            } else {
-                Bolo.searchAllBolosByAgencyAndCategory(agency._id, category._id, req.body.field, function (err, listOfBolos) {
-                    if (err) throw err;
-                    res.render('bolo-search-results', {bolos: listOfBolos});
-                });
-            }
-        });
+        if (err) next(err);
+        else {
+            Category.findCategoryByName(req.body.categoryName, function (err, category) {
+                if (err) next(err);
+                else {
+                    if (!agency) {
+                        Bolo.searchAllBolosByCategory(category._id, req.body.field, function (err, listOfBolos) {
+                            if (err) next(err);
+                            else
+                                res.render('bolo-search-results', {bolos: listOfBolos});
+                        });
+                    } else {
+                        Bolo.searchAllBolosByAgencyAndCategory(agency._id, category._id, req.body.field, function (err, listOfBolos) {
+                            if (err) next(err);
+                            else
+                                res.render('bolo-search-results', {bolos: listOfBolos});
+                        });
+                    }
+                }
+            });
+        }
     });
 };
