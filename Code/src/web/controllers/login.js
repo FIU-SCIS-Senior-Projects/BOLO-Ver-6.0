@@ -154,7 +154,7 @@ var sendAccountLockedEmailToAdmins = function (account) {
  */
 exports.getLogIn = function (req, res) {
     if (req.user) {
-        req.flash('error_msg', 'Already logged in as *' + req.user.userName + '*');
+        req.flash('error_msg', 'Already logged in as *' + req.user.username + '*');
         res.redirect('/bolo');
     }
     else {
@@ -171,8 +171,7 @@ passport.use(new LocalStrategy(function (username, password, done) {
             return done(err);
         }
         //If no user was found
-        if (!user)
-        {
+        if (!user) {
             console.log('Username was not found');
             return done(null, false, {
                 message: 'Username *' + username + '* was not found on the database'
@@ -232,10 +231,8 @@ exports.renderForgotPasswordPage = function (req, res) {
 };
 
 
-exports.checkUserPassword = function (req, res)
-{
-    User.findUserByUsername('null', function (err, user)
-    {
+exports.checkUserPassword = function (req, res) {
+    User.findUserByUsername('null', function (err, user) {
         user.password = req.body.newPassword;
     })
 };

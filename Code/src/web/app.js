@@ -3,6 +3,9 @@
  * @type {_|exports|module.exports}
  * @private
  */
+
+'use strict';
+
 var http = require('http');
 var path = require('path');
 
@@ -160,7 +163,7 @@ app.locals.config_bootstrap = config.bootstrap;
  */
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', "http://" + req.headers.host);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('X-Frame-Options', 'sameorigin');
     next();
@@ -191,15 +194,26 @@ app.get('/', function (req, res) {
 app.use('/', mainRoutes.auth);
 app.use('/aboutUs', mainRoutes.aboutUs);
 app.use('/img', mainRoutes.img);
+app.use(function (req, res, next) {
+    var login_redirect = null;
+    if (req.session.login_redirect) {
+        console.log('Redirecting to: ' + req.session.login_redirect);
+        login_redirect = req.session.login_redirect;
+        req.session.login_redirect = null;
+        if (login_redirect !== null && login_redirect.indexOf('.') == -1) {
+            res.redirect(config.appURL + login_redirect);
+        }
+    } else {
+        next();
+    }
+});
 
 /**
  * If user is logged in, then keep going
  */
 app.use(function (req, res, next) {
-    if (req.user) {
-
+    if (req.isAuthenticated()) {
         next();
-
     } else {
         req.session.login_redirect = req.originalUrl;
         res.redirect('/login');
