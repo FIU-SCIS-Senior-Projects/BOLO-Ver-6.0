@@ -132,13 +132,13 @@ exports.postCreateForm = function (req, res) {
         });
         if (req.files['shield']) {
             newAgency.shield = {
-                data: fs.readFileSync(req.files['shield'][0].buffer),
+                data: req.files['shield'][0].buffer,
                 contentType: req.files['shield'][0].mimeType
             };
         }
         if (req.files['watermark']) {
             newAgency.watermark = {
-                data: fs.readFileSync(req.files['watermark'][0].buffer),
+                data: req.files['watermark'][0].buffer,
                 contentType: req.files['watermark'][0].mimeType
             };
         }
