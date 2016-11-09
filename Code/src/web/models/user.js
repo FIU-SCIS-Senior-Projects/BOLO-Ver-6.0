@@ -95,7 +95,7 @@ module.exports.findAllUsers = function (callback) {
 };
 
 module.exports.findUserByUsername = function (username, callback) {
-    User.findOne({username: username}).populate('agency').exec(callback);
+    User.findOne({username: username.toLowerCase()}).populate('agency').exec(callback);
 };
 
 module.exports.findUserByID = function (id, callback) {
