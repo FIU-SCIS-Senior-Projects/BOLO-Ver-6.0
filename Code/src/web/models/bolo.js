@@ -106,6 +106,14 @@ module.exports.findBolosByAgencyID = function (agencyID, isConfirmed, isArchived
         .exec(callback);
 };
 
+module.exports.findBolosByAgencyNames = function (agencyIDs, isConfirmed, isArchived, limit, sortBy, callback) {
+    Bolo.find( {agency: {$in: {agencyIDs}}, isConfirmed: isConfirmed, isArchived: isArchived})
+        .populate('agency').populate('author').populate('category')
+        .limit(limit)
+        .sort([[sortBy, -1]])
+        .exec(callback);
+};
+
 module.exports.findBoloByToken = function (token, callback) {
     Bolo.findOne({conformationToken: token}).exec(callback);
 };
