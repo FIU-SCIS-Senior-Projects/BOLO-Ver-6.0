@@ -94,7 +94,7 @@ exports.postCreateForm = function (req, res) {
 
     //If a logo was not added in
     if (!req.files['logo']) {
-        errors.push({msg: 'There needs to be a featured image'});
+        errors.push({msg: 'There needs to be a logo image'});
     }
 
     //If at least one error was found
