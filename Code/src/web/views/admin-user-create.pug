@@ -8,18 +8,44 @@ block admin-content
 
     form( action="/admin/user/create" method="post" )
         +input_text( "username", "Username ", "", true, user1)
-        +input_text( "email", "Email", "", true, email1 )
         +input_text( "fname", "First Name", "", true, fname1 )
         +input_text( "lname", "Last Name", "", true,  lname1 )
         //+input_text( "password", "Password", "", true,  "", "password" )
         //+input_text( "confirm", "Repeat Password", "", true,  "", "password" )
+        div#agency
+            -
+                var agencyNames = ['Select an Agency']
+                for (var num in agencies)
+                agencyNames.push(agencies[num].name);
+            if (userTier === 'ROOT')
+                +select_options("agency", "Agency", agencyNames, true, agency1)
+            else if (userTier === 'ADMINISTRATOR')
 
+        .form-group
+            label.control-label( for='email' ) Email
+            div.input-group
+                input.form-control( name='email' type=type ? type : 'text' value=email1 id='email')
+                div#emailDomain.input-group-addon
+                    | N/A
+        script.
+            var agencySelector = $('#agency'),
+                    emailDomain = $('#emailDomain')
+            agencies = !{JSON.stringify(agencies)};;
+            var changeEmailDomain = function () {
+                const val = agencySelector.find("option:selected").index() - 1;
+                if (val !== -1) {
+                    emailDomain.text(agencies[val].emailDomain);
+                } else {
+                    emailDomain.text('N/A');
+                }
+            }
+
+            emailDomain.ready(changeEmailDomain)
+            agencySelector.change(changeEmailDomain)
         if (userTier === 'ROOT')
             +select_options("role", "Role", ['OFFICER', 'SUPERVISOR', 'ADMINISTRATOR', 'ROOT'], true, role1)
         else
             +select_options("role", "Role", ['OFFICER', 'SUPERVISOR', 'ADMINISTRATOR'], true, role1)
-        if (userTier === 'ROOT')
-            +select_options("agency", "Agency", agencies, true, agency1)
 
         +input_text( "badge", "Badge No.", "", true,  badge1 )
         +input_text( "sectunit", "Section / Unit", "", true,  unit1 )
