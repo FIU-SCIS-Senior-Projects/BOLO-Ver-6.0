@@ -1,10 +1,10 @@
-var multiparty          = require('multiparty');
-var json2csv            = require('json2csv');
-var fs                  = require('fs');
-var path                = require('path');
+var multiparty = require('multiparty');
+var json2csv = require('json2csv');
+var fs = require('fs');
+var path = require('path');
 var Agency = require('../../models/agency');
 var BOLO = require('../../models/bolo');
-var config              = require('../../config');
+var config = require('../../config');
 
 var all_fields = ['id', 'agency', 'agencyName', 'author', 'category',
     'firstName', 'lastName', 'dob', 'dlNumber', 'address', 'zipCode',
@@ -22,12 +22,10 @@ var all_fields = ['id', 'agency', 'agencyName', 'author', 'category',
     'summary', 'Type', 'record', 'isActive'];
 
 
-
 /**
  * Respond with a form to create a Data Subscriber.
  */
-module.exports.getDataAnalysis = function(req, res)
-{
+module.exports.getDataAnalysis = function (req, res) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
         if (err) throw err;
         res.render('admin-data-analysis', {agencies: listOfAgencies});
@@ -35,30 +33,25 @@ module.exports.getDataAnalysis = function(req, res)
 
 };
 
-module.exports.downloadCsv = function(req, res)
-{
+module.exports.downloadCsv = function (req, res) {
 
     var agenciesToFilterBy = req.query['agencies'];
-    const limit = config.const.BOLOS_PER_QUERY;
+    console.log(agenciesToFilterBy);
+    console.log("This is the agencies: " + agenciesToFilterBy);
+    const limit = 2000000;
     const isArchived = req.query.archived || false;
+    console.log("The limit for findBOLO is: " + limit);
     console.log("I Made it To the Method");
     console.log("THis is the first agency:" + agenciesToFilterBy[0]);
-    Agency.findAgencyByName(agenciesToFilterBy[0], function(err, agency)
-    {
-        console.log("The entire details of the agency are: " + agency);
-        BOLO.findBolosByAgencyID( agency.id, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS)
-        {
-            console.log("Finding All BOLOS");
-            if (err) throw err;
-            var csv = json2csv({ data: listOfBOLOS, fields: all_fields});
-            console.log("Downloading CSV");
-            fs.writeFile('./src/web/public/csv/bolos.csv', csv, function(err) {
-                if (err) {console.log(err)}
-                res.send("/csv/bolos.csv");
-            })
-        });
-    });
 
+    BOLO.findBolosByAgencyIDs(agenciesToFilterBy, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS) {
+        console.log("THis is the list of BOLOS found: " + listOfBOLOS);
+        var csv = json2csv({data: listOfBOLOS, fields: all_fields});
+        console.log("The csv: " + csv);
+        res.set("Content-Type", "text/csv");
+        res.send(csv);
+        res.end();
+    });
 
 //    boloService.getBolosFromAgencies(agenciesToFilterBy, 2000000, 0).then(function(results)
 //   {
