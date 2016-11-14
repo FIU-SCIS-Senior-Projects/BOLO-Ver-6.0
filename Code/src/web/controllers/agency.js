@@ -1,7 +1,7 @@
 var Agency = require('../models/agency');
 
 exports.renderAgencies = function (req, res) {
-    Agency.findAllAgencies(function (err, listOfAgencies) {
+    Agency.findAllActiveAgencies(function (err, listOfAgencies) {
         if (err) throw err;
         res.render('agency', {agencies: listOfAgencies});
     })

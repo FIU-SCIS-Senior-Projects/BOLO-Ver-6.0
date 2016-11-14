@@ -19,7 +19,6 @@ block content
                         th.hidden-sm.hidden-xs Zip
                         th State
                         th.hidden-sm.hidden-xs Phone
-                        th.hidden-xs Active
                 tbody
                     for agency in agencies
                         tr
@@ -29,7 +28,3 @@ block content
                             td.hidden-sm.hidden-xs  #{agency.zipcode}
                             td  #{agency.state}
                             td.hidden-sm.hidden-xs #{agency.phone}
-                            if(agency.isActive)
-                                td.hidden-xs.text-info Active
-                            else
-                                td.hidden-xs.text-warning Not Active

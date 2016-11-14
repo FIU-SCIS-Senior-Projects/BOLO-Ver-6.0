@@ -60,6 +60,10 @@ module.exports.findAllAgencies = function (callback) {
     Agency.find({name: {$ne: 'NULL'}}, callback);
 };
 
+module.exports.findAllActiveAgencies = function (callback) {
+    Agency.find({name: {$ne: 'NULL'}, isActive: true}, callback);
+};
+
 /**
  * Returns an agency on the database
  * @param agencyName the name of the agency

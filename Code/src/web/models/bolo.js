@@ -107,7 +107,7 @@ module.exports.findBolosByAgencyID = function (agencyID, isConfirmed, isArchived
 };
 
 module.exports.findBolosByAgencyIDs = function (agencyIDs, isConfirmed, isArchived, limit, sortBy, callback) {
-    Bolo.find( {agency: {$in: {agencyIDs}}, isConfirmed: isConfirmed, isArchived: isArchived})
+    Bolo.find( {agency: {$in: agencyIDs}, isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)
         .sort([[sortBy, -1]])
