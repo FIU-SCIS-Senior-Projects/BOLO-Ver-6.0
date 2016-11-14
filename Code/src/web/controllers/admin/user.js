@@ -12,7 +12,22 @@ var emailService = require('../../services/email-service');
 
 var User = require('../../models/user');
 var Agency = require('../../models/agency');
-var Bolo = require('../../models/bolo');
+
+function sendNewUserNotification(useremail, firstname, lastname, passwordToken, username) {
+    return emailService.send({
+        'to': useremail,
+        'from': config.email.from,
+        'fromName': config.email.fromName,
+        'subject': 'NEW BOLO Account Has Been Created For ' + firstname + ' ' + lastname,
+        'text': 'Congratulations! An account has been made for you on our system!  \n' +
+        'Please click on the link below to login to our system: \n\n' +
+        config.appURL + '\n\n' +
+        '***The following information is deemed sensitive***: ' + '\n\n' +
+        'Your username is: ' + username + '\n\n' +
+        'Your first time password is: ' + passwordToken + '\n\n' +
+        'Please login to the BOLO System and follow the instructions to finish setting up your account '
+    });
+}
 
 /**
  * Error handling for MongoDB
@@ -126,12 +141,7 @@ exports.multiUserCreate = function (req, res) {
 exports.getCreateForm = function (req, res) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
         if (err) throw err;
-        var listOfAgencyNames = [];
-        for (const i in listOfAgencies)
-            listOfAgencyNames.push(listOfAgencies[i].name);
-        res.render('admin-user-create', {
-            agencies: listOfAgencyNames
-        })
+        res.render('admin-user-create', {agencies: listOfAgencies})
     });
 };
 
@@ -157,7 +167,7 @@ exports.postCreateForm = function (req, res) {
     var errors = [];
     req.checkBody('username', 'Username is required').notEmpty();
     req.checkBody('email', 'Email is required').notEmpty();
-    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('email', 'Email is not valid').isEmailNoDomain();
     var valErrors = req.validationErrors();
     for (var x in valErrors)
         errors.push(valErrors[x]);
@@ -170,10 +180,7 @@ exports.postCreateForm = function (req, res) {
             if (err) throw err;
             else {
                 console.log(errors);
-                var listOfAgencyNames = [];
-                for (const agencyName in listOfAgencies)
-                    listOfAgencyNames.push(agencyName.name);
-                prevForm.agencies = listOfAgencyNames;
+                prevForm.agencies = listOfAgencies;
                 prevForm.errors = errors;
                 res.render('admin-user-create', prevForm);
             }
@@ -189,10 +196,7 @@ exports.postCreateForm = function (req, res) {
                     if (err) throw err;
                     else {
                         console.log(errors);
-                        var listOfAgencyNames = [];
-                        for (const i in listOfAgencies)
-                            listOfAgencyNames.push(listOfAgencies[i].name);
-                        prevForm.agencies = listOfAgencyNames;
+                        prevForm.agencies = listOfAgencies;
                         prevForm.errors = ['Could not find that agency...'];
                         res.render('admin-user-create', prevForm);
                     }
@@ -208,7 +212,7 @@ exports.postCreateForm = function (req, res) {
                 firstname: req.body.fname,
                 lastname: req.body.lname,
                 password: passwordToken,
-                email: req.body.email,
+                email: req.body.email + userAgency.emailDomain,
                 tier: req.body.role,
                 badge: req.body.badge,
                 unit: req.body.sectunit,
@@ -247,23 +251,6 @@ exports.postCreateForm = function (req, res) {
     }
 };
 
-
-function sendNewUserNotification(useremail, firstname, lastname, passwordToken, username)
-{
-    return emailService.send({
-        'to': useremail,
-        'from': config.email.from,
-        'fromName': config.email.fromName,
-        'subject': 'NEW BOLO Account Has Been Created For ' + firstname + ' ' + lastname ,
-        'text': 'Congratulations! An account has been made for you on our system!  \n' +
-        'Please click on the link below to login to our system: \n\n' +
-        config.appURL + '\n\n' +
-        '***The following information is deemed sensitive***: ' + '\n\n' +
-        'Your username is: ' + username   + '\n\n' +
-        'Your first time password is: ' + passwordToken  + '\n\n' +
-        'Please login to the BOLO System and follow the instructions to finish setting up your account '
-    });
-};
 /**
  * Responds with a list of all system users.
  *

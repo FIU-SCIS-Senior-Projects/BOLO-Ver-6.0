@@ -1,6 +1,5 @@
 'use strict';
 
-var router = require('express').Router();
 var crypto = require('crypto');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -9,7 +8,6 @@ var Agency = require('../models/agency');
 var password = require('../controllers/resetPassword');
 var passwordUtil = require('./../lib/password-util');
 var config = require('../config');
-var users = require('../routes/admin/user');
 
 var emailService = require('../services/email-service');
 
@@ -204,7 +202,6 @@ passport.use(new LocalStrategy(function (username, password, done) {
     })
 }));
 
-
 /**
  * Process Username and Password for Login.
  */
@@ -229,196 +226,3 @@ exports.LogOut = function (req, res) {
 exports.renderForgotPasswordPage = function (req, res) {
     res.render('passwordForgotten');
 };
-
-
-exports.checkUserPassword = function (req, res) {
-    User.findUserByUsername('null', function (err, user) {
-        user.password = req.body.newPassword;
-    })
-};
-
-router.post('/forgotPassword', function (req, res)
-{
-    console.log("I MADE IT TO FORGOT PASSWORD");
-    var email = req.body.email;
-    crypto.randomBytes(20, function (err, buf) {
-
-        if (err) {
-            console.log("Error generating UUID.");
-            req.flash(FERR, 'Error: Please try again. Contact administrator if error persists.');
-            return res.redirect('back');
-        }
-
-        userService.getByEmail(email).then(function (user) {
-            if (!user) {
-                req.flash(FERR, 'Error: Unregistered email address.');
-                return res.redirect('back');
-            }
-            if (user.accountStatus2 === true) {
-                req.flash(FERR, 'Your account has been suspended. Please contact your agency administrator');
-                return res.redirect('back');
-            }
-
-
-            var passwordToken = crypto.randomBytes(20).toString('hex');
-            var nintydaysinMins = 129600;
-            var todaysDate = new Date();
-            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
-
-            bcrypt.genSalt(10, function (err, salt)
-            {
-                if (err) throw (err);
-                bcrypt.hash(passwordToken, salt, null, function (err, hash)
-                {
-                    console.log("The new Password salt is: " + hash);
-                    user.password = hash;
-                    user.passwordDate = expiredPasswordDate;
-                    user.isActive = true;
-                    user.save(function (err)
-                    {
-                        if (err) {
-                            req.flash('error_msg', getErrorMessage(err)[0].msg);
-                            res.redirect('/admin/user');
-                        } else {
-                            req.flash('success_msg', 'Password Has Been Reset For ' + user.username);
-                            res.redirect('/bolo');
-                        }
-                    });
-                })
-            });
-            return emailService.send({
-                'to': useremail,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'Password Has Been Reset For ' + firstname + ' ' + lastname ,
-                'text': 'Your password has been reset by your administrator!  \n' +
-                'Please click on the link below to login to our system: \n\n' +
-                config.appURL + '\n\n' +
-                'If you did not request a password reset please inform your administrator immediately! \n\n' +
-                '***The following information is deemed sensitive***: ' + '\n\n' +
-                'Your username is: ' + username   + '\n\n' +
-                'Your first time password is: ' + passwordToken  + '\n\n' +
-                'Please login to the BOLO System and follow the instructions to create a new password for your account '
-            })
-                .then(function () {
-                    req.flash('messages', 'Reset information successfully sent to %s.', email);
-                    res.redirect('login');
-                })
-        });
-
-    });
-
-});
-
-router.get('/changepassword/:token', function (req, res) {
-    userService.getByToken(req.params.token).then(function (user) {
-        if (!user || (user.resetPasswordExpires < Date.now())) {
-            req.flash(FERR, 'Error: Reset Token is invalid or may have expired.');
-            return res.redirect('/forgotPassword');
-        }
-        res.render('change-password', {
-            userID: user.id,
-            'form_errors': req.flash('form-errors')
-        });
-    });
-
-});
-
-router.post('/changepassword/:userID', function (req, res) {
-    var userID = req.params.userID;
-    parseFormData(req).then(function (formDTO) {
-        var validationErrors = passwordUtil.validatePassword(
-            formDTO.fields.password, formDTO.fields.confirm
-        );
-
-        if (validationErrors) {
-            req.flash('form-errors', validationErrors);
-            throw new FormError();
-        }
-
-        return userService.renderResetPassword(userID, formDTO.fields.password);
-    }, function (error) {
-        console.error('Error at /users/:id/reset-password >>> ', error.message);
-        req.flash(FERR, 'Error processing form, please try again.');
-        res.redirect('back');
-    })
-        .then(function () {
-            req.flash(FMSG, 'Password reset successful.');
-            res.redirect('/login');
-        })
-        .catch(function (error) {
-            var patt = new RegExp("matches previous");
-            var res = patt.test(error.message);
-
-            if (res) {
-                req.flash(FERR, 'New password must not match previous.');
-                res.redirect('back');
-            }
-
-            if ('FormError' !== error.name) throw error;
-
-            console.error('Error at /users/:id/reset-password >>> ', error.message);
-            req.flash(FERR, 'Error occurred, please try again.');
-            res.redirect('back');
-        })
-        .catch(function (error) {
-            res.redirect('back');
-        });
-});
-
-router.get('/expiredpassword/:token', function (req, res) {
-    userService.getByToken(req.params.token).then(function (user) {
-        if (!user || (user.resetPasswordExpires < Date.now())) {
-            req.flash(FERR, 'Error: Reset Token is invalid or may have expired.');
-            return res.redirect('/forgotPassword');
-        }
-        res.render('change-password', {
-            userID: user.id,
-            "url": "/expiredpassword",
-            'form_errors': req.flash('form-errors')
-        });
-    });
-
-});
-
-router.post('/expiredpasswrd/:userID', function (req, res) {
-    var userID = req.params.userID;
-    parseFormData(req).then(function (formDTO) {
-        var validationErrors = passwordUtil.validatePassword(
-            formDTO.fields.password, formDTO.fields.confirm
-        );
-
-        if (validationErrors) {
-            req.flash('form-errors', validationErrors);
-            throw new FormError();
-        }
-
-        return userService.renderResetPassword(userID, formDTO.fields.password);
-    }, function (error) {
-        console.error('Error at /users/:id/reset-password >>> ', error.message);
-        req.flash(FERR, 'Error processing form, please try again.');
-        res.redirect('back');
-    })
-        .then(function () {
-            req.flash(FMSG, 'Password reset successful.');
-            res.redirect('/login');
-        })
-        .catch(function (error) {
-            var patt = new RegExp("matches previous");
-            var res = patt.test(error.message);
-
-            if (res) {
-                req.flash(FERR, 'New password must not match previous.');
-                res.redirect('back');
-            }
-
-            if ('FormError' !== error.name) throw error;
-
-            console.error('Error at /users/:id/reset-password >>> ', error.message);
-            req.flash(FERR, 'Error occurred, please try again.');
-            res.redirect('back');
-        })
-        .catch(function (error) {
-            res.redirect('back');
-        });
-});

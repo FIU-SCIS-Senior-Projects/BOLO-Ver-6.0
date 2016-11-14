@@ -80,6 +80,12 @@ app.use(validator({
                 "x0c\\x0e-\\x7f])+)\\])");
 
             return reg.test(value);
+        },
+        isEmailNoDomain: function (value) {
+            //Any letter, number, underscore, +, -, ., and %, and must be between 1 and 128 chars
+            var reg = new RegExp("^([\d\w-.+%]{1,128})$");
+
+            return reg.test(value);
         }
     }
 }));
@@ -193,7 +199,7 @@ app.get('/', function (req, res) {
 });
 app.use('/', mainRoutes.auth);
 app.use('/aboutUs', mainRoutes.aboutUs);
-app.use('/img', mainRoutes.img);
+
 app.use(function (req, res, next) {
     var login_redirect = null;
     if (req.session.login_redirect) {
@@ -219,6 +225,7 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
+app.use('/img', mainRoutes.img);
 app.use('/password', mainRoutes.password);
 app.use('/bolo', mainRoutes.bolo);
 app.use('/account', mainRoutes.account);

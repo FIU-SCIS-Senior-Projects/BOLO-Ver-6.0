@@ -462,7 +462,7 @@ exports.postCreateBolo = function (req, res, next) {
                 errors.push('Please Enter a Valid Date');
             // If there are errors
             if (errors.length) {
-                console.log(errors);
+                console.log("Validation errors:" + errors);
 
                 //Render back page
                 prevForm.errors = errors;
@@ -495,25 +495,51 @@ exports.postCreateBolo = function (req, res, next) {
                         var buffer = {};
 
                         if (req.files['featured']) {
-                            newBolo.featured = {
-                                data: req.files['featured'][0].buffer,
-                                contentType: req.files['featured'][0].mimeType
-                            };
+                            if (req.body.compressedFeatured) {
+                                console.log('Using compressed featured image');
+                                newBolo.featured = {
+                                    data: req.body.compressedFeatured,
+                                    contentType: 'image/jpg'
+                                };
+                            } else {
+                                console.log('Using original featured image');
+                                newBolo.featured = {
+                                    data: req.files['featured'][0].buffer,
+                                    contentType: req.files['featured'][0].mimeType
+                                };
+                            }
                             buffer.featured = new Buffer(newBolo.featured.data).toString('base64');
                         }
-                        //http://www.hacksparrow.com/node-js-image-processing-and-manipulation.html
                         if (req.files['other1']) {
-                            newBolo.other1 = {
-                                data: req.files['other1'][0].buffer,
-                                contentType: req.files['other1'][0].mimeType
-                            };
+                            if (req.body.compressedOther1) {
+                                console.log('Using compressed other1 image');
+                                newBolo.other1 = {
+                                    data: req.body.compressedOther1,
+                                    contentType: 'image/jpg'
+                                };
+                            } else {
+                                console.log('Using original other1 image');
+                                newBolo.other1 = {
+                                    data: req.files['other1'][0].buffer,
+                                    contentType: req.files['other1'][0].mimeType
+                                };
+                            }
                             buffer.other1 = new Buffer(newBolo.other1.data).toString('base64');
                         }
                         if (req.files['other2']) {
-                            newBolo.other2 = {
-                                data: req.files['other2'][0].buffer,
-                                contentType: req.files['other2'][0].mimeType
-                            };
+                            if (req.body.compressedOther2) {
+                                console.log('Using compressed other2 image');
+                                newBolo.other2 = {
+                                    data: req.body.compressedOther2,
+                                    contentType: 'image/jpg'
+                                };
+                            } else {
+                                console.log('Using original other2 image');
+                                newBolo.other2 = {
+                                    data: req.files['other2'][0].buffer,
+                                    contentType: req.files['other2'][0].mimeType
+                                };
+                            }
                             buffer.other2 = new Buffer(newBolo.other2.data).toString('base64');
                         }
 
