@@ -5,7 +5,7 @@ block jumbo-desc
 
 block admin-content
     p.lead Retrieve data for analysis
-    form(method='POST')
+    form(name='createBoloForm' action= "/admin/dataAnalysis" method='post')
         div#labels
             for agency in agencies
                 .checkbox.col-xl-12.col-lg-12.hidden-md.hidden-sm.hidden-xs
