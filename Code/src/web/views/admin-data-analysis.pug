@@ -10,12 +10,12 @@ block admin-content
             for agency in agencies
                 .checkbox.col-xl-12.col-lg-12.hidden-md.hidden-sm.hidden-xs
                     label
-                        input(value=agency.id type="checkbox" )
+                        input(name=agencies value=agency.id type="checkbox" )
                     | #{agency.name}
         .col-xl-12.col-lg-12.hidden-md.hidden-sm.hidden-xs
 
             .form-group
-        a.btn.btn-default.pull-left( id="download-button" type = "submit") Download
+        button.btn.btn-default.pull-left( id="download-button" type = "submit") Download
     button#selectAll.btn.btn-default.pull-left() Select All
     button#deselectAll.btn.btn-default.pull-left() Deselect All
     .hidden-lg.hidden-xl
