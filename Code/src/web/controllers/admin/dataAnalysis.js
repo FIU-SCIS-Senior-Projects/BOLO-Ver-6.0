@@ -28,13 +28,11 @@ module.exports.downloadCsv = function (req, res)
     var agenciesToFilterBy = req.body.agencies;
     const limit = 2000000;
     const isArchived = false;
-    //console.log("The limit for findBOLO is: " + limit);
-    console.log("I Made it To the Method");
+
 
 
     BOLO.findBolosByAgencyIDs(agenciesToFilterBy, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS)
     {
-        console.log(listOfBOLOS);
         var formattedListOfBOLOS = [];
         for (var i = 0; i < listOfBOLOS.length; i++)
         {
@@ -68,7 +66,6 @@ module.exports.downloadCsv = function (req, res)
                 {
                     all_fields.push(listOfBOLOS[i].category.fields[j]);
                 }
-                console.log("I am at the loop to get the fields");
                 newJSON[listOfBOLOS[i].category.fields[j]] = listOfBOLOS[i].fields[j];
             }
 
@@ -81,10 +78,10 @@ module.exports.downloadCsv = function (req, res)
             newJSON.CreatedOn = listOfBOLOS[i].createdOn;
             newJSON.LastUpdatedOn = listOfBOLOS[i].lastUpdated;
 
-            console.log(newJSON);
+
             formattedListOfBOLOS[i] = newJSON;
         }
-        console.log(all_fields);
+
         for(var k = 0; k < secondary_fields.length; k++)
         {
             if (all_fields.indexOf(secondary_fields[k]) === -1)
@@ -92,10 +89,9 @@ module.exports.downloadCsv = function (req, res)
                 all_fields.push(secondary_fields[k]);
             }
         }
-        console.log(all_fields);
+
         json2csv({data: formattedListOfBOLOS, fields: all_fields}, function (err, csv)
         {
-            console.log("I made the CSV");
             if (err) {
                 console.log(err);
             }
