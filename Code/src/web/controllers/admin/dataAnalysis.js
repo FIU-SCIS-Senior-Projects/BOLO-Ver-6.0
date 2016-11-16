@@ -6,21 +6,10 @@ var Agency = require('../../models/agency');
 var BOLO = require('../../models/bolo');
 var config = require('../../config');
 
-var all_fields = ['id', 'agency', 'agencyName', 'author', 'category',
-    'firstName', 'lastName', 'dob', 'dlNumber', 'address', 'zipCode',
-    'race', 'sex', 'height', 'weight', 'hairColor', 'tattoos',
-    'vehicleMake', 'vehicleModel', 'vehicleColor', 'vehicleYear',
-    'vehicleStyle', 'vehicleLicenseState', 'vehicleLicensePlate',
-    'vehicleIdNumber', 'boatYear', 'boatManufacturer', 'boatModel',
-    'boatType', 'boatLength', 'boatColor', 'boatHullIdNumber',
-    'boatRegistrationNumberSt', 'boatRegistrationNumberNu',
-    'propulsion', 'propulsionType', 'propulsionMake', 'trailer',
-    'trailerManufacturer', 'trailerVIN', 'trailerTagLicenseState',
-    'trailerTagLicenseNumber', 'timeReported', 'dateReported',
-    'timeRecovered', 'dateRecovered', 'addressRecovered',
-    'zipCodeRecovered', 'agencyRecovered', 'additional',
-    'summary', 'Type', 'record', 'isActive'];
+var all_fields = ['BOLOid', 'Status',  'Agency', 'Author', 'Category'];
 
+var secondary_fields = ['Info', 'Video URL',  'Summary', 'FeaturedImage',
+    'Other1Image', 'Other2Image',  'CreatedOn', 'LastUpdatedOn'];
 
 /**
  * Respond with a form to create a Data Subscriber.
@@ -33,35 +22,91 @@ module.exports.getDataAnalysis = function (req, res) {
 
 };
 
-module.exports.downloadCsv = function (req, res) {
+module.exports.downloadCsv = function (req, res)
+{
 
-    var agenciesToFilterBy = req.query['agencies'];
-    console.log(agenciesToFilterBy);
-    console.log("This is the agencies: " + agenciesToFilterBy);
+    var agenciesToFilterBy = req.body.agencies;
     const limit = 2000000;
-    const isArchived = req.query.archived || false;
-    console.log("The limit for findBOLO is: " + limit);
+    const isArchived = false;
+    //console.log("The limit for findBOLO is: " + limit);
     console.log("I Made it To the Method");
-    console.log("THis is the first agency:" + agenciesToFilterBy[0]);
 
-    BOLO.findBolosByAgencyIDs(agenciesToFilterBy, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS) {
-        console.log("THis is the list of BOLOS found: " + listOfBOLOS);
-        var csv = json2csv({data: listOfBOLOS, fields: all_fields});
-        console.log("The csv: " + csv);
-        res.set("Content-Type", "text/csv");
-        res.send(csv);
-        res.end();
+
+    BOLO.findBolosByAgencyIDs(agenciesToFilterBy, true, isArchived, limit, 'createdOn', function (err, listOfBOLOS)
+    {
+        console.log(listOfBOLOS);
+        var formattedListOfBOLOS = [];
+        for (var i = 0; i < listOfBOLOS.length; i++)
+        {
+            var featured = "No";
+            var other1 = "No";
+            var other2 = "No";
+            if(listOfBOLOS[i].featured.data !== undefined)
+            {
+                featured = "Yes";
+            }
+            if(listOfBOLOS[i].other1.data !== undefined)
+            {
+                other1 = "Yes";
+            }
+            if(listOfBOLOS[i].other2.data !== undefined)
+            {
+                other2 = "Yes";
+            }
+            var newJSON =
+            {
+                BOLOid: listOfBOLOS[i].id,
+                Status: listOfBOLOS[i].status,
+                Agency: listOfBOLOS[i].agency.name,
+                Author: listOfBOLOS[i].author.firstname + " " + listOfBOLOS[i].author.lastname,
+                Category: listOfBOLOS[i].category.name
+            };
+
+            for(var j = 0; j < listOfBOLOS[i].fields.length; j++)
+            {
+                if (all_fields.indexOf(listOfBOLOS[i].category.fields[j]) === -1)
+                {
+                    all_fields.push(listOfBOLOS[i].category.fields[j]);
+                }
+                console.log("I am at the loop to get the fields");
+                newJSON[listOfBOLOS[i].category.fields[j]] = listOfBOLOS[i].fields[j];
+            }
+
+            newJSON.Info = listOfBOLOS[i].info;
+            newJSON.VideoURL = listOfBOLOS[i].videoURL;
+            newJSON.Summary = listOfBOLOS[i].summary;
+            newJSON.FeaturedImage = featured;
+            newJSON.Other1Image = other1;
+            newJSON.Other2Image = other2;
+            newJSON.CreatedOn = listOfBOLOS[i].createdOn;
+            newJSON.LastUpdatedOn = listOfBOLOS[i].lastUpdated;
+
+            console.log(newJSON);
+            formattedListOfBOLOS[i] = newJSON;
+        }
+        console.log(all_fields);
+        for(var k = 0; k < secondary_fields.length; k++)
+        {
+            if (all_fields.indexOf(secondary_fields[k]) === -1)
+            {
+                all_fields.push(secondary_fields[k]);
+            }
+        }
+        console.log(all_fields);
+        json2csv({data: formattedListOfBOLOS, fields: all_fields}, function (err, csv)
+        {
+            console.log("I made the CSV");
+            if (err) {
+                console.log(err);
+            }
+
+            res.set({
+                'Content-Disposition': 'attachment; filename=DataAnalysis.csv',
+                'Content-Type': 'text/csv'
+            });
+            res.send(csv);
+        });
+
     });
 
-//    boloService.getBolosFromAgencies(agenciesToFilterBy, 2000000, 0).then(function(results)
-//   {
-//        return json2csv({ data: results.bolos, fields: all_fields})
-//    }).then(function(file) {
-//        fs.writeFile('./src/web/public/csv/bolos.csv', file, function(err) {
-//            if (err) {console.log(err)}
-//            res.send("/csv/bolos.csv");
-//        })
-//    }).catch(function(err) {
-//        console.log(err);
-//    })
 };

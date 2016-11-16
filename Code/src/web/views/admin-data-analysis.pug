@@ -4,13 +4,13 @@ block jumbo-desc
     p Admin Portal: Data Analysis
 
 block admin-content
-    p.lead Retrieve data for analysis
+    p.lead Retrieve Data For Analysis
     form(name='createBoloForm' action= "/admin/dataAnalysis" method='post')
         div#labels
             for agency in agencies
                 .checkbox.col-xl-12.col-lg-12.hidden-md.hidden-sm.hidden-xs
                     label
-                        input(name=agencies value=agency.id type="checkbox" )
+                        input(name="agencies" value=agency.id type="checkbox" )
                     | #{agency.name}
         .col-xl-12.col-lg-12.hidden-md.hidden-sm.hidden-xs
 

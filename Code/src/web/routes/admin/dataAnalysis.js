@@ -6,6 +6,6 @@ var router = require('express').Router();
 var control = require('../../controllers/admin/dataAnalysis.js');
 
 router.get('/', control.getDataAnalysis);
-router.get('/bolotoCsv', control.downloadCsv);
+router.post('/', control.downloadCsv);
 
 module.exports = router;
