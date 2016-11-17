@@ -4,7 +4,7 @@
  * @private
  */
 
-'use strict';
+//'use strict';
 
 var http = require('http');
 var path = require('path');
@@ -85,6 +85,12 @@ app.use(validator({
             //Any letter, number, underscore, +, -, ., and %, and must be between 1 and 128 chars
             var reg = new RegExp("^([\d\w-.+%]{1,128})$");
 
+            return reg.test(value);
+        },
+        isCorrectPasswordFormat: function (value){
+            var reg = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&().^\\[\\]\\-_])[A-Za-z\\d$@$!%*?&().^\\[\\]\\-_]{10,128}");
+            console.log("THIS IS THE PASSWORD I GOT: " + value);
+            console.log("THe password is valid: " + reg.test(value));
             return reg.test(value);
         }
     }

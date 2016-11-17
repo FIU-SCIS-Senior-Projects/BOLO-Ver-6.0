@@ -53,31 +53,50 @@ exports.newPassword = function (req, res)
     var todaysDate = new Date();
     var nintydaysinMins = 129600;
     var newPasswordDate = new Date(todaysDate.getTime() + nintydaysinMins*60000);
-
+    //console.log("THis is the new password Date: " + newPasswordDate);
     if (req.body.password)
     {
         console.log("The New Password is: " + req.body.password);
-        bcrypt.genSalt(10, function (err, salt)
+
+        var errors = [];
+        req.checkBody('password', 'Password is not valid').isCorrectPasswordFormat();
+        var valErrors = req.validationErrors();
+        for (var x in valErrors)
+            errors.push(valErrors[x]);
+
+        //If at least one error was found
+        if (errors.length)
         {
-            if (err) throw (err);
-            bcrypt.hash(req.body.password, salt, null, function (err, hash)
+
+            console.log('Validation has failed');
+            res.render('passwordReset', {errors: errors});
+        }
+
+        else
+        {
+            bcrypt.genSalt(10, function (err, salt)
             {
-                console.log("The new Password salt is: " + hash);
-                user.password = hash;
-                user.passwordDate = newPasswordDate;
-                user.isActive = true;
-                user.save(function (err)
+                if (err) throw (err);
+                bcrypt.hash(req.body.password, salt, null, function (err, hash)
                 {
-                    if (err) {
-                        req.flash('error_msg', getErrorMessage(err)[0].msg);
-                        res.redirect('/password/renderResetPass');
-                    } else {
-                        req.flash('success_msg', 'Password Has Been Updated for ' + user.username);
-                        res.redirect('/bolo');
-                    }
-                });
-            })
-        });
+                    console.log("The new Password salt is: " + hash);
+                    user.password = hash;
+                    user.passwordDate = newPasswordDate;
+                    user.isActive = true;
+                    user.save(function (err)
+                    {
+                        if (err) {
+                            req.flash('error_msg', getErrorMessage(err)[0].msg);
+                            res.redirect('/password/renderResetPass');
+                        } else {
+                            req.flash('success_msg', 'Password Has Been Updated for ' + user.username);
+                            res.redirect('/bolo');
+                        }
+                    });
+                })
+            });
+        }
+
     }
 
     console.log("The Password Expires on: " + newPasswordDate);
