@@ -83,7 +83,7 @@ app.use(validator({
         },
         isEmailNoDomain: function (value) {
             //Any letter, number, underscore, +, -, ., and %, and must be between 1 and 128 chars
-            var reg = new RegExp("^([\d\w-.+%]{1,128})$");
+            var reg = new RegExp("^([\\d\\w-.+%]{1,128})$");
 
             return reg.test(value);
         },
