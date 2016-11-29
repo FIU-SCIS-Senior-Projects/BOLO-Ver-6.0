@@ -72,8 +72,7 @@ var Schema = new mongoose.Schema({
         default: false
     },
     subscribers: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'user',
+        type: [String]
     }
 });
 
@@ -116,6 +115,10 @@ module.exports.findBolosByAgencyIDs = function (agencyIDs, isConfirmed, isArchiv
 
 module.exports.findBoloByToken = function (token, callback) {
     Bolo.findOne({conformationToken: token}).exec(callback);
+};
+
+module.exports.addDataSubscriberEmailToBolo = function (boloID, emailToAdd, callback) {
+    Bolo.findByIdAndUpdate(boloID, {$push: {subscribers: emailToAdd}}, {safe: true, upsert: true}, callback);
 };
 
 module.exports.searchAllBolosByAgencyAndCategory = function (agencyID, categoryID, fieldsArray, callback) {
