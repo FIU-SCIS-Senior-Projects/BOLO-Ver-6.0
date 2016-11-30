@@ -696,6 +696,9 @@ exports.postEditBolo = function (req, res, next) {
                     }
                     //If no errors were found
                     else {
+                        console.log("The current status is: " + bolo.status);
+                        console.log("The new status is: " + req.body.status);
+
                         var token = crypto.randomBytes(20).toString('hex');
                         if (req.body.videoURL) bolo.videoURL = req.body.videoURL;
                         if (req.body.info) bolo.info = req.body.info;

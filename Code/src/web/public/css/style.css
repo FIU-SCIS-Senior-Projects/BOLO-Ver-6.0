@@ -278,9 +278,9 @@ a.thumbnail.active {
 
 #updatedstatus {
     text-align: center;
-    padding: 80px 0;
+    padding: 80px;
     transform: rotate(55deg);
-    font-size: 210px;
+    font-size: 290px;
     max-width: 100%;
     position: absolute;
     z-index: 100;
@@ -290,7 +290,7 @@ a.thumbnail.active {
     text-align: center;
     padding: 90px 0;
     transform: rotate(45deg);
-    font-size: 45px;
+    font-size: 50px;
     max-width: 110%;
     position: absolute;
     z-index: 100;
