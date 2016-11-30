@@ -488,6 +488,20 @@ exports.renderBoloAsPDF = function (req, res, next) {
 
                     //Write BOLO Images based on how many images exist, to the PDF
 
+                    if ( (bolo.featured.data == undefined)&& (bolo.other1.data == undefined) && (bolo.other2.data == undefined))
+                    {
+                        console.log("NO PIC SELECTED");
+                        var noPic = "/Users/libsys/BOLO-Ver-6.0/Code/src/web/public/img/nopic.png";
+                        fs.readFile(noPic, 'utf8', function(err, data)
+                        {
+                            console.log(data);
+                            doc.image(data, 170, 135, {
+                                width: 290, height: 230, align: 'center'
+                            }).moveDown(5);
+
+                        });
+
+                    }
                     //Only Featured is present
                     if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
                         doc.image(bolo.featured.data, 170, 135, {
