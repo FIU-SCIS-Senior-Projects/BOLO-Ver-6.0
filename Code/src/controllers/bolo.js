@@ -173,7 +173,6 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
                 doc.text(bolo.status, 120, 150, {align: 'center'})
                     .moveDown();
             };
-
         }
         else {
             if (onePhoto) {
@@ -574,7 +573,6 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.text(bolo.status, 120, 150, {align: 'center'})
                                     .moveDown();
                             };
-
                         }
                         else {
                             if (onePhoto) {

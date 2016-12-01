@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var config = require('../src/web/config');
+var config = require('../src/config');
 
 var User = require('../src/web/models/user');
 var Agency = require('../src/web/models/agency');

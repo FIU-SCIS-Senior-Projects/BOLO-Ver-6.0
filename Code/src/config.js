@@ -10,7 +10,7 @@ var path = require('path');
 var validate = require('validate.js');
 
 require('dotenv').config({
-    'path': path.resolve(__dirname, '../../.env')
+    'path': path.resolve(__dirname, '../.env')
 });
 
 var core = path.resolve(__dirname, '../core');
