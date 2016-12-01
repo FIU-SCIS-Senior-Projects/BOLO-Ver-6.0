@@ -33,39 +33,40 @@ block content
     //Render Images
     .row
         .col-xs-12.col-md-12
-            if (bolo.featured.data && !bolo.other1.data && !bolo.other2.data)
+            if (buffer.featured.data && !buffer.other1.data && !buffer.other2.data)
                 .col-xs-12.col-md-10.col-md-offset-1
-                    a(href="/img/bolo/featured/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
-            else if (bolo.featured.data && bolo.other1 && !bolo.other2.data)
+                    img#a.img-responsive.boloPictures
+            else if (buffer.featured.data && buffer.other1.data && !buffer.other2.data)
                 .col-xs-12.col-md-6
-                    a(href="/img/bolo/other1/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/other1/" + bolo.id)
+                    img#a.img-responsive.boloPictures
                 .col-xs-12.col-md-6
-                    a(href="/img/bolo/featured/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
-            else if (bolo.featured.data && !bolo.other1 && bolo.other2.data)
+                    img#b.img-responsive.boloPictures
+            else if (buffer.featured.data && !buffer.other1.data && buffer.other2.data)
                 .col-xs-12.col-md-6
-                    a(href="/img/bolo/other2/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/other2/" + bolo.id)
+                    img#a.img-responsive.boloPictures
                 .col-xs-12.col-md-6.col-xs-12
-                    a(href="/img/bolo/featured/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
-
-            else if (bolo.featured.data && bolo.other1.data && bolo.other2.data)
+                    img#c.img-responsive.boloPictures
+            else if (buffer.featured.data && buffer.other1.data && buffer.other2.data)
                 .col-xs-12.col-md-4
-                    a(href="/img/bolo/other1/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/other1/" + bolo.id)
+                    img#b.img-responsive.boloPictures
                 .col-xs-12.col-md-4
-                    a(href="/img/bolo/featured/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/featured/" + bolo.id)
+                    img#a.img-responsive.boloPictures
                 .col-xs-12.col-md-4
-                    a(href="/img/bolo/other2/" + bolo.id)
-                        img.img-responsive.boloPictures(src="/img/bolo/other2/" + bolo.id)
+                    img#c.img-responsive.boloPictures
             else
                 .col-xs-12.col-md-10.col-md-offset-1
                     img.img-responsive.boloPictures( src="/img/nopic.png" alt='Featured Image')
 
+            script.
+                var featured = document.getElementById('a')
+                var other1 = document.getElementById('b')
+                var other2 = document.getElementById('c')
+                if(featured)
+                    featured.src = 'data:' + '#{buffer.featured.contentType}' + ' ;base64,' + '#{buffer.featured.data}';
+                if(other1)
+                    other1.src = 'data:' + '#{buffer.other1.contentType}' + ' ;base64,' + '#{buffer.other1.data}';
+                if(other2)
+                    other2.src = 'data:' + '#{buffer.other2.contentType}' + ' ;base64,' + '#{buffer.other2.data}';
     br
     br
     .row
@@ -75,8 +76,8 @@ block content
                 dd #{bolo.id}
 
                 - for (var i = 0; i < bolo.fields.length; i++)
-                    dt.strong #{category.fields[i]}:
-                    dd #{bolo.fields[i]}
+                dt.strong #{category.fields[i]}:
+                dd #{bolo.fields[i]}
 
                 dt.strong Created:
                 dd #{bolo.createdOn}

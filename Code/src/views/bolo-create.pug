@@ -81,14 +81,14 @@ block content
                     #compressedOther1Prev.col-sm-4
                     #compressedOther2Prev.col-sm-4
 
-            input#compressedFeatured( name = 'compressedFeatured' type='hidden' )
-            input#compressedOther1( name = 'compressedOther1' type='hidden' )
-            input#compressedOther2( name = 'compressedOther2' type='hidden' )
+            //input#compressedFeatured( name = 'compressedFeatured' type='hidden' )
+            //input#compressedOther1( name = 'compressedOther1' type='hidden' )
+            //input#compressedOther2( name = 'compressedOther2' type='hidden' )
 
             +input_text( "videoURL", "Video Link", "", false, vid1, "url" )
             +input_textarea( "info", "Additional Info", "", false, info1 )
             +input_textarea( "summary", "Summary", "", false, summary1 )
             .form-group
                 button.btn.btn-default( name = "option" type = "submit" value = "submit") SUBMIT
-        button.btn.btn-default( name = "option" type = "submit" value = "preview" ) PREVIEW
+                button.btn.btn-default( name = "option" type = "submit" value = "preview" ) PREVIEW
 
