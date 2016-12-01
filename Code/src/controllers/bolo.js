@@ -48,201 +48,201 @@ function getErrorMessage(err) {
  * @param creatorEmail
  */
 /*
-function sendBoloNotificationEmail(bolo, template, creatorEmail) {
-    console.log("THIS THE BOLO WE RECEIVED: " + bolo);
+ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
+ console.log("THIS THE BOLO WE RECEIVED: " + bolo);
 
 
-    Bolo.findBoloByID(bolo.id, function (err, boloToSend) {
-        if (err) {
-            console.log('Error finding BOLO!');
-        } else {
-            console.log("THIS THE BOLO WE ARE CONVERTING: " + boloToSend);
-            var doc = new PDFDocument();
+ Bolo.findBoloByID(bolo.id, function (err, boloToSend) {
+ if (err) {
+ console.log('Error finding BOLO!');
+ } else {
+ console.log("THIS THE BOLO WE ARE CONVERTING: " + boloToSend);
+ var doc = new PDFDocument();
 
 
-            //--------------GRAPHICS PORTION-----------------------
+ //--------------GRAPHICS PORTION-----------------------
 
-            //Write Agency Graphics if they exist to the PDF
-            if (boloToSend.agency.watermark.data != undefined) {
-                doc.image(boloToSend.agency.watermark.data, 0, 0, {
-                    fit: [800, 800]
-                });
-            }
+ //Write Agency Graphics if they exist to the PDF
+ if (boloToSend.agency.watermark.data != undefined) {
+ doc.image(boloToSend.agency.watermark.data, 0, 0, {
+ fit: [800, 800]
+ });
+ }
 
-            if (boloToSend.agency.logo.data != undefined) {
-                doc.image(boloToSend.agency.logo.data, 15, 15, {
-                    height: 100
-                });
-            }
-            if (boloToSend.agency.shield.data != undefined) {
-                doc.image(boloToSend.agency.shield.data, 490, 15, {
-                    height: 100
-                });
-            }
+ if (boloToSend.agency.logo.data != undefined) {
+ doc.image(boloToSend.agency.logo.data, 15, 15, {
+ height: 100
+ });
+ }
+ if (boloToSend.agency.shield.data != undefined) {
+ doc.image(boloToSend.agency.shield.data, 490, 15, {
+ height: 100
+ });
+ }
 
-            //Write BOLO Images based on how many images exist, to the PDF
-            var onePhoto, twoPhotos, threePhotos;
-            //Only Featured is present
-            if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
-                doc.image(bolo.featured.data, 170, 135, {
-                    width: 290, height: 230, align: 'center'
-                }).moveDown(5);
-                onePhoto = true;
-            }
-            // Only Featured and Other1 are present
-            if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
-                doc.image(bolo.featured.data, 320, 135, {
-                    width: 270, height: 210, align: 'center'
-                }).moveDown(5);
+ //Write BOLO Images based on how many images exist, to the PDF
+ var onePhoto, twoPhotos, threePhotos;
+ //Only Featured is present
+ if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
+ doc.image(bolo.featured.data, 170, 135, {
+ width: 290, height: 230, align: 'center'
+ }).moveDown(5);
+ onePhoto = true;
+ }
+ // Only Featured and Other1 are present
+ if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
+ doc.image(bolo.featured.data, 320, 135, {
+ width: 270, height: 210, align: 'center'
+ }).moveDown(5);
 
-                doc.image(bolo.other1.data, 30, 135, {
-                    width: 270, height: 210, align: 'left'
-                }).moveDown(5);
-                twoPhotos = true;
-            }
-            // Only Featured and Other2 are present
-            if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
-                doc.image(bolo.featured.data, 30, 135, {
-                    width: 270, height: 210, align: 'center'
-                }).moveDown(5);
+ doc.image(bolo.other1.data, 30, 135, {
+ width: 270, height: 210, align: 'left'
+ }).moveDown(5);
+ twoPhotos = true;
+ }
+ // Only Featured and Other2 are present
+ if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
+ doc.image(bolo.featured.data, 30, 135, {
+ width: 270, height: 210, align: 'center'
+ }).moveDown(5);
 
-                doc.image(bolo.other2.data, 320, 135, {
-                    width: 270, height: 210, align: 'left'
-                }).moveDown(5);
-                twoPhotos = true;
-            }
-            // All Images are present
-            if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
-                doc.image(bolo.featured.data, 228, 135, {
-                    width: 170, height: 110, align: 'center'
-                }).moveDown(5);
+ doc.image(bolo.other2.data, 320, 135, {
+ width: 270, height: 210, align: 'left'
+ }).moveDown(5);
+ twoPhotos = true;
+ }
+ // All Images are present
+ if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
+ doc.image(bolo.featured.data, 228, 135, {
+ width: 170, height: 110, align: 'center'
+ }).moveDown(5);
 
-                doc.image(bolo.other1.data, 40, 135, {
-                    width: 170, height: 110, align: 'left'
-                }).moveDown(5);
+ doc.image(bolo.other1.data, 40, 135, {
+ width: 170, height: 110, align: 'left'
+ }).moveDown(5);
 
-                doc.image(bolo.other2.data, 415, 135, {
-                    width: 170, height: 110, align: 'right'
-                }).moveDown(5);
-                threePhotos = true;
-            }
+ doc.image(bolo.other2.data, 415, 135, {
+ width: 170, height: 110, align: 'right'
+ }).moveDown(5);
+ threePhotos = true;
+ }
 
-            //--------------TEXT PORTION-----------------------
+ //--------------TEXT PORTION-----------------------
 
-            //Write headers and Police Department Information to the PDF Document
-            doc.fontSize(10);
-            doc.font('Times-Roman');
-            doc.fillColor('red');
-            doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 85, 15, {align: 'center'})
-                .moveDown(0.25);
-            doc.fillColor('black');
-            doc.text(agency.name + " Police Department", {align: 'center'})
-                .moveDown(0.25);
-            doc.text(agency.address, {align: 'center'})
-                .moveDown(0.25);
-            doc.text(agency.city + ", " + agency.state + ", " + agency.zipcode, {align: 'center'})
-                .moveDown(0.25);
-            doc.text(agency.phone, {align: 'center'})
-                .moveDown(0.25);
-            doc.fontSize(20);
-            doc.fillColor('red');
+ //Write headers and Police Department Information to the PDF Document
+ doc.fontSize(10);
+ doc.font('Times-Roman');
+ doc.fillColor('red');
+ doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 85, 15, {align: 'center'})
+ .moveDown(0.25);
+ doc.fillColor('black');
+ doc.text(agency.name + " Police Department", {align: 'center'})
+ .moveDown(0.25);
+ doc.text(agency.address, {align: 'center'})
+ .moveDown(0.25);
+ doc.text(agency.city + ", " + agency.state + ", " + agency.zipcode, {align: 'center'})
+ .moveDown(0.25);
+ doc.text(agency.phone, {align: 'center'})
+ .moveDown(0.25);
+ doc.fontSize(20);
+ doc.fillColor('red');
 
-            //Write Category and BOLO status to the PDF Document
-            doc.fontSize(23);
-            if (bolo.status !== 'ACTIVE') {
-                if (onePhoto) {
-                    doc.fillColor('black');
-                    doc.text(bolo.category.name, 85, 100, {align: 'center'}); //original 100, 140
-                    doc.fontSize(80);
-                    doc.fillColor('red');
-                    doc.text(bolo.status, 110, 210, {align: 'center'})
-                        .moveDown();
-                }
-                if (twoPhotos) {
-                    doc.fillColor('black');
-                    doc.text(bolo.category.name, 85, 100, {align: 'center'});//original 100, 140
-                    doc.fontSize(80);
-                    doc.fillColor('red');
-                    doc.text(bolo.status, 120, 210, {align: 'center'})
-                        .moveDown();
-                }
-                if (threePhotos) {
-                    doc.fillColor('black');
-                    doc.text(bolo.category.name, 85, 100, {align: 'center'});//original 100, 140
-                    doc.fontSize(80);
-                    doc.fillColor('red');
-                    doc.text(bolo.status, 120, 150, {align: 'center'})
-                        .moveDown();
-                }
-            }
-            else {
-                if (onePhoto) {
-                    doc.fillColor('red');
-                    doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                        .moveDown(11);
-                }
-                if (twoPhotos) {
-                    doc.fillColor('red');
-                    doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                        .moveDown(5);
-                }
+ //Write Category and BOLO status to the PDF Document
+ doc.fontSize(23);
+ if (bolo.status !== 'ACTIVE') {
+ if (onePhoto) {
+ doc.fillColor('black');
+ doc.text(bolo.category.name, 85, 100, {align: 'center'}); //original 100, 140
+ doc.fontSize(80);
+ doc.fillColor('red');
+ doc.text(bolo.status, 110, 210, {align: 'center'})
+ .moveDown();
+ }
+ if (twoPhotos) {
+ doc.fillColor('black');
+ doc.text(bolo.category.name, 85, 100, {align: 'center'});//original 100, 140
+ doc.fontSize(80);
+ doc.fillColor('red');
+ doc.text(bolo.status, 120, 210, {align: 'center'})
+ .moveDown();
+ }
+ if (threePhotos) {
+ doc.fillColor('black');
+ doc.text(bolo.category.name, 85, 100, {align: 'center'});//original 100, 140
+ doc.fontSize(80);
+ doc.fillColor('red');
+ doc.text(bolo.status, 120, 150, {align: 'center'})
+ .moveDown();
+ }
+ }
+ else {
+ if (onePhoto) {
+ doc.fillColor('red');
+ doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+ .moveDown(11);
+ }
+ if (twoPhotos) {
+ doc.fillColor('red');
+ doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+ .moveDown(5);
+ }
 
-                if (threePhotos) {
-                    doc.fillColor('red');
-                    doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                        .moveDown();
-                }
+ if (threePhotos) {
+ doc.fillColor('red');
+ doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+ .moveDown();
+ }
 
-                doc.text("A BOLO has been issued! Details have been purposely hidden for security.", {align: 'center'})
-                    .moveDown(0.25);
-                doc.text("Pleaes login to the BOLO database to view the full details of this BOLO.", {align: 'center'})
-                    .moveDown(0.25);
-                doc.end();
-            }
-
-
-            User.findAllUsers(function (err, users) {
-                if (err) {
-                    console.log('Error finding all users!')
-                } else {
-                    var tmp = config.email.template_path + '/' + template + '.pug';
-                    var tdata = {
-                        'bolo': bolo,
-                        'app_url': config.appURL
-                    };
-
-                    // todo check if this is async
-                    var html = jade.renderFile(tmp, tdata);
-
-                    console.log("SENDING EMAIL SUCCESSFULLY");
-                    emailService.send({
-                        'to': creatorEmail,
-                        'bbc': 'bzamo007@fiu.edu',
-                        'from': config.email.from,
-                        'fromName': config.email.fromName,
-                        'subject': 'BOLO Alert: ' + boloToSend.category.name,
-                        'html': html,
-                        'files': [{
-                            filename: tdata.bolo.id + '.pdf', // required only if file.content is used.
-                            contentType: 'application/pdf', // optional
-                            content: doc
-                        }]
-                    })
-                        .catch(function (error) {
-                            console.error(
-                                'Unknown error occurred while sending notifications to users' +
-                                'subscribed to agency id %s for BOLO %s\n %s',
-                                bolo.agency, bolo.id, error.message
-                            );
-                        })
-                }
-            })
-        }
-    })
+ doc.text("A BOLO has been issued! Details have been purposely hidden for security.", {align: 'center'})
+ .moveDown(0.25);
+ doc.text("Pleaes login to the BOLO database to view the full details of this BOLO.", {align: 'center'})
+ .moveDown(0.25);
+ doc.end();
+ }
 
 
-}
-*/
+ User.findAllUsers(function (err, users) {
+ if (err) {
+ console.log('Error finding all users!')
+ } else {
+ var tmp = config.email.template_path + '/' + template + '.pug';
+ var tdata = {
+ 'bolo': bolo,
+ 'app_url': config.appURL
+ };
+
+ // todo check if this is async
+ var html = jade.renderFile(tmp, tdata);
+
+ console.log("SENDING EMAIL SUCCESSFULLY");
+ emailService.send({
+ 'to': creatorEmail,
+ 'bbc': 'bzamo007@fiu.edu',
+ 'from': config.email.from,
+ 'fromName': config.email.fromName,
+ 'subject': 'BOLO Alert: ' + boloToSend.category.name,
+ 'html': html,
+ 'files': [{
+ filename: tdata.bolo.id + '.pdf', // required only if file.content is used.
+ contentType: 'application/pdf', // optional
+ content: doc
+ }]
+ })
+ .catch(function (error) {
+ console.error(
+ 'Unknown error occurred while sending notifications to users' +
+ 'subscribed to agency id %s for BOLO %s\n %s',
+ bolo.agency, bolo.id, error.message
+ );
+ })
+ }
+ })
+ }
+ })
+
+
+ }
+ */
 
 /**
  * Sends an email to all subscribers of a bolo
@@ -251,50 +251,50 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
  * @param template
  */
 /*
-function sendBoloToDataSubscriber(bolo, template) {
-    var someData = {};
+ function sendBoloToDataSubscriber(bolo, template) {
+ var someData = {};
 
-    console.log('in email function');
-    boloService.getAttachment(bolo.id, 'featured').then(function (attDTO) {
-        someData.featured = attDTO.data;
+ console.log('in email function');
+ boloService.getAttachment(bolo.id, 'featured').then(function (attDTO) {
+ someData.featured = attDTO.data;
 
-        return dataSubscriberService.getDataSubscribers('all_active')
-            .then(function (dataSubscribers) {
-                // filters out Data Subscribers and pushes their emails into array
-                var subscribers = dataSubscribers.map(function (dataSubscriber) {
-                    console.log(dataSubscriber.email);
-                    return dataSubscriber.email;
-                });
+ return dataSubscriberService.getDataSubscribers('all_active')
+ .then(function (dataSubscribers) {
+ // filters out Data Subscribers and pushes their emails into array
+ var subscribers = dataSubscribers.map(function (dataSubscriber) {
+ console.log(dataSubscriber.email);
+ return dataSubscriber.email;
+ });
 
-                var tmp = config.email.template_path + '/' + template + '.jade';
-                var tdata = {
-                    'bolo': bolo,
-                    'app_url': config.appURL
-                };
+ var tmp = config.email.template_path + '/' + template + '.jade';
+ var tdata = {
+ 'bolo': bolo,
+ 'app_url': config.appURL
+ };
 
-                var html = jade.renderFile(tmp, tdata);
-                console.log("SENDING EMAIL TO SUBSCRIBERS SUCCESSFULLY");
-                return emailService.send({
-                    'to': subscribers,
-                    'from': config.email.from,
-                    'fromName': config.email.fromName,
-                    'subject': 'BOLO Alert: ' + bolo.category,
-                    'html': html,
-                    'files': [{
-                        filename: tdata.bolo.id + '.jpg', // required only if file.content is used.
-                        contentType: 'image/jpeg', // optional
-                        content: someData.featured
-                    }]
-                });
+ var html = jade.renderFile(tmp, tdata);
+ console.log("SENDING EMAIL TO SUBSCRIBERS SUCCESSFULLY");
+ return emailService.send({
+ 'to': subscribers,
+ 'from': config.email.from,
+ 'fromName': config.email.fromName,
+ 'subject': 'BOLO Alert: ' + bolo.category,
+ 'html': html,
+ 'files': [{
+ filename: tdata.bolo.id + '.jpg', // required only if file.content is used.
+ contentType: 'image/jpeg', // optional
+ content: someData.featured
+ }]
+ });
 
-            })
-            .catch(function (error) {
-                console.error('Error occurred while sending notifications to subscriber: ' + dataSubscriber);
-                console.error(error);
-            });
-    })
-}
-*/
+ })
+ .catch(function (error) {
+ console.error('Error occurred while sending notifications to subscriber: ' + dataSubscriber);
+ console.error(error);
+ });
+ })
+ }
+ */
 
 /**
  * Sends an email to the logged in user to confirm a created bolo
@@ -410,17 +410,48 @@ exports.getBoloDetails = function (req, res, next) {
     // Check if ObjectId is valid
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
         Bolo.findBoloByID(req.params.id, function (err, bolo) {
-            if (err) next(err);
-            if (!bolo) {
-                req.flash('error_msg', 'Bolo ' + req.params.id + ' could not be found');
-                res.redirect('/bolo');
+            if (err) {
+                next(err);
             } else {
-                res.render('bolo-details', {bolo: bolo});
+                if (!bolo) {
+                    req.flash('error_msg', 'Bolo ' + req.params.id + ' could not be found');
+                    res.redirect('/bolo');
+                } else {
+                    Bolo.findIfEmailIsInBolo(req.params.id, req.user.email, function (err, boloFound) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            console.log(boloFound);
+                            res.render('bolo-details', {bolo: bolo, isSubscribed: boloFound});
+                        }
+                    });
+                }
             }
         });
     } else {
         next();
     }
+};
+
+exports.subscribeToBOLO = function (req, res, next) {
+    Bolo.subscribeToBOLO(req.params.id, req.user.email, function (err) {
+        if (err) {
+            next(err);
+        } else {
+            req.flash('success_msg', 'You are now Subscribed');
+            res.redirect('/bolo/' + req.params.id);
+        }
+    });
+};
+exports.unsubscribeFromBOLO = function (req, res, next) {
+    Bolo.unsubscribeFromBOLO(req.params.id, req.user.email, function (err) {
+        if (err) {
+            next(err);
+        } else {
+            req.flash('error_msg', 'You are now UnSubscribed');
+            res.redirect('/bolo/' + req.params.id);
+        }
+    });
 };
 
 /**

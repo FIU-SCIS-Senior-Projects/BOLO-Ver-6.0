@@ -18,6 +18,8 @@ router.post('/search', control.postBoloSearch);
 router.get('/archive', control.renderArchivedBolos);
 router.get('/list', control.listBolos);
 router.get('/:id', control.getBoloDetails);
+router.post('/subscribe/:id', control.subscribeToBOLO);
+router.post('/unsubscribe/:id', control.unsubscribeFromBOLO);
 router.get('/pdf/:id', control.renderBoloAsPDF);
 router.get('/archive/purge', control.renderPurgeArchivedBolosPage);
 router.post('/archive/purge', control.purgeArchivedBolos);
@@ -27,6 +29,5 @@ router.get('/confirm/:token', control.confirmBolo);
 router.get('/edit/:id', control.getEditBolo);
 router.post('/edit/:id', boloImages, control.postEditBolo);
 router.post('/delete/:id', control.deleteBolo);
-
 
 module.exports = router;

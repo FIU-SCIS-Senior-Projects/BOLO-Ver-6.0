@@ -8,7 +8,12 @@ block jumbo
                 button.btn.btn-primary(onclick='history.go(-1);') Go Back
                 a.btn.btn-default( href="/bolo/pdf/" + bolo.id target="_blank" ) Generate PDF
             .pull-right
-                button.btn.btn-primary(onclick='history.go(-1);') Subscribe To BOLO
+                if (!isSubscribed.length)
+                    form( action= "/bolo/subscribe/" + bolo.id method="post")
+                        button.btn.btn-primary Subscribe To BOLO
+                else
+                    form( action= "/bolo/unsubscribe/" + bolo.id method="post")
+                        button.btn.btn-warning UnSubscribe From BOLO
 
 block content
     .row
