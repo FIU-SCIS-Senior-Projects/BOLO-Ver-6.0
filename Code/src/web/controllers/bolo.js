@@ -45,11 +45,14 @@ function getErrorMessage(err) {
  *
  * @param boloID a bolos id
  */
-function sendBoloNotificationEmail(bolo, template, creatorEmail) {
+function sendBoloNotificationEmail(bolo, template, creatorEmail)
+{
     console.log("THIS THE BOLO WE RECEIVED: " + bolo);
 
 
-    Bolo.findBoloByID(bolo.id, function (err, boloToSend) {
+
+    Bolo.findBoloByID(bolo.id, function (err, boloToSend)
+    {
         if (err) throw err;
         console.log("THIS THE BOLO WE ARE CONVERTING: " + boloToSend);
         var doc = new PDFDocument();
@@ -148,34 +151,39 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
 
         //Write Category and BOLO status to the PDF Document
         doc.fontSize(23);
-        if (bolo.status !== 'ACTIVE') {
-            if (onePhoto) {
+        if (bolo.status !== 'ACTIVE')
+        {
+            if(onePhoto)
+            {
                 doc.fillColor('black');
                 doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 110, 210, {align: 'center'})
                     .moveDown();
-            };
-            if (twoPhotos) {
+            }
+            if(twoPhotos)
+            {
                 doc.fillColor('black');
                 doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 210, {align: 'center'})
                     .moveDown();
-            };
-            if (threePhotos) {
+            }
+            if(threePhotos)
+            {
                 doc.fillColor('black');
                 doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 150, {align: 'center'})
                     .moveDown();
-            };
+            }
 
         }
-        else {
+        else
+        {
             if (onePhoto) {
                 doc.fillColor('red');
                 doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
@@ -201,7 +209,8 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
         }
 
 
-        User.findAllUsers(function (err, users) {
+        User.findAllUsers( function (err, users)
+        {
             /*
              var sendTo = function()
              {
@@ -225,7 +234,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
             console.log("SENDING EMAIL SUCCESSFULLY");
             emailService.send({
                 'to': creatorEmail,
-                'bbc': 'bzamo007@fiu.edu',
+                'bbc' : 'bzamo007@fiu.edu',
                 'from': config.email.from,
                 'fromName': config.email.fromName,
                 'subject': 'BOLO Alert: ' + boloToSend.category.name,
@@ -248,6 +257,9 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
 
 
 }
+
+
+
 
 
 /**
@@ -456,238 +468,257 @@ exports.renderBoloAsPDF = function (req, res, next) {
                      */
 
                     //--------------GRAPHICS PORTION-----------------------
-                    var errorFlag = false;
-                    try {
-                        //Write Agency Graphics if they exist to the PDF
-                        if (agency.watermark.data != undefined) {
-                            doc.image(agency.watermark.data, 0, 0, {
-                                fit: [800, 800]
-                            });
-                        }
-                        if (agency.logo.data != undefined) {
-                            doc.image(agency.logo.data, 15, 15, {
-                                height: 100
-                            });
-                        }
-                        if (agency.shield.data != undefined) {
-                            doc.image(agency.shield.data, 490, 15, {
-                                height: 100
-                            });
-                        }
 
-                        //Write BOLO Images based on how many images exist, to the PDF
-
-                        //Only Featured is present
-                        if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
-                            doc.image(bolo.featured.data, 170, 135, {
-                                width: 290, height: 230, align: 'center'
-                            }).moveDown(5);
-                            var onePhoto = true;
-                        }
-                        // Only Featured and Other1 are present
-                        if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
-                            doc.image(bolo.featured.data, 320, 135, {
-                                width: 270, height: 210, align: 'center'
-                            }).moveDown(5);
-
-                            doc.image(bolo.other1.data, 30, 135, {
-                                width: 270, height: 210, align: 'left'
-                            }).moveDown(5);
-                            var twoPhotos = true;
-                        }
-                        // Only Featured and Other2 are present
-                        if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
-                            doc.image(bolo.featured.data, 30, 135, {
-                                width: 270, height: 210, align: 'center'
-                            }).moveDown(5);
-
-                            doc.image(bolo.other2.data, 320, 135, {
-                                width: 270, height: 210, align: 'left'
-                            }).moveDown(5);
-                            var twoPhotos = true;
-                        }
-                        // All Images are present
-                        if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
-                            doc.image(bolo.featured.data, 228, 135, {
-                                width: 170, height: 110, align: 'center'
-                            }).moveDown(5);
-
-                            doc.image(bolo.other1.data, 40, 135, {
-                                width: 170, height: 110, align: 'left'
-                            }).moveDown(5);
-
-                            doc.image(bolo.other2.data, 415, 135, {
-                                width: 170, height: 110, align: 'right'
-                            }).moveDown(5);
-                            var threePhotos = true;
-                        }
-                    } catch (err) {
-                        errorFlag = err;
+                    //Write Agency Graphics if they exist to the PDF
+                    if (agency.watermark.data != undefined) {
+                        doc.image(agency.watermark.path, 0, 0, {
+                            fit: [800, 800]
+                        });
                     }
-                    if (errorFlag) {
-                        next(errorFlag)
-                    } else {
-                        //--------------TEXT PORTION-----------------------
+                    if (agency.logo.data != undefined) {
+                        doc.image(agency.logo.data, 15, 15, {
+                            height: 100
+                        });
+                    }
+                    if (agency.shield.data != undefined) {
+                        doc.image(agency.shield.data, 490, 15, {
+                            height: 100
+                        });
+                    }
 
-                        //Write headers and Police Department Information to the PDF Document
-                        doc.fontSize(10);
-                        doc.font('Times-Roman');
-                        doc.fillColor('red');
-                        doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 85, 15, {align: 'center'})
-                            .moveDown(0.25);
-                        doc.fillColor('black');
-                        doc.text(agency.name + " Police Department", {align: 'center'})
-                            .moveDown(0.25);
-                        doc.text(agency.address, {align: 'center'})
-                            .moveDown(0.25);
-                        doc.text(agency.city + ", " + agency.state + ", " + agency.zipcode, {align: 'center'})
-                            .moveDown(0.25);
-                        doc.text(agency.phone, {align: 'center'})
-                            .moveDown(0.25);
-                        doc.fontSize(20);
-                        doc.fillColor('red');
+                    //Write BOLO Images based on how many images exist, to the PDF
 
-                        //Write Category and BOLO status to the PDF Document
-                        doc.fontSize(23);
-                        if (bolo.status !== 'ACTIVE') {
-                            if (onePhoto) {
-                                doc.fillColor('black');
-                                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
-                                doc.fontSize(80);
-                                doc.fillColor('red');
-                                doc.text(bolo.status, 110, 210, {align: 'center'})
-                                    .moveDown();
-                            };
-                            if (twoPhotos) {
-                                doc.fillColor('black');
-                                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
-                                doc.fontSize(80);
-                                doc.fillColor('red');
-                                doc.text(bolo.status, 120, 210, {align: 'center'})
-                                    .moveDown();
-                            };
-                            if (threePhotos) {
-                                doc.fillColor('black');
-                                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
-                                doc.fontSize(80);
-                                doc.fillColor('red');
-                                doc.text(bolo.status, 120, 150, {align: 'center'})
-                                    .moveDown();
-                            };
 
-                        }
-                        else {
-                            if (onePhoto) {
-                                doc.fillColor('red');
-                                doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                                    .moveDown(11);
-                            }
-                            if (twoPhotos) {
-                                doc.fillColor('red');
-                                doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                                    .moveDown(5);
-                            }
+                    //NO Picture is present
+                    if ( (bolo.featured.data == undefined) && (bolo.other1.data == undefined) && (bolo.other2.data == undefined))
+                    {
+                        console.log("NO PIC");
+                        var noPic = "/Users/libsys/BOLO-Ver-6.0/Code/src/web/public/img/nopic.png";
+                        doc.image(noPic, 170, 135, {
+                            width: 290, height: 230, align: 'center'
+                        }).moveDown(5);
+                        var onePhoto = true;
 
-                            if (threePhotos) {
-                                doc.fillColor('red');
-                                doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                                    .moveDown();
-                            }
+                    }
 
-                        }
-                        doc.fontSize(12);
-                        doc.fillColor('black');
-                        doc.fontSize(11);
-                        doc.font('Times-Roman')
-                            .text("Bolo ID: ", 200)
-                            .moveUp()
-                            .text(bolo.id, 400)
-                            .moveDown();
+                    //Only Featured is present
+                    else if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined))
+                    {
+                        console.log("ONE PIC");
+                        doc.image(bolo.featured.data, 170, 135, {
+                            width: 290, height: 230, align: 'center'
+                        }).moveDown(5);
+                        var onePhoto = true;
+                    }
+                    // Only Featured and Other1 are present
+                    else if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
+                        console.log("TWO PICS");
+                        doc.image(bolo.featured.data, 320, 135, {
+                            width: 270, height: 210, align: 'center'
+                        }).moveDown(5);
 
-                        //Write all of the fields and details to the PDF Document
-                        for (var i = 0; i < bolo.fields.length; i++) {
-                            console.log("I am trying to print the text!");
-                            console.log("The index is: " + i + " -- At this index the element is: " + bolo.fields[i]);
+                        doc.image(bolo.other1.data, 30, 135, {
+                            width: 270, height: 210, align: 'left'
+                        }).moveDown(5);
+                        var twoPhotos = true;
+                    }
+                    // Only Featured and Other2 are present
+                    else if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
+                        console.log("TWO PICS");
+                        doc.image(bolo.featured.data, 30, 135, {
+                            width: 270, height: 210, align: 'center'
+                        }).moveDown(5);
+
+                        doc.image(bolo.other2.data, 320, 135, {
+                            width: 270, height: 210, align: 'left'
+                        }).moveDown(5);
+                        var twoPhotos = true;
+                    }
+                    // All Images are present
+                   else if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
+                        console.log("ALL PICS");
+                        doc.image(bolo.featured.data, 228, 135, {
+                            width: 170, height: 110, align: 'center'
+                        }).moveDown(5);
+
+                        doc.image(bolo.other1.data, 40, 135, {
+                            width: 170, height: 110, align: 'left'
+                        }).moveDown(5);
+
+                        doc.image(bolo.other2.data, 415, 135, {
+                            width: 170, height: 110, align: 'right'
+                        }).moveDown(5);
+                        var threePhotos = true;
+                    }
+
+                    //--------------TEXT PORTION-----------------------
+
+                    //Write headers and Police Department Information to the PDF Document
+                    doc.fontSize(10);
+                    doc.font('Times-Roman');
+                    doc.fillColor('red');
+                    doc.text("UNCLASSIFIED// FOR OFFICIAL USE ONLY// LAW ENFORCEMENT SENSITIVE", 85, 15, {align: 'center'})
+                        .moveDown(0.25);
+                    doc.fillColor('black');
+                    doc.text(agency.name + " Police Department", {align: 'center'})
+                        .moveDown(0.25);
+                    doc.text(agency.address, {align: 'center'})
+                        .moveDown(0.25);
+                    doc.text(agency.city + ", " + agency.state + ", " + agency.zipcode, {align: 'center'})
+                        .moveDown(0.25);
+                    doc.text(agency.phone, {align: 'center'})
+                        .moveDown(0.25);
+                    doc.fontSize(20);
+                    doc.fillColor('red');
+
+                    //Write Category and BOLO status to the PDF Document
+                    doc.fontSize(23);
+                    if (bolo.status !== 'ACTIVE')
+                    {
+                        if(onePhoto)
+                        {
                             doc.fillColor('black');
-                            doc.fontSize(12);
-                            doc.font('Times-Roman')
-                                .text(bolo.category.fields[i] + ": ", 200)
-                                .moveUp()
-                                .text(bolo.fields[i], 400)
+                            doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                            doc.fontSize(80);
+                            doc.fillColor('red');
+                            doc.text(bolo.status, 110, 210, {align: 'center'})
                                 .moveDown();
-
                         }
-
-                        //Write Additional Details
-                        doc.font('Times-Roman')
-                            .text(" ", 200)
-                            .moveDown();
-
-                        doc.font('Times-Bold')
-                            .text("Created: " + bolo.createdOn, 200)
-                            .moveDown();
-
-
-                        /*
-                         //For Data Analysis Recovered
-                         if(data.bolo['dateRecovered'] !== ""){
-                         doc.font('Times-Roman')
-                         .text("Date Recovered: " + data.bolo['dateRecovered'], 200)
-                         .moveDown(0.25);
-                         }
-                         if(data.bolo['timeRecovered'] !== ""){
-                         doc.font('Times-Roman')
-                         .text("Time Recovered: " + data.bolo['timeRecovered'], 200)
-                         .moveDown(0.25);
-                         }
-                         if(data.bolo['addressRecovered'] !== ""){
-                         doc.font('Times-Roman')
-                         .text("Address Recovered: " + data.bolo['addressRecovered'], 200)
-                         .moveDown(0.25);
-                         }
-                         if(data.bolo['zipCodeRecovered'] !== ""){
-                         doc.font('Times-Roman')
-                         .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 200)
-                         .moveDown(0.25);
-                         }
-                         if(data.bolo['agencyRecovered'] !== ""){
-                         doc.font('Times-Roman')
-                         .text("Agency Recovered: " + data.bolo['agencyRecovered'], 200)
-                         .moveDown();
-                         }
-                         */
-
-                        // Display Additional Information only if there is a value in it
-                        if (bolo.info !== "") {
-                            doc.font('Times-Bold')
-                                .text("Additional: ", 200)
-                                .moveDown(0.25);
-                            doc.font('Times-Roman')
-                                .text(bolo.info, {width: 281})
+                        if(twoPhotos)
+                        {
+                            doc.fillColor('black');
+                            doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                            doc.fontSize(80);
+                            doc.fillColor('red');
+                            doc.text(bolo.status, 120, 210, {align: 'center'})
+                                .moveDown();
+                        }
+                        if(threePhotos)
+                        {
+                            doc.fillColor('black');
+                            doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                            doc.fontSize(80);
+                            doc.fillColor('red');
+                            doc.text(bolo.status, 120, 150, {align: 'center'})
                                 .moveDown();
                         }
 
-                        // Display a Summary only if there is a value in it
-                        if (bolo.summary !== "") {
-                            doc.font('Times-Bold')
-                                .text("Summary: ", 200)
-                                .moveDown(0.25);
-                            doc.font('Times-Roman')
-                                .text(bolo.summary, {width: 281})
-                                .moveDown();
-                        }
-
-                        doc.font('Times-Bold')
-                            .text("This BOLO was created by: " + bolo.author.unit + " " + bolo.author.rank + " " + bolo.author.firstname + " " + bolo.author.lastname)
-                            .moveDown(0.25);
-                        doc.font('Times-Bold')
-                            .text("Please contact the agency should clarification be required.", {width: 281});
-
-                        //End Document and send it to the front end via res
-                        doc.end();
-                        res.contentType("application/pdf");
-                        doc.pipe(res);
                     }
+                    else
+                    {
+                        if(onePhoto)
+                        {
+                            doc.fillColor('red');
+                            doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+                                .moveDown(11);
+                        }
+                        if(twoPhotos)
+                        {
+                            doc.fillColor('red');
+                            doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+                                .moveDown(5);
+                        }
+
+                        if(threePhotos)
+                        {
+                            doc.fillColor('red');
+                            doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
+                                .moveDown();
+                        }
+
+                    }
+                    doc.fontSize(12);
+                    doc.fillColor('black');
+                    doc.fontSize(11);
+                    doc.font('Times-Roman')
+                        .text("Bolo ID: ", 200)
+                        .moveUp()
+                        .text(bolo.id, 400)
+                        .moveDown();
+
+                    //Write all of the fields and details to the PDF Document
+                    for (var i = 0; i < bolo.fields.length; i++) {
+                        console.log("I am trying to print the text!");
+                        console.log("The index is: " + i + " -- At this index the element is: " + bolo.fields[i]);
+                        doc.fillColor('black');
+                        doc.fontSize(12);
+                        doc.font('Times-Roman')
+                            .text(bolo.category.fields[i] + ": ", 200)
+                            .moveUp()
+                            .text(bolo.fields[i], 400)
+                            .moveDown();
+
+                    }
+
+                    //Write Additional Details
+                    doc.font('Times-Roman')
+                        .text(" ", 200)
+                        .moveDown();
+
+                    doc.font('Times-Bold')
+                        .text("Created: " + bolo.createdOn, 200)
+                        .moveDown();
+
+
+                    /*
+                     //For Data Analysis Recovered
+                     if(data.bolo['dateRecovered'] !== ""){
+                     doc.font('Times-Roman')
+                     .text("Date Recovered: " + data.bolo['dateRecovered'], 200)
+                     .moveDown(0.25);
+                     }
+                     if(data.bolo['timeRecovered'] !== ""){
+                     doc.font('Times-Roman')
+                     .text("Time Recovered: " + data.bolo['timeRecovered'], 200)
+                     .moveDown(0.25);
+                     }
+                     if(data.bolo['addressRecovered'] !== ""){
+                     doc.font('Times-Roman')
+                     .text("Address Recovered: " + data.bolo['addressRecovered'], 200)
+                     .moveDown(0.25);
+                     }
+                     if(data.bolo['zipCodeRecovered'] !== ""){
+                     doc.font('Times-Roman')
+                     .text("Zip Code Recovered: " + data.bolo['zipCodeRecovered'], 200)
+                     .moveDown(0.25);
+                     }
+                     if(data.bolo['agencyRecovered'] !== ""){
+                     doc.font('Times-Roman')
+                     .text("Agency Recovered: " + data.bolo['agencyRecovered'], 200)
+                     .moveDown();
+                     }
+                     */
+
+                    // Display Additional Information only if there is a value in it
+                    if (bolo.info !== "") {
+                        doc.font('Times-Bold')
+                            .text("Additional: ", 200)
+                            .moveDown(0.25);
+                        doc.font('Times-Roman')
+                            .text(bolo.info, {width: 281})
+                            .moveDown();
+                    }
+
+                    // Display a Summary only if there is a value in it
+                    if (bolo.summary !== "") {
+                        doc.font('Times-Bold')
+                            .text("Summary: ", 200)
+                            .moveDown(0.25);
+                        doc.font('Times-Roman')
+                            .text(bolo.summary, {width: 281})
+                            .moveDown();
+                    }
+
+                    doc.font('Times-Bold')
+                        .text("This BOLO was created by: " + bolo.author.unit + " " + bolo.author.rank + " " + bolo.author.firstname + " " + bolo.author.lastname)
+                        .moveDown(0.25);
+                    doc.font('Times-Bold')
+                        .text("Please contact the agency should clarification be required.", {width: 281});
+
+                    //End Document and send it to the front end via res
+                    doc.end();
+                    res.contentType("application/pdf");
+                    doc.pipe(res);
                 });
             }
         })

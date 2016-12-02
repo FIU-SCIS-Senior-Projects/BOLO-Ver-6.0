@@ -280,8 +280,8 @@ a.thumbnail.active {
     text-align: center;
     padding: 80px;
     transform: rotate(55deg);
-    font-size: 290px;
-    max-width: 100%;
+    font-size: 280px;
+    max-width: 90%;
     position: absolute;
     z-index: 100;
 }
