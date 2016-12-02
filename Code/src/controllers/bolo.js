@@ -161,7 +161,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
                 doc.fillColor('red');
                 doc.text(bolo.status, 110, 210, {align: 'center'})
                     .moveDown();
-            }
+            };
             if(twoPhotos)
             {
                 doc.fillColor('black');
@@ -170,7 +170,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 210, {align: 'center'})
                     .moveDown();
-            }
+            };
             if(threePhotos)
             {
                 doc.fillColor('black');
@@ -179,7 +179,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 150, {align: 'center'})
                     .moveDown();
-            }
+            };
 
         }
         else
@@ -522,13 +522,14 @@ exports.renderBoloAsPDF = function (req, res, next) {
                         var onePhoto, twoPhotos, threePhotos;
                         //Only Featured is present
                         if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
-                            doc.image(bolo.featured.data, 170, 135, {
+                            var noPic = "public/img/nopic.png";
+                            doc.image(noPic, 170, 135, {
                                 width: 290, height: 230, align: 'center'
                             }).moveDown(5);
                             onePhoto = true;
                         }
                         // Only Featured and Other1 are present
-                        if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
+                        else if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
                             doc.image(bolo.featured.data, 320, 135, {
                                 width: 270, height: 210, align: 'center'
                             }).moveDown(5);
@@ -539,7 +540,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                             twoPhotos = true;
                         }
                         // Only Featured and Other2 are present
-                        if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
+                        else if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
                             doc.image(bolo.featured.data, 30, 135, {
                                 width: 270, height: 210, align: 'center'
                             }).moveDown(5);
@@ -550,7 +551,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                             twoPhotos = true;
                         }
                         // All Images are present
-                        if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
+                        else if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
                             doc.image(bolo.featured.data, 228, 135, {
                                 width: 170, height: 110, align: 'center'
                             }).moveDown(5);
@@ -615,7 +616,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.fontSize(80);
                                 doc.fillColor('red');
                                 doc.text(bolo.status, 120, 150, {align: 'center'})
-                                    .moveDown();
+                                    .moveDown(10);
                             }
                         }
                         else {

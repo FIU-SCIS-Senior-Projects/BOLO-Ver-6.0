@@ -278,10 +278,10 @@ a.thumbnail.active {
 
 #updatedstatus {
     text-align: center;
-    padding: 80px;
+    padding: 0px;
     transform: rotate(55deg);
     font-size: 280px;
-    max-width: 90%;
+    max-width: 60%;
     position: absolute;
     z-index: 100;
 }
