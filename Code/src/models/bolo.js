@@ -105,8 +105,27 @@ module.exports.findBolosByAgencyID = function (agencyID, isConfirmed, isArchived
         .exec(callback);
 };
 
+module.exports.findIfEmailIsInBolo = function (boloID, email, callback) {
+    Bolo.find({_id: boloID, subscribers: email})
+        .exec(callback);
+};
+
+module.exports.subscribeToBOLO = function (boloId, email, callback) {
+    Bolo.findByIdAndUpdate(boloId,
+        {$push: {subscribers: email}},
+        {safe: true, upsert: true},
+        callback);
+};
+
+module.exports.unsubscribeFromBOLO = function (boloId, email, callback) {
+    Bolo.findByIdAndUpdate(boloId,
+        {$pullAll: {subscribers: [email]}},
+        callback);
+};
+
+
 module.exports.findBolosByAgencyIDs = function (agencyIDs, isConfirmed, isArchived, limit, sortBy, callback) {
-    Bolo.find( {agency: {$in: agencyIDs}, isConfirmed: isConfirmed, isArchived: isArchived})
+    Bolo.find({agency: {$in: agencyIDs}, isConfirmed: isConfirmed, isArchived: isArchived})
         .populate('agency').populate('author').populate('category')
         .limit(limit)
         .sort([[sortBy, -1]])

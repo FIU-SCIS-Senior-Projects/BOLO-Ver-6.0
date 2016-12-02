@@ -165,4 +165,4 @@ function sendUserPassResetNotification(useremail, firstname, lastname, passwordT
         'Your first time password is: ' + passwordToken  + '\n\n' +
         'Please login to the BOLO System and follow the instructions to create a new password for your account '
     });
-};
+}

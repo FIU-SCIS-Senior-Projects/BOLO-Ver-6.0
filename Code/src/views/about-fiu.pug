@@ -1,37 +1,15 @@
-extends ./layout.jade
-include ./includes/mixins.jade
+extends layout
 
-// @Author John Burke
-
-//    READ ME:
-//    This is the format laid out for you DO NOT CHANGE IT OR DEVIATE FROM IT!
-//    Alphabetical order by last name for each STUDENT and there are
-//    four places that have to be updated according to the screen size to make
-//    this fully mobile responsive for all five screen sizes. If there are four
-//    students in you group then copy and paste from the last semester and keep
-//    everyone in alphabetical order. If there are two students in your group
-//    then copy the first semester. this will provide an appropriate template
-//    for you to use.
-//
-//  Sample:
-//    div.hidden-xl.hidden-lg.hidden-md.hidden-sm.col-xs-12
-//        img( src="/img/burke.jpg" alt="", width=200)      ==> photo
-//        h4.strong Burke, John                             ==> Your name
-//        p egonz077@fiu.edu                                ==> Your email
-//        p Front end development       ==> ONE Milestone feature you worked only
-//        p Graduation 5 Aug. 2016                          ==> Graduation Data
-//        br
-//        br
 
 block jumbo
     .jumbotron
         .container
-            img#featured.img.center-block( src="/img/cec.jpg" alt="" )
+            img.img.center-block( src="/img/cec.jpg" alt="" )
 block content
     div.container
         div.row
-                br
-                br
+            br
+            br
             p For the seniors in FIU’s Department of Electrical and Computer
                 | Engineering, everything they’ve learned in four years
                 | culminates with a single project. Working together in teams,
@@ -45,10 +23,10 @@ block content
                 | graduates' success in this course will enable them to provide
                 | a significant software project that may help them land a job
                 | in the real-world.
-                br
-                br
-                br
-                br
+            br
+            br
+            br
+            br
     div.container
         div.row
             div.hidden-xs
