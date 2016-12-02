@@ -520,10 +520,17 @@ exports.renderBoloAsPDF = function (req, res, next) {
 
                         //Write BOLO Images based on how many images exist, to the PDF
                         var onePhoto, twoPhotos, threePhotos;
-                        //Only Featured is present
-                        if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
+
+                        if ((bolo.featured.data == undefined) && (bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
                             var noPic = "public/img/nopic.png";
                             doc.image(noPic, 170, 135, {
+                                width: 290, height: 230, align: 'center'
+                            }).moveDown(5);
+                            onePhoto = true;
+                        }
+                        //Only Featured is present
+                        if ((bolo.other1.data == undefined) && (bolo.other2.data == undefined)) {
+                            doc.image(bolo.featured.data, 170, 135, {
                                 width: 290, height: 230, align: 'center'
                             }).moveDown(5);
                             onePhoto = true;
