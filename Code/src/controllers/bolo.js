@@ -257,7 +257,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
 
 
  }
- */
+
 
 /**
  * Sends an email to all subscribers of a bolo

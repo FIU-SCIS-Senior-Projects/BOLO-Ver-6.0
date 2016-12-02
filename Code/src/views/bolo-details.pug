@@ -31,8 +31,12 @@ block content
         .col-xs-2
             img.img-responsive( src='/img/agency/shield/' + bolo.agency.id alt="Agency Shield" )
     .row
-        div.col-xs-12
-            h2.text-center.text-danger.strong #{bolo.status}
+        if(bolo.status !== 'ACTIVE')
+            div.col-xs-12
+                h2#updatedstatus.text-center.text-danger.strong #{bolo.status}
+        else
+            div.col-xs-12
+                h2.text-center.text-danger.strong #{bolo.category.name} -- #{bolo.status}
 
     //Render Images
     .row
