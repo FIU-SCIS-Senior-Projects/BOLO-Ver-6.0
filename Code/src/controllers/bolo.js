@@ -616,7 +616,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.fontSize(80);
                                 doc.fillColor('red');
                                 doc.text(bolo.status, 120, 150, {align: 'center'})
-                                    .moveDown(10);
+                                    .moveDown();
                             }
                         }
                         else {
