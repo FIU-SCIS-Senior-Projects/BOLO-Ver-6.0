@@ -52,7 +52,7 @@ var Schema = new mongoose.Schema({
 var Agency = module.exports = mongoose.model('agency', Schema);
 
 /**
- * Returns a list of all agencies on the database
+ * Returns a list of all agencies on the database except the null agency for the root user
  * @param callback a function where the first parameter is an error if any, and the second
  * parameter is the list of all agencies
  */

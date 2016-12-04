@@ -138,10 +138,12 @@ exports.multiUserCreate = function (req, res) {
 /**
  * Responds with a form to create a new user.
  */
-exports.getCreateForm = function (req, res) {
+exports.getCreateForm = function (req, res, next) {
     Agency.findAllAgencies(function (err, listOfAgencies) {
-        if (err) throw err;
-        res.render('admin-user-create', {agencies: listOfAgencies})
+        if (err) next(err);
+        else {
+            res.render('admin-user-create', {agencies: listOfAgencies})
+        }
     });
 };
 

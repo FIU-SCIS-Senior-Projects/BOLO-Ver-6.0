@@ -10,16 +10,16 @@ block admin-content
         +input_text( "username", "Username ", "", true, user1)
         +input_text( "fname", "First Name", "", true, fname1 )
         +input_text( "lname", "Last Name", "", true,  lname1 )
-        //+input_text( "password", "Password", "", true,  "", "password" )
-        //+input_text( "confirm", "Repeat Password", "", true,  "", "password" )
+
         div#agency
             -
                 var agencyNames = ['Select an Agency']
                 for (var num in agencies)
-                agencyNames.push(agencies[num].name);
-            if (userTier === 'ROOT')
-                +select_options("agency", "Agency", agencyNames, true, agency1)
-            else if (userTier === 'ADMINISTRATOR')
+                    if (userTier === 'ROOT' ||
+                    (userTier === 'ADMINISTRATOR' && userAgency.name === agencies[num].name))
+                        agencyNames.push(agencies[num].name);
+
+            +select_options("agency", "Agency", agencyNames, true, agency1)
 
         .form-group
             label.control-label( for='email' ) Email
@@ -39,9 +39,12 @@ block admin-content
                     emailDomain.text('N/A');
                 }
             }
-
-            emailDomain.ready(changeEmailDomain)
-            agencySelector.change(changeEmailDomain)
+            emailDomain.ready(function() {
+                changeEmailDomain();
+                });
+            agencySelector.change(function () {
+                changeEmailDomain();
+            });
         if (userTier === 'ROOT')
             +select_options("role", "Role", ['OFFICER', 'SUPERVISOR', 'ADMINISTRATOR', 'ROOT'], true, role1)
         else
