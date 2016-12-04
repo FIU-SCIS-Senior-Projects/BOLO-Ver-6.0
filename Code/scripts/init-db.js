@@ -23,6 +23,7 @@ var rootUser = new User({
     firstname: 'N/A',
     lastname: 'N/A',
     password: config.rootPasswd,
+    passwordDate: new Date(8640000000000000), // Latest possible date
     email: 'null@null.com',
     tier: 'ROOT',
     badge: '0',
@@ -37,7 +38,7 @@ nullAgency.save(function (err, agency) {
     } else {
         console.log('Null Agency has been registered: ' + agency);
         rootUser.agency = agency._id;
-        User.createUser(rootUser, function (err, user) {
+        rootUser.save(function (err, user) {
             if (err) {
                 console.log('root user could not be saved: ' + err);
                 process.exit(2);
