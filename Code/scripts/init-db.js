@@ -27,8 +27,7 @@ var rootUser = new User({
     tier: 'ROOT',
     badge: '0',
     unit: 'N/A',
-    rank: 'N/A',
-    agency: agency._id
+    rank: 'N/A'
 });
 
 nullAgency.save(function (err, agency) {
