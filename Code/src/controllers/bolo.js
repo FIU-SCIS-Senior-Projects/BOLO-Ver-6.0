@@ -43,16 +43,15 @@ function getErrorMessage(err) {
 /**
  * Sends an email to all subscribers of a bolo
  *
- * @param boloID a bolos id
+ * @param bolo
+ * @param template
+ * @param creatorEmail
  */
-function sendBoloNotificationEmail(bolo, template, creatorEmail)
-{
+function sendBoloNotificationEmail(bolo, template, creatorEmail) {
     console.log("THIS THE BOLO WE RECEIVED: " + bolo);
 
 
-
-    Bolo.findBoloByID(bolo.id, function (err, boloToSend)
-    {
+    Bolo.findBoloByID(bolo.id, function (err, boloToSend) {
         if (err) throw err;
         console.log("THIS THE BOLO WE ARE CONVERTING: " + boloToSend);
         var doc = new PDFDocument();
@@ -92,6 +91,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
             var onePhoto = true;
         }
         // Only Featured and Other1 are present
+        var twoPhotos;
         if ((bolo.other1.data != undefined) && (bolo.other2.data == undefined)) {
             doc.image(bolo.featured.data, 320, 135, {
                 width: 270, height: 210, align: 'center'
@@ -100,7 +100,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
             doc.image(bolo.other1.data, 30, 135, {
                 width: 270, height: 210, align: 'left'
             }).moveDown(5);
-            var twoPhotos = true;
+            twoPhotos = true;
         }
         // Only Featured and Other2 are present
         if ((bolo.other2.data != undefined) && (bolo.other1.data == undefined)) {
@@ -111,7 +111,7 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
             doc.image(bolo.other2.data, 320, 135, {
                 width: 270, height: 210, align: 'left'
             }).moveDown(5);
-            var twoPhotos = true;
+            twoPhotos = true;
         }
         // All Images are present
         if ((bolo.other1.data != undefined) && (bolo.other2.data != undefined)) {
@@ -151,39 +151,33 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
 
         //Write Category and BOLO status to the PDF Document
         doc.fontSize(23);
-        if (bolo.status !== 'ACTIVE')
-        {
-            if(onePhoto)
-            {
+        if (bolo.status !== 'ACTIVE') {
+            if (onePhoto) {
                 doc.fillColor('black');
-                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                doc.text(bolo.category.name, 85, 100, {align: 'center'}); //original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 110, 210, {align: 'center'})
                     .moveDown();
-            };
-            if(twoPhotos)
-            {
+            }
+            if (twoPhotos) {
                 doc.fillColor('black');
-                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                doc.text(bolo.category.name, 85, 100, {align: 'center'}); //original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 210, {align: 'center'})
                     .moveDown();
-            };
-            if(threePhotos)
-            {
+            }
+            if (threePhotos) {
                 doc.fillColor('black');
-                doc.text(bolo.category.name, 85, 100, {align: 'center'})//original 100, 140
+                doc.text(bolo.category.name, 85, 100, {align: 'center'}); //original 100, 140
                 doc.fontSize(80);
                 doc.fillColor('red');
                 doc.text(bolo.status, 120, 150, {align: 'center'})
                     .moveDown();
-            };
-
+            }
         }
-        else
-        {
+        else {
             if (onePhoto) {
                 doc.fillColor('red');
                 doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
@@ -209,55 +203,46 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail)
         }
 
 
-        User.findAllUsers( function (err, users)
-        {
-            /*
-             var sendTo = function()
-             {
-             for (var i = 0; i < users.length; i++)
-             {
-             users.map(users.email);
-             }
-             };
+        User.findAllUsers(function (err, users) {
+            if (err) {
+                console.log("Error finding all users...\n" + err);
+            } else {
+                var tmp = config.email.template_path + '/' + template + '.pug';
+                var tdata = {
+                    'bolo': bolo,
+                    'app_url': config.appURL
+                };
 
-             console.log("LIST OF SENDESS: " + sendTo);
-             */
-            var tmp = config.email.template_path + '/' + template + '.pug';
-            var tdata = {
-                'bolo': bolo,
-                'app_url': config.appURL
-            };
+                // todo check if this is async
+                var html = jade.renderFile(tmp, tdata);
 
-            // todo check if this is async
-            var html = jade.renderFile(tmp, tdata);
-
-            console.log("SENDING EMAIL SUCCESSFULLY");
-            emailService.send({
-                'to': creatorEmail,
-                'bbc' : 'bzamo007@fiu.edu',
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: ' + boloToSend.category.name,
-                'html': html,
-                'files': [{
-                    filename: tdata.bolo.id + '.pdf', // required only if file.content is used.
-                    contentType: 'application/pdf', // optional
-                    content: doc
-                }]
-            })
-                .catch(function (error) {
-                    console.error(
-                        'Unknown error occurred while sending notifications to users' +
-                        'subscribed to agency id %s for BOLO %s\n %s',
-                        bolo.agency, bolo.id, error.message
-                    );
+                console.log("SENDING EMAIL SUCCESSFULLY");
+                emailService.send({
+                    'to': creatorEmail,
+                    'bbc': 'bzamo007@fiu.edu',
+                    'from': config.email.from,
+                    'fromName': config.email.fromName,
+                    'subject': 'BOLO Alert: ' + boloToSend.category.name,
+                    'html': html,
+                    'files': [{
+                        filename: tdata.bolo.id + '.pdf', // required only if file.content is used.
+                        contentType: 'application/pdf', // optional
+                        content: doc
+                    }]
                 })
+                    .catch(function (error) {
+                        console.error(
+                            'Unknown error occurred while sending notifications to users' +
+                            'subscribed to agency id %s for BOLO %s\n %s',
+                            bolo.agency, bolo.id, error.message
+                        );
+                    })
+            }
         })
     })
 
 
- }
-
+}
 
 /**
  * Sends an email to all subscribers of a bolo
@@ -608,7 +593,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.fontSize(80);
                                 doc.fillColor('red');
                                 doc.text(bolo.status, 110, 210, {align: 'center'})
-                                    .moveDown();
+                                    .moveDown(11);
                             }
                             if (twoPhotos) {
                                 doc.fillColor('black');
@@ -616,7 +601,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.fontSize(80);
                                 doc.fillColor('red');
                                 doc.text(bolo.status, 120, 210, {align: 'center'})
-                                    .moveDown();
+                                    .moveDown(10);
                             }
                             if (threePhotos) {
                                 doc.fillColor('black');
@@ -624,7 +609,7 @@ exports.renderBoloAsPDF = function (req, res, next) {
                                 doc.fontSize(80);
                                 doc.fillColor('red');
                                 doc.text(bolo.status, 120, 150, {align: 'center'})
-                                    .moveDown();
+                                    .moveDown(5);
                             }
                         }
                         else {
@@ -636,13 +621,13 @@ exports.renderBoloAsPDF = function (req, res, next) {
                             if (twoPhotos) {
                                 doc.fillColor('red');
                                 doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                                    .moveDown(5);
+                                    .moveDown(10);
                             }
 
                             if (threePhotos) {
                                 doc.fillColor('red');
                                 doc.text(bolo.category.name + " -- " + bolo.status, 85, 100, {align: 'center'})//original 100, 140
-                                    .moveDown();
+                                    .moveDown(5);
                             }
 
                         }
