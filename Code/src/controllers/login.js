@@ -151,7 +151,7 @@ var sendAccountLockedEmailToAdmins = function (account) {
  * Render login page if not logged in
  */
 exports.getLogIn = function (req, res) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         req.flash('error_msg', 'Already logged in as *' + req.user.username + '*');
         res.redirect('/bolo');
     }
@@ -190,13 +190,15 @@ passport.use(new LocalStrategy(function (username, password, done) {
         User.comparePassword(password, user.password, function (err1, isValid) {
             if (err1) {
                 console.log('comparePassword Error: ' + err1);
-                return done(null, false, {message: err1});
+                return done(null, false, {message: 'Password Error! ' +
+                    'Contact your Administrator if this messages persists'});
             }
             if (!isValid) {
                 console.log('Password is incorrect');
                 return done(null, false, {message: 'Password is incorrect'});
             }
             //If all checks pass, authorize user for the current session
+            console.log("Test");
             return done(null, user);
         });
     })
@@ -209,7 +211,6 @@ exports.attemptLogIn = (passport.authenticate(
     'local', {
         successRedirect: '/password',
         failureRedirect: '/login',
-        successFlash: 'Welcome ',
         failureFlash: true
     }
 ));

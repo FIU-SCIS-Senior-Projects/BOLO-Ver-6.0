@@ -89,8 +89,7 @@ app.use(validator({
         },
         isCorrectPasswordFormat: function (value){
             var reg = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&().^\\[\\]\\-_])[A-Za-z\\d$@$!%*?&().^\\[\\]\\-_]{10,128}");
-            console.log("THIS IS THE PASSWORD I GOT: " + value);
-            console.log("THe password is valid: " + reg.test(value));
+
             return reg.test(value);
         }
     }
@@ -145,12 +144,13 @@ app.use(passport.session());
  */
 app.use(flash());
 app.use(function (req, res, next) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         res.locals.userLoggedIn = true;
         res.locals.userID = req.user._id;
         res.locals.userName = req.user.username;
         res.locals.userTier = req.user.tier;
         res.locals.userAgency = req.user.agency;
+
     }
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
@@ -203,8 +203,10 @@ app.use(function (req, res, next) {
 app.get('/', function (req, res) {
     res.redirect('/bolo');
 });
+
 app.use('/', mainRoutes.auth);
 app.use('/aboutUs', mainRoutes.aboutUs);
+app.use('/password', mainRoutes.password);
 
 app.use(function (req, res, next) {
     var login_redirect = null;
@@ -231,8 +233,11 @@ app.use(function (req, res, next) {
         res.redirect('/login');
     }
 });
+
+
+
+
 app.use('/img', mainRoutes.img);
-app.use('/password', mainRoutes.password);
 app.use('/bolo', mainRoutes.bolo);
 app.use('/account', mainRoutes.account);
 app.use('/userGuide', mainRoutes.userGuide);

@@ -34,6 +34,36 @@ exports.getAgencyWatermark = function (req, res, next) {
     });
 };
 
+exports.removeAgencyLogo = function (req, res, next) {
+    Agency.removeLogo(req.params.id, function (err, agency) {
+        if (err) next(err);
+        else {
+            req.flash('success_msg', 'Logo has been removed');
+            res.redirect('/admin/agency/edit/' + req.params.id);
+        }
+    });
+};
+
+exports.removeAgencyShield = function (req, res, next) {
+    Agency.removeShield(req.params.id, function (err, agency) {
+        if (err) next(err);
+        else {
+            req.flash('success_msg', 'Logo has been removed');
+            res.redirect('/admin/agency/edit/' + req.params.id);
+        }
+    });
+};
+
+exports.removeAgencyWatermark = function (req, res, next) {
+    Agency.removeWatermark(req.params.id, function (err, agency) {
+        if (err) next(err);
+        else {
+            req.flash('success_msg', 'Watermark has been removed');
+            res.redirect('/admin/agency/edit/' + req.params.id);
+        }
+    });
+};
+
 exports.getBoloFeatured = function (req, res, next) {
     Bolo.findBoloByID(req.params.id, function (err, bolo) {
         if (err) next(err);

@@ -74,6 +74,24 @@ module.exports.findAgencyByName = function (agencyName, callback) {
     Agency.findOne({name: agencyName}, callback);
 };
 
+module.exports.removeLogo = function (id, callback) {
+    Agency.findOneAndUpdate({_id: id}, {
+        logo: {}
+    }, callback);
+};
+
+module.exports.removeShield = function (id, callback) {
+    Agency.findOneAndUpdate({_id: id}, {
+        shield: {}
+    }, callback);
+};
+
+module.exports.removeWatermark = function (id, callback) {
+    Agency.findOneAndUpdate({_id: id}, {
+        watermark: {}
+    }, callback);
+};
+
 module.exports.findAgencyByID = function (id, callback) {
     Agency.findById(id, callback);
 };
