@@ -20,24 +20,12 @@ exports.listCategories = function (req, res) {
     })
 };
 
-exports.getCategoryForm = function (req, res)
-{
+exports.getCategoryForm = function (req, res) {
     res.render('admin-category-create');
 };
 
-exports.getCategoryPreview = function (req, res)
-{
-    var prevForm = {
-        name1: req.body.name
-    };
-    res.render('admin-category-preview');
-
-
-};
-
 exports.getCategoryDetails = function (req, res) {
-    Category.findCategoryByID(req.params.id, function (err, category)
-    {
+    Category.findCategoryByID(req.params.id, function (err, category) {
 
         if (err) {
             req.flash('error_msg', 'Could not get category details');
@@ -74,15 +62,12 @@ exports.createNewCategory = function (req, res) {
             fields: req.body.fields
         });
         //IF they are previewing then render the Preview
-        if(req.body.option=== "preview")
-        {
+        if (req.body.option === "preview") {
             res.render('admin-category-preview', {category: newCategory});
         }
         //They are submitting and want to create a new category. A new category is created.
-        else
-        {
-            Category.createCategory(newCategory, function (err, category)
-            {
+        else {
+            Category.createCategory(newCategory, function (err, category) {
                 if (err) {
                     console.log('Save Category has failed');
                     prevForm.errors = getErrorMessage(err);
@@ -97,11 +82,9 @@ exports.createNewCategory = function (req, res) {
     }
 };
 
-exports.getEditCategoryForm = function (req, res)
-{
+exports.getEditCategoryForm = function (req, res) {
 
-    Category.findCategoryByID(req.params.id, function (err, category)
-    {
+    Category.findCategoryByID(req.params.id, function (err, category) {
 
         if (err) {
             req.flash('error_msg', 'Could not get category details');
@@ -114,7 +97,8 @@ exports.getEditCategoryForm = function (req, res)
     });
 
 };
-exports.postEditCategory = function (req, res){
+
+exports.postEditCategory = function (req, res) {
     var prevForm = {
         name1: req.body.name
     };
@@ -131,17 +115,16 @@ exports.postEditCategory = function (req, res){
         res.render('admin-category-create', prevForm);
     }
 
-    else{
+    else {
         Category.findCategoryByID(req.params.id, function (err, category) {
             if (err) throw err;
             console.log("I FOUND THE CATEGORY");
             //Update the category
             if (req.body.name) category.name = req.body.name;
-            if (req.body.fields) category.fields= req.body.fields;
+            if (req.body.fields) category.fields = req.body.fields;
 
             //IF they are previewing then render then Preview
-            if(req.body.option=== "preview")
-            {
+            if (req.body.option === "preview") {
                 res.render('admin-category-preview', {category: category});
             }
             //They are submitting and want to update the category. the category is saved.
@@ -163,6 +146,7 @@ exports.postEditCategory = function (req, res){
 
 
 };
+
 exports.removeCategory = function (req, res) {
 
 };
