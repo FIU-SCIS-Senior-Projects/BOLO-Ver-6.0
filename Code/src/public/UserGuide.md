@@ -1,7 +1,1 @@
-#User Guide
-
-##Officers
-
-##Supervisors
-
-##Administrators
+#Welcome to the User Guide

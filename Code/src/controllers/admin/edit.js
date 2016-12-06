@@ -36,13 +36,32 @@ exports.saveAboutUs = function (req, res) {
 };
 
 exports.getLoginPageForm = function (req, res) {
-    req.flash('error_msg', 'Page is not yet ready');
-    res.redirect('/admin');
+    fs.readFile('./public/Login.md', function (err, data) {
+        if (err) {
+            console.log(err);
+            res.render('admin-edit-login',
+                {errors: [{msg: 'Error! Login.md could not be read'}]});
+        } else {
+            console.log('Login is being read');
+            res.render('admin-edit-Login', {markdown: data.toString()});
+        }
+    });
 };
 
 exports.saveLoginPage = function (req, res) {
-    req.flash('error_msg', 'Page is not yet ready');
-    res.redirect('/admin');
+    var newMarkdown = req.body.in;
+    console.log('Writing to system: ' + newMarkdown);
+    fs.writeFile('./public/Login.md', newMarkdown, function (err) {
+        if (err) {
+            console.log(err);
+            req.flash('The file did not save...', err);
+            res.render('admin-edit-login', {markdown: newMarkdown});
+        } else {
+            console.log('Login has been over-written');
+            req.flash('success_msg', 'Changes are saved');
+            res.redirect('/admin/edit/login');
+        }
+    })
 };
 
 exports.getUserGuideForm = function (req, res) {

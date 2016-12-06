@@ -4,15 +4,11 @@ include includes/mixins
 block jumbo
     .jumbotron
         .container
-            img#featured.img.center-block(src="/img/chiefsofpolice.png" alt="", style="height:200px;")
-            p(align='center') User's Guide
-            a.btn.btn-default(href='/userGuide/pdf' target="_blank") Generate PDF
-                |&nbsp;
-            br
+            h3 User's Guide
 
 block content
     .container
-        .row
+        .row.text-center
             != md(text)
 
     if (userTier === 'ROOT')
@@ -26,7 +22,7 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;6) Select new agency shield (required)
         P &nbsp;&nbsp;&nbsp;&nbsp;7) Enter a 'Water  Mark' image (optional)
         P &nbsp;&nbsp;&nbsp;&nbsp;8) Click 'Submit'
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Up date an Angency * *
+        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Up date an Agency * *
         P &nbsp;&nbsp;&nbsp;&nbsp;3) Click on the 'Blue Asterisk' to the right on the agency
         P &nbsp;&nbsp;&nbsp;&nbsp;4) Enter or Modify any fields required
         P &nbsp;&nbsp;&nbsp;&nbsp;5) Enter or Update 'Logo' image
@@ -98,45 +94,20 @@ block content
 
     if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT' || userTier === 'OFFICER')
         h3.strong(style='color:030b2f;') Create a BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;Click 'Create' and Select Auto, Boat or General BOLO.
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Select Auto BOLO * *
+        p &nbsp;&nbsp;&nbsp;&nbsp;Click 'Create'
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Enter the reported time and date (required)
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Fill in additional fields
+        p &nbsp;&nbsp;&nbsp;&nbsp;2) Fill in the category and the fields that populate
         p &nbsp;&nbsp;&nbsp;&nbsp;3) Upload available images
         p &nbsp;&nbsp;&nbsp;&nbsp;4) Add a video link (if available)
         p &nbsp;&nbsp;&nbsp;&nbsp;5) FIll in the summery.
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) Click the 'Preview' Button to make sure you have added everything
+        p &nbsp;&nbsp;&nbsp;&nbsp;6) *Optional* Click the 'Preview' Button to make sure you have added everything
         p &nbsp;&nbsp;&nbsp;&nbsp;7) Click 'Back to Create BOLO' to go back to the BOLO
         p &nbsp;&nbsp;&nbsp;&nbsp;8) Repeat Steps 2 - 7 until all information is complete
         p &nbsp;&nbsp;&nbsp;&nbsp;9) Click 'Submit' to submit your BOLO
         p &nbsp;&nbsp;&nbsp;&nbsp;10) Goto to your registered email and click on the confirmation link
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Select BOAT * *
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Enter the reported time and date (required)
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Fill in additional fields
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Fill in propulsion and trailer details
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Upload available images
-        p &nbsp;&nbsp;&nbsp;&nbsp;5) Add a video link (if available)
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) FIll in the summery
-        p &nbsp;&nbsp;&nbsp;&nbsp;7) Click the 'Preview' Button to make sure you have added everything
-        p &nbsp;&nbsp;&nbsp;&nbsp;8) Click 'Back to Create BOLO' to go back to the BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;9) Repeat Steps 2 - 7 until all information is complete
-        p &nbsp;&nbsp;&nbsp;&nbsp;10) Click 'Submit' to submit your BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;11) Goto to your registered email and click on the confirmation link
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Select General BOLO * *
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Enter the reported time and date (required)
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select a category (required)
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Fill in additional fields
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Upload available images
-        p &nbsp;&nbsp;&nbsp;&nbsp;5) Add a video link (if available)
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) FIll in the summery
-        p &nbsp;&nbsp;&nbsp;&nbsp;7) Click the 'Preview' Button to make sure you have added everything
-        p &nbsp;&nbsp;&nbsp;&nbsp;8) Click 'Back to Create BOLO' to go back to the BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;9) Repeat Steps 2 - 7 until all information is complete
-        p &nbsp;&nbsp;&nbsp;&nbsp;10) Click 'Submit' to submit your BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;11) Goto to your registered email and click on the confirmation link
         br
 
-        h3.strong(style='color:030b2f;') Edit a BLOL
+        h3.strong(style='color:030b2f;') Edit a BOLO
         P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * You can only edit your BOLOs * *
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Edit'
         p &nbsp;&nbsp;&nbsp;&nbsp;2) Select any field you want to edit
@@ -174,8 +145,7 @@ block content
         h3.strong(style='color:030b2f;') Filter by Agency
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Select Agency'
         p &nbsp;&nbsp;&nbsp;&nbsp;2) Select one or more agencies
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Click 'Submit'
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Results BOLOs will display
+        p &nbsp;&nbsp;&nbsp;&nbsp;3) Results BOLOs will display
         br
 
     // print for officer

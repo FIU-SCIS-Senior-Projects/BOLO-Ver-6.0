@@ -1,13 +1,14 @@
 'use strict';
 
+var fs = require('fs');
 var crypto = require('crypto');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/user');
 var Agency = require('../models/agency');
 var password = require('../controllers/resetPassword');
-var passwordUtil = require('./../lib/password-util');
 var config = require('../config');
+var md = require('node-markdown').Markdown;
 
 var emailService = require('../services/email-service');
 
@@ -156,7 +157,15 @@ exports.getLogIn = function (req, res) {
         res.redirect('/bolo');
     }
     else {
-        res.render('login');
+        fs.readFile(__dirname + '/../public/Login.md', function (err, data) {
+            if (err) {
+                console.log('Login.md could not be read...\n' + err.stack);
+                res.render('login', {md: md, text: 'Welcome'});
+            } else {
+                console.log('Login.md is being read');
+                res.render('login', {md: md, text: data.toString()});
+            }
+        });
     }
 };
 

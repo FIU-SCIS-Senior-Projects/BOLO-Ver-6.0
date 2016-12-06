@@ -138,6 +138,15 @@ input[type="file"] {
     display: block;
 }
 
+/* For the pictures in the about us page */
+.aboutUsPicture {
+    object-fit: cover;
+    width: 300px;
+    height: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .thumbnail {
     border: solid #cccccc 2px;
     word-wrap: break-word;
@@ -278,7 +287,7 @@ a.thumbnail.active {
 
 #updatedstatus {
     text-align: center;
-    padding: 0px;
+    padding: 0;
     transform: rotate(55deg);
     font-size: 280px;
     max-width: 60%;

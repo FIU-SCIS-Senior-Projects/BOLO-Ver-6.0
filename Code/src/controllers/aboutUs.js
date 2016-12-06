@@ -6,32 +6,12 @@ var fs = require('fs');
 var md = require('node-markdown').Markdown;
 
 /**
- * This function is to display the MDCACP about page
- */
-exports.getAboutMDCACP = function (req, res) {
-    res.render('about-MDCACP');
-};
-
-/**
  * This function is to display the AboutUsFIU page.
  */
-exports.getAboutUsFIU = function (req, res) {
-    res.render('about-fiu');
-};
-
-/**
- * This function is to display the AboutIBM page.
- */
-exports.getAboutUsIBM = function (req, res) {
-    res.render('about-ibm');
-};
-
-exports.getAboutUs = function (req, res) {
+exports.getAboutUs = function (req, res, next) {
     fs.readFile(__dirname + '/../public/AboutUs.md', function (err, data) {
-        if (err) {
-            throw err;
-        } else {
-            console.log('AboutUs.md is being read');
+        if (err) next(err);
+        else {
             res.render('about', {md: md, text: data.toString()});
         }
     });

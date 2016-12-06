@@ -2,14 +2,9 @@ extends layout
 
 block jumbo
     .jumbotron
-        .container(style="display:flex; justify-content: center;")
-            div
-                div(style="display: flex; justify-content: center;")
-                    img(src= "/img/chiefsofpolice.png", style="height:200px;")
-                h1(style="text-align: center;") BOLO
-                p.text-center BOLO Creator
-                p.strong Situational Awareness Multi-Jurisdictional Resource
-
+        .container
+            div.text-center
+                != md(text)
 block content
     .container
         noscript
