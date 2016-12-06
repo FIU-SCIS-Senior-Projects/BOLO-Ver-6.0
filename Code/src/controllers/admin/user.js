@@ -150,7 +150,7 @@ exports.getCreateForm = function (req, res, next) {
 /**
  * Process data to create a user, respond with the result.
  */
-exports.postCreateForm = function (req, res) {
+exports.postCreateForm = function (req, res, next) {
 
     //Holds previously entered form data
     var prevForm = {
@@ -228,7 +228,7 @@ exports.postCreateForm = function (req, res) {
             User.createUser(newUser, function (err, user) {
                 if (err) {
                     Agency.findAllAgencies(function (err1, listOfAgencies) {
-                        if (err1) throw err1;
+                        if (err1) next (err1);
                         else {
                             console.log(err);
                             var listOfAgencyNames = [];

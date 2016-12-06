@@ -49,8 +49,6 @@ function getErrorMessage(err) {
  */
 function sendBoloNotificationEmail(bolo, template, creatorEmail) {
     console.log("THIS THE BOLO WE RECEIVED: " + bolo);
-
-
     Bolo.findBoloByID(bolo.id, function (err, boloToSend) {
         if (err) throw err;
         console.log("THIS THE BOLO WE ARE CONVERTING: " + boloToSend);
@@ -240,8 +238,6 @@ function sendBoloNotificationEmail(bolo, template, creatorEmail) {
             }
         })
     })
-
-
 }
 
 /**
@@ -443,6 +439,7 @@ exports.subscribeToBOLO = function (req, res, next) {
         }
     });
 };
+
 exports.unsubscribeFromBOLO = function (req, res, next) {
     Bolo.unsubscribeFromBOLO(req.params.id, req.user.email, function (err) {
         if (err) {
@@ -1087,11 +1084,7 @@ exports.postEditBolo = function (req, res, next) {
  * List archived bolos
  */
 exports.renderArchivedBolos = function (req, res) {
-    if (req.user.tier === 'ROOT') {
-        res.render('bolo-archive');
-    } else {
-        res.render('unauthorized');
-    }
+    res.render('bolo-archive');
 };
 
 /**
