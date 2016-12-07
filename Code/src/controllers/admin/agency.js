@@ -43,10 +43,12 @@ exports.listAgencies = function (req, res) {
 /**
  * Gets the details of an agency
  */
-exports.getAgencyDetails = function (req, res) {
+exports.getAgencyDetails = function (req, res, next) {
     Agency.findAgencyByID(req.params.id, function (err, agency) {
-        if (err) throw err;
-        res.render('admin-agency-details', {agency: agency});
+        if (err) next(err);
+        else {
+            res.render('admin-agency-details', {agency: agency});
+        }
     });
 };
 

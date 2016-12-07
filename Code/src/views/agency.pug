@@ -22,7 +22,7 @@ block content
                 tbody
                     for agency in agencies
                         tr
-                            td: a( href='/admin/agency/' + agency.id ) #{agency.name}
+                            td: a( href='/agency/' + agency.id ) #{agency.name}
                             td.hidden-xs #{agency.address}
                             td  #{agency.city}
                             td.hidden-sm.hidden-xs  #{agency.zipcode}

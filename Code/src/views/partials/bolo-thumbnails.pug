@@ -48,7 +48,7 @@ for bolo in bolos
                     .pull-left
                         a.btn.btn-primary( href="/bolo/" + bolo.id role="button" ) View
             else
-                if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR' )
+                if (userTier === 'ROOT' || userTier === 'ADMINISTRATOR' || (userTier === 'SUPERVISOR' && userName === bolo.author.username && userAgency.name === bolo.agency.name))
                     .pull-left
                         a.btn.btn-info( href="/bolo/edit/" + bolo.id role="button" )
                             | Edit
@@ -59,7 +59,14 @@ for bolo in bolos
                         form( action= '/bolo/archive/' + bolo.id method="post" )
                             button.btn.btn-warning( type='submit' onclick="return confirm('Are you sure you want to archive this bolo?')")
                                 | Archive
-
+                else if (userTier === 'SUPERVISOR' && userAgency.name === bolo.agency.name)
+                    .pull-left
+                        a.btn.btn-primary( href="/bolo/" + bolo.id role="button" )
+                            | Details
+                    .pull-right
+                        form( action= '/bolo/archive/' + bolo.id method="post" )
+                            button.btn.btn-warning( type='submit' onclick="return confirm('Are you sure you want to archive this bolo?')")
+                                | Archive
                 else if (userName === bolo.author.username )
                     .pull-left
                         a.btn.btn-info( href="/bolo/edit/" + bolo.id role="button" )

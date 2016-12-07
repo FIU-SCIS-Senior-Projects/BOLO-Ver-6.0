@@ -92,28 +92,28 @@ block content
         P &nbsp;&nbsp;&nbsp;&nbsp;5) Click 'Submit'
         br
 
-    if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT' || userTier === 'OFFICER')
-        h3.strong(style='color:030b2f;') Create a BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;Click 'Create'
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Enter the reported time and date (required)
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Fill in the category and the fields that populate
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Upload available images
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Add a video link (if available)
-        p &nbsp;&nbsp;&nbsp;&nbsp;5) FIll in the summery.
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) *Optional* Click the 'Preview' Button to make sure you have added everything
-        p &nbsp;&nbsp;&nbsp;&nbsp;7) Click 'Back to Create BOLO' to go back to the BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;8) Repeat Steps 2 - 7 until all information is complete
-        p &nbsp;&nbsp;&nbsp;&nbsp;9) Click 'Submit' to submit your BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;10) Goto to your registered email and click on the confirmation link
-        br
 
-        h3.strong(style='color:030b2f;') Edit a BOLO
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * You can only edit your BOLOs * *
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Edit'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select any field you want to edit
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Enter any information required
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Submit'
-        br
+    h3.strong(style='color:030b2f;') Create a BOLO
+    p &nbsp;&nbsp;&nbsp;&nbsp;Click 'Create'
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Enter the reported time and date (required)
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Fill in the category and the fields that populate
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Upload available images
+    p &nbsp;&nbsp;&nbsp;&nbsp;4) Add a video link (if available)
+    p &nbsp;&nbsp;&nbsp;&nbsp;5) FIll in the summery.
+    p &nbsp;&nbsp;&nbsp;&nbsp;6) *Optional* Click the 'Preview' Button to make sure you have added everything
+    p &nbsp;&nbsp;&nbsp;&nbsp;7) Click 'Back to Create BOLO' to go back to the BOLO
+    p &nbsp;&nbsp;&nbsp;&nbsp;8) Repeat Steps 2 - 7 until all information is complete
+    p &nbsp;&nbsp;&nbsp;&nbsp;9) Click 'Submit' to submit your BOLO
+    p &nbsp;&nbsp;&nbsp;&nbsp;10) Goto to your registered email and click on the confirmation link
+    br
+
+    h3.strong(style='color:030b2f;') Edit a BOLO
+    P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * You can only edit your BOLOs * *
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Edit'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Select any field you want to edit
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Enter any information required
+    p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Submit'
+    br
 
     if (userTier === 'OFFICER' || userTier === 'SUPERVISOR')
         h3.strong(style='color:030b2f;') View Details of a BOLO
@@ -133,25 +133,27 @@ block content
         p &nbsp;&nbsp;&nbsp;&nbsp;6) Click 'Back' to go back to the BOLO details
         br
 
-        h3.strong(style='color:030b2f;') Filter by (Me)
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Filter By'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select filter:
-        p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* My BOLO
-        p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* My Agency
-        p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* All BOLOs
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Results BOLOs will display
-        br
+    h3.strong(style='color:030b2f;') Filter by (Me)
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Filter By'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Select filter:
+    p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* My BOLO
+    p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* My Agency
+    p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* All BOLOs
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Results BOLOs will display
+    br
 
-        h3.strong(style='color:030b2f;') Filter by Agency
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Select Agency'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select one or more agencies
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Results BOLOs will display
-        br
+    h3.strong(style='color:030b2f;') Filter by Agency
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Select Agency'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Select one or more agencies
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Results BOLOs will display
+    br
 
-    // print for officer
+    if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT')
+        h3.strong(style='color:030b2f;') Archive BOLO
+
     if (userTier === 'OFFICER' || userTier === 'SUPERVISOR')
         h3.strong(style='color:030b2f;') Archive
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * having access
+        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* * Having access
             | to view archived BOLOs might assist you are looking for someone
             | who fits the description of another crime. * *
         p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Archive'
@@ -188,40 +190,40 @@ block content
         p &nbsp;&nbsp;&nbsp;&nbsp;Send the BOLO to the archive files
         br
 
-    if (userTier === 'SUPERVISOR' || userTier === 'ADMINISTRATOR' || userTier === 'ROOT' || userTier === 'OFFICER')
-        h3.strong(style='color:030b2f;') Agency Directory
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Agency Directory' to view a list
-            | of partnering agencies.
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select an agency by clicking their name
-        p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* View contact information
-        p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Verify an agency's 'Logo' and 'Shield
-        br
 
-        h3.strong(style='color:030b2f;') Search BOLO by field(s)
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Search'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Select any field(s) you wish to search.
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Enter information value of field(s).
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* *Wild card search
-            | is for something you can not search with an optional search * *
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Search'
-        br
+    h3.strong(style='color:030b2f;') Agency Directory
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on 'Agency Directory' to view a list
+        | of partnering agencies.
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Select an agency by clicking their name
+    p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* View contact information
+    p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Verify an agency's 'Logo' and 'Shield
+    br
 
-        h3.strong(style='color:030b2f;') Get Notifications
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on your 'Username'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Settings' from the dropdown
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Click on 'Notifications'
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Click on 'Subscribe to other Agencies at the bottom left'
-        p &nbsp;&nbsp;&nbsp;&nbsp;5) Select agencies to recieve notifications
-        P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* *You may also unsubribe from an angency * *
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) Select agencies to remove from your list of Agencies
-        p &nbsp;&nbsp;&nbsp;&nbsp;7) Click 'Unscribe Selected'
-        br
+    h3.strong(style='color:030b2f;') Search BOLO by field(s)
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click 'Search'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Select any field(s) you wish to search.
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Enter information value of field(s).
+    P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* *Wild card search
+        | is for something you can not search with an optional search * *
+    p &nbsp;&nbsp;&nbsp;&nbsp;4) Click 'Search'
+    br
 
-        h3.strong(style='color:030b2f;') Reset Password
-        p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on your 'Username'
-        p &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Settings' from the dropdown
-        p &nbsp;&nbsp;&nbsp;&nbsp;3) Click 'Change Password'
-        p &nbsp;&nbsp;&nbsp;&nbsp;4) Enter new password
-        p &nbsp;&nbsp;&nbsp;&nbsp;5) enter confirmation password
-        p &nbsp;&nbsp;&nbsp;&nbsp;6) Click 'Submit'
-        br
+    h3.strong(style='color:030b2f;') Get Notifications
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on your 'Username'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Settings' from the dropdown menu
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Click on 'Notifications'
+    p &nbsp;&nbsp;&nbsp;&nbsp;4) Click on 'Subscribe to other Agencies at the bottom left'
+    p &nbsp;&nbsp;&nbsp;&nbsp;5) Select agencies to recieve notifications
+    P.strong(style='color:red;') &nbsp;&nbsp;&nbsp;&nbsp;* *You may also unsubscribe from an angency * *
+    p &nbsp;&nbsp;&nbsp;&nbsp;6) Select agencies to remove from your list of Agencies
+    p &nbsp;&nbsp;&nbsp;&nbsp;7) Click 'Unsubscribe Selected'
+    br
+
+    h3.strong(style='color:030b2f;') Reset Password
+    p &nbsp;&nbsp;&nbsp;&nbsp;1) Click on your 'Username'
+    p &nbsp;&nbsp;&nbsp;&nbsp;2) Click on 'Settings' from the dropdown menu
+    p &nbsp;&nbsp;&nbsp;&nbsp;3) Click 'Change Password'
+    p &nbsp;&nbsp;&nbsp;&nbsp;4) Enter new password
+    p &nbsp;&nbsp;&nbsp;&nbsp;5) enter confirmation password
+    p &nbsp;&nbsp;&nbsp;&nbsp;6) Click 'Submit'
+    br

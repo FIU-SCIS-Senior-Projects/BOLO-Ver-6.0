@@ -1,13 +1,20 @@
 var Agency = require('../models/agency');
 
-exports.renderAgencies = function (req, res) {
+exports.renderAgencies = function (req, res, next) {
     Agency.findAllActiveAgencies(function (err, listOfAgencies) {
-        if (err) throw err;
-        res.render('agency', {agencies: listOfAgencies});
+        if (err) next(err);
+        else {
+            res.render('agency', {agencies: listOfAgencies});
+        }
     })
 
 };
 
 exports.renderAgencyDetails = function (req, res) {
-    res.render('agency');
+    Agency.findAgencyByID(req.params.id, function (err, agency) {
+        if (err) next(err);
+        else {
+            res.render('agency-details', {agency: agency});
+        }
+    });
 };
