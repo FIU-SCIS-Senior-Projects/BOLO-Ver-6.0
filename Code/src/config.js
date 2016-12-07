@@ -30,10 +30,6 @@ config.const = {
 
     /* http://momentjs.com/docs/#/displaying/ */
     DATE_FORMAT: 'MM-DD-YY HH:mm:ss',
-    MAX_IMG_SIZE: 512000,
-    HIGH_COMPRESSION: 10,
-    MEDIUM_COMPRESSION: 40,
-    LOW_COMPRESSION: 70
 };
 
 // Sets the number of days a bolo can remain unconfirmed before expiring

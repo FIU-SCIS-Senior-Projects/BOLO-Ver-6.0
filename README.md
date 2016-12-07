@@ -40,8 +40,6 @@ was ran and tested under Node v4.4.7
 
 The application is ran from Code/scr/app.js using node.js. The
 
-
-
 ## Development Notes
 
 ### Secrets
