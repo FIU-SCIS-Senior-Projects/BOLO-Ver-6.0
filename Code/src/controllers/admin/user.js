@@ -65,74 +65,72 @@ exports.getCSVForm = function (req, res) {
 /**
  * Creates multiple users from a csv file
  */
-exports.multiUserCreate = function (req, res) {
+exports.multiUserCreate = function (req, res, next) {
     var converter = new Converter({});
     var index = 0;
 
     if (req.files.csvfile) {
         var csv = req.files.csvfile[0];
 
+        converter.fromFile(csv.path, function (err, result) {
+            console.log("JSON CSV" + JSON.stringify(result));
+            while (index < result.length) {
+                console.log('index: %s, result.length: %s', index, result.length);
+                console.log(result[index]);
+                var newUser = function (index) {
+                    Agency.findAgencyByName(result[index].Agency, function (err, userAgency) {
+                        if (err) {
+                            console.log(index + ' users have been created');
+                            next(err);
+                        }
+                        else {
+                            console.log('******* index: %s, result.length: %s *******', index, result.length);
+                            var passwordToken = crypto.randomBytes(20).toString('hex');
+                            var nintydaysinMins = 129600;
+                            var todaysDate = new Date();
+                            var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
+                            console.log("THE USERS Pass will EXPIRE ON: " + expiredPasswordDate);
+                            var newUser = new User({
+                                username: result[index].Username,
+                                firstname: result[index].Firstname,
+                                lastname: result[index].Lastname,
+                                password: passwordToken,
+                                email: result[index].Email,
+                                tier: result[index].Role,
+                                badge: result[index].BadgeNumber,
+                                unit: result[index].Unit,
+                                rank: result[index].Title,
+                                agency: userAgency.id,
+                                isActive: false,
+                                passwordDate: expiredPasswordDate
+                            });
+                            //Save the user
+                            User.createUser(newUser, function (err, user) {
+                                if (err) {
+                                    console.log(index + ' users have been created');
+                                    next(err);
+                                }
+                                //If no errors, user has been saved
+                                else {
+                                    sendNewUserNotification(newUser.email, newUser.firstname, newUser.lastname, passwordToken, newUser.username);
+                                    console.log(user);
+                                    console.log('User has been registered');
+                                }
+                            });
+                        }
+                    });
+                };
+                newUser(index);
+                index = index + 1;
+            }
+            req.flash('success_msg', 'All Users Successfully Uploaded');
+            res.redirect('/admin/user/multiple');
+        });
     }
     else {
         req.flash('error_msg', 'NO CSV SELECTED -- Please Select A CSV File');
         res.redirect('/admin/user/multiple');
     }
-
-    converter.fromFile(csv.path, function (err, result) {
-        console.log("JSON CSV" + JSON.stringify(result));
-        while (index < result.length) {
-            console.log('index: %s, result.length: %s', index, result.length);
-            console.log(result[index]);
-            var newUser = function (index) {
-                Agency.findAgencyByName(result[index].Agency, function (err, userAgency) {
-
-                    if (err) throw err;
-                    console.log('******* index: %s, result.length: %s *******', index, result.length);
-
-                    //console.log('******* index - 2: %s, result.length: %s *******', index, result.length);
-                    var passwordToken = crypto.randomBytes(20).toString('hex');
-                    var nintydaysinMins = 129600;
-                    var todaysDate = new Date();
-                    var expiredPasswordDate = new Date(todaysDate.getTime() - nintydaysinMins * 60000);
-                    console.log("THE USERS Pass will EXPIRE ON: " + expiredPasswordDate);
-                    var newUser = new User({
-                        username: result[index].Username,
-                        firstname: result[index].Firstname,
-                        lastname: result[index].Lastname,
-                        password: passwordToken,
-                        email: result[index].Email,
-                        tier: result[index].Role,
-                        badge: result[index].BadgeNumber,
-                        unit: result[index].Unit,
-                        rank: result[index].Title,
-                        agency: userAgency.id,
-                        isActive: false,
-                        passwordDate: expiredPasswordDate
-                    });
-                    //Save the user
-                    User.createUser(newUser, function (err, user) {
-                        if (err) {
-                            throw err;
-                        }
-                        //If no errors, user has been saved
-                        else {
-                            sendNewUserNotification(newUser.email, newUser.firstname, newUser.lastname, passwordToken, newUser.username);
-                            console.log(user);
-                            console.log('User has been registered');
-                        }
-                    });
-
-                });
-            };
-
-            newUser(index);
-            index = index + 1;
-        }
-    });
-    console.log("I Finished");
-    req.flash('success_msg', 'All Users Successfully Uploaded');
-    res.redirect('/admin/user/multiple');
-
 };
 
 /**
@@ -179,7 +177,7 @@ exports.postCreateForm = function (req, res, next) {
         console.log('Validation has failed');
         //Get every Agency name on the DB
         Agency.findAllAgencies(function (err, listOfAgencies) {
-            if (err) throw err;
+            if (err) next(err);
             else {
                 console.log(errors);
                 prevForm.agencies = listOfAgencies;
@@ -192,10 +190,10 @@ exports.postCreateForm = function (req, res, next) {
     else {
         //Create a new user model to save
         Agency.findAgencyByName(req.body.agency, function (err, userAgency) {
-            if (err) throw err;
+            if (err) next(err);
             if (!userAgency) {
                 Agency.findAllAgencies(function (err, listOfAgencies) {
-                    if (err) throw err;
+                    if (err) next(err);
                     else {
                         console.log(errors);
                         prevForm.agencies = listOfAgencies;
