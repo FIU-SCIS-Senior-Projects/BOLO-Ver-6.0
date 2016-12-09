@@ -38,7 +38,10 @@ latest version of MongoDB
 Node/js can be downloaded from https://nodejs.org/en/. The Application
 was ran and tested under Node v4.4.7
 
-The application is ran from Code/scr/app.js using node.js. The
+The application is ran from Code/scr/app.js using node.js. The exact
+command is:
+"APP_URL=http://localhost:3000 node app.js"
+while in the src directory
 
 ## Development Notes
 
