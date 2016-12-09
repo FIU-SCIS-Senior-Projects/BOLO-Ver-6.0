@@ -12,7 +12,6 @@ var md = require('node-markdown').Markdown;
 
 var emailService = require('../services/email-service');
 
-
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -22,131 +21,31 @@ passport.deserializeUser(function (id, done) {
     });
 });
 
-var sendExpirationReminder = function (user, timeLeft) {
-
-    // create token to send to user
-    crypto.randomBytes(20, function (err, buf) {
-
-        var token = buf.toString('hex');
-
-        user.resetPasswordToken = token;
-        // token expires in 1 day
-        user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000;
-        userService.updateUser(user.id, user).then(function (user) {
-
-
-            var daysLeft;
-
-            //
-            if (timeLeft / 86400000 < 1) {
-                daysLeft = "1 day";
-            } else {
-                daysLeft = Math.floor(timeLeft / 86400000).toString() + ' days';
-            }
-
-            emailService.send({
-                'to': user.email,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: Password Expiration',
-                'text': 'Your password will expire in less than ' + daysLeft + '. Change it to avoid a password reset. \n' +
-                'To change your password, follow this link: \n\n' +
-                config.appURL + '/expiredpassword/' + token + '\n\n'
-            })
-
-        })
-
-
-    });
-};
-var sendPasswordExpiredEmail = function (user) {
-    console.log("SENT EMAIL");
-    // create token to send to user
-    crypto.randomBytes(20, function (err, buf) {
-
-        var token = buf.toString('hex');
-
-        user.resetPasswordToken = token;
-        // Token will expire in 24 hours
-        user.resetPasswordExpires = Date.now() + 24 * 60 * 60;
-        userService.updateUser(user.id, user).then(function (user) {
-
-
-        }).then(function () {
-            emailService.send({
-                'to': user.email,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: Password Expiration',
-                'text': 'Your password has expired. \n' +
-                'To change your password, follow this link: \n\n' +
-                config.appURL + '/expiredpassword/' + token + '\n\n'
-            })
-        })
-
-    });
-};
-var sendAccountLockedEmail = function (account) {
-
-
-    crypto.randomBytes(20, function (err, buf) {
-
-        var token = buf.toString('hex');
-
-        userService.getByEmail(account.email).then(function (user) {
-
-            user.resetPasswordToken = token;
-            user.resetPasswordExpires = Date.now() + 3600000;
-            userService.updateUser(user.id, user);
-            console.log("Sending account locked email to %s", account.email);
-            emailService.send({
-                'to': account.email,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: Account Locked',
-                'text': 'Your account has been locked. \n' +
-                'To change your password and activate your account, follow this link: \n\n' +
-                config.appURL + '/changepassword/' + token + '\n\n'
-            })
-
-        })
-    });
-};
-var sendAccountLockedEmailToAdmins = function (account) {
-
-
-    userService.getUsersByAgency(account.agency).then(function (users) {
-        var admins = [];
-        //get the admin user emails
-        for (var i in users) {
-
-            // check if user is tier 3 / admin and the user himself is not one of those admins
-            if (users[i].data.tier === 3 && users[i].data.email !== account.email) {
-                admins.push(users[i].data.email);
-            }
-        }
-
-        console.log("Admins were obtained");
-
-        if (admins.length > 0) {
-            console.log("sending email to the following admins " + admins);
-
-            emailService.send({
-                'to': admins,
-                'from': config.email.from,
-                'fromName': config.email.fromName,
-                'subject': 'BOLO Alert: User Account Warning',
-                'text': 'The account of ' + account.username + ' has been locked after attempting ' +
-                config.MAX_INCORRECT_LOGINS + ' incorrect login attempts.'
-
-            }).catch(function (error) {
-
-                console.log(error)
-            })
-        }
-
+/**
+ * Lets the user know that their password will expire soon after signing in
+ * Todo: Implement next iteration
+ *
+ * @param user The users information
+ * @param timeLeft Amount of time left till expiration
+ */
+function sendExpirationReminder(user, timeLeft) {
+    var daysLeft;
+    //
+    if (timeLeft / 86400000 < 1) {
+        daysLeft = "1 day";
+    } else {
+        daysLeft = Math.floor(timeLeft / 86400000).toString() + ' days';
+    }
+    emailService.send({
+        'to': user.email,
+        'from': config.email.from,
+        'fromName': config.email.fromName,
+        'subject': 'BOLO Alert: Password Expiration',
+        'text': 'Your password will expire in less than ' + daysLeft + '\n' +
+        'To change your password, please login, go to Account, then click \'Change Password\'\n'
     })
-};
+}
+
 
 /**
  * Render login page if not logged in
@@ -199,8 +98,10 @@ passport.use(new LocalStrategy(function (username, password, done) {
         User.comparePassword(password, user.password, function (err1, isValid) {
             if (err1) {
                 console.log('comparePassword Error: ' + err1);
-                return done(null, false, {message: 'Password Error! ' +
-                    'Contact your Administrator if this messages persists'});
+                return done(null, false, {
+                    message: 'Password Error! ' +
+                    'Contact your Administrator if this messages persists'
+                });
             }
             if (!isValid) {
                 console.log('Password is incorrect');

@@ -33,10 +33,12 @@ var getErrorMessage = function (err) {
 /**
  * Respond with a list of agencies in the database
  */
-exports.listAgencies = function (req, res) {
+exports.listAgencies = function (req, res, next) {
     Agency.findAllAgencies(function (err, agencies) {
-        if (err) throw err;
-        res.render('admin-agency', {agencies: agencies});
+        if (err) next(err);
+        else {
+            res.render('admin-agency', {agencies: agencies});
+        }
     });
 };
 
@@ -55,16 +57,20 @@ exports.getAgencyDetails = function (req, res, next) {
 /**
  * Activate an agency
  */
-exports.activationAgency = function (req, res) {
+exports.activationAgency = function (req, res, next) {
     Agency.findAgencyByID(req.params.id, function (err, agency) {
-        if (err) throw err;
-        agency.isActive = !agency.isActive;
-        agency.save(function (err) {
-            if (err) throw err;
-            var msg = agency.isActive ? 'activated' : 'deactivated';
-            req.flash('success_msg', 'Agency *' + agency.name + '* is now ' + msg);
-            res.redirect('/admin/agency/edit/' + req.params.id);
-        });
+        if (err) next(err);
+        else {
+            agency.isActive = !agency.isActive;
+            agency.save(function (err) {
+                if (err) next(err);
+                else {
+                    var msg = agency.isActive ? 'activated' : 'deactivated';
+                    req.flash('success_msg', 'Agency *' + agency.name + '* is now ' + msg);
+                    res.redirect('/admin/agency/edit/' + req.params.id);
+                }
+            });
+        }
     })
 };
 
@@ -179,8 +185,10 @@ exports.postCreateForm = function (req, res) {
  */
 exports.getEditForm = function (req, res) {
     Agency.findAgencyByID(req.params.id, function (err, agency) {
-        if (err) throw err;
-        res.render('admin-agency-edit', {agency: agency});
+        if (err) next(err);
+        else {
+            res.render('admin-agency-edit', {agency: agency});
+        }
     });
 };
 
@@ -209,51 +217,52 @@ exports.postEditForm = function (req, res) {
     // If the form is valid
     else {
         Agency.findAgencyByID(req.params.id, function (err, agency) {
-            if (err) throw err;
+            if (err) next(err);
+            else {
+                //Update the agency
+                if (req.body.name) agency.name = req.body.name;
+                if (req.body.domain)   agency.emailDomain = req.body.domain;
+                if (req.body.address)   agency.address = req.body.address;
+                if (req.body.city)   agency.city = req.body.city;
+                if (req.body.state)   agency.state = req.body.state;
+                if (req.body.zip)   agency.zipcode = req.body.zip;
+                if (req.body.phone)   agency.phone = req.body.phone;
 
-            //Update the agency
-            if (req.body.name) agency.name = req.body.name;
-            if (req.body.domain)   agency.emailDomain = req.body.domain;
-            if (req.body.address)   agency.address = req.body.address;
-            if (req.body.city)   agency.city = req.body.city;
-            if (req.body.state)   agency.state = req.body.state;
-            if (req.body.zip)   agency.zipcode = req.body.zip;
-            if (req.body.phone)   agency.phone = req.body.phone;
-
-            //Update and remove files
-            if (req.files) {
-                if (req.files['logo'])
-                    agency.logo = {
-                        data: req.files['logo'][0].buffer,
-                        contentType: req.files['logo'][0].mimeType
-                    };
-                if (req.files['shield'])
-                    agency.shield = {
-                        data: req.files['shield'][0].buffer,
-                        contentType: req.files['shield'][0].mimeType
-                    };
-                if (req.files['watermark'])
-                    agency.watermark = {
-                        data: req.files['watermark'][0].buffer,
-                        contentType: req.files['watermark'][0].mimeType
-                    };
-            }
-
-            console.log(agency);
-
-            agency.save(function (err) {
-                if (err) {
-                    console.log('Agency could not be updated');
-                    console.log(getErrorMessage(err)[0].msg);
-                    req.flash('error_msg', getErrorMessage(err)[0].msg);
-                    res.redirect('/admin/agency/edit/' + req.params.id);
-                } else {
-                    console.log('Agency has been Updated');
-
-                    req.flash('success_msg', 'Agency has been Updated!');
-                    res.redirect('/admin/agency/edit/' + req.params.id);
+                //Update and remove files
+                if (req.files) {
+                    if (req.files['logo'])
+                        agency.logo = {
+                            data: req.files['logo'][0].buffer,
+                            contentType: req.files['logo'][0].mimeType
+                        };
+                    if (req.files['shield'])
+                        agency.shield = {
+                            data: req.files['shield'][0].buffer,
+                            contentType: req.files['shield'][0].mimeType
+                        };
+                    if (req.files['watermark'])
+                        agency.watermark = {
+                            data: req.files['watermark'][0].buffer,
+                            contentType: req.files['watermark'][0].mimeType
+                        };
                 }
-            });
+
+                console.log(agency);
+
+                agency.save(function (err) {
+                    if (err) {
+                        console.log('Agency could not be updated');
+                        console.log(getErrorMessage(err)[0].msg);
+                        req.flash('error_msg', getErrorMessage(err)[0].msg);
+                        res.redirect('/admin/agency/edit/' + req.params.id);
+                    } else {
+                        console.log('Agency has been Updated');
+
+                        req.flash('success_msg', 'Agency has been Updated!');
+                        res.redirect('/admin/agency/edit/' + req.params.id);
+                    }
+                });
+            }
         })
     }
 };
@@ -261,27 +270,33 @@ exports.postEditForm = function (req, res) {
 /**
  * Respond with a form to edit agency details
  */
-exports.getEditForm = function (req, res) {
+exports.getEditForm = function (req, res, next) {
     Agency.findAgencyByID(req.params.id, function (err, agency) {
-        if (err) throw err;
-        res.render('admin-agency-edit', {agency: agency});
+        if (err) next(err);
+        else {
+            res.render('admin-agency-edit', {agency: agency});
+        }
     });
 };
 
 /**
  * Gets the delete agency conformation page
  */
-exports.getDeleteAgency = function (req, res) {
+exports.getDeleteAgency = function (req, res, next) {
     if (req.user.tier === 'ROOT') {
         Agency.findAgencyByID(req.params.id, function (err, agency) {
-            if (err) throw err;
-            User.findUsersByAgencyID(agency.id, function (err, listOfAgencyUsers) {
-                if (err) throw err;
-                res.render('admin-agency-delete', {
-                    agency: agency,
-                    users: listOfAgencyUsers
-                });
-            })
+            if (err) next(err);
+            else {
+                User.findUsersByAgencyID(agency.id, function (err, listOfAgencyUsers) {
+                    if (err) next(err);
+                    else {
+                        res.render('admin-agency-delete', {
+                            agency: agency,
+                            users: listOfAgencyUsers
+                        });
+                    }
+                })
+            }
         });
     } else {
         res.render('unauthorized');
@@ -291,20 +306,20 @@ exports.getDeleteAgency = function (req, res) {
 /**
  * Deletes the agency
  */
-exports.deleteAgency = function (req, res) {
+exports.deleteAgency = function (req, res, next) {
     if (req.user.tier === 'ROOT') {
         User.comparePassword(req.body.password, req.user.password, function (err, result) {
-            if (err) throw err;
+            if (err) next(err);
             if (result) {
                 Agency.findAgencyByID(req.params.id, function (err, agency) {
-                    if (err) throw err;
+                    if (err) next(err);
                     //Delete All Users
                     User.removeUsersByAgencyID(agency.id, function (err) {
-                        if (err) throw err;
+                        if (err) next(err);
                         //Delete Agency
                         var deletedAgencyName = agency.name;
                         Agency.removeAgencyByID(agency.id, function (err) {
-                            if (err) throw err;
+                            if (err) next(err);
                             req.flash('error_msg', 'Agency ' + deletedAgencyName + ' has been deleted');
                             res.redirect('/admin/agency');
                         });

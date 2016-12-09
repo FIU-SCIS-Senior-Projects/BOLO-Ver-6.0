@@ -3,7 +3,7 @@
 
 
 /**
- * @todo Look into a more robust solution for authorization
+ * @todo Implement authorization using this class for all 4 tiers
  *
  * This is method has too much knowledge about the internals of the user
  * object which violates the goals of the architectural decisions made for
@@ -11,7 +11,7 @@
  *
  * Refer to Mingle #576 and #603 for authorization policy.
  **/
-function BoloAuthorize ( bolo, author, user ) {
+function BoloAuthorize(bolo, author, user) {
     this.bolo = bolo;
     this.author = author;
     this.user = user;
@@ -38,28 +38,28 @@ BoloAuthorize.prototype.canSupervise = function () {
 };
 
 BoloAuthorize.prototype.authorizedToEdit = function () {
-    if ( this.isRoot() ) return true;
-    if ( this.isAdmin() && this.sameAgency() ) return true;
-    if ( this.canSupervise() && this.sameAgency() ) return true;
-    if ( this.sameUser() && this.sameAgency() ) return true;
+    if (this.isRoot()) return true;
+    if (this.isAdmin() && this.sameAgency()) return true;
+    if (this.canSupervise() && this.sameAgency()) return true;
+    if (this.sameUser() && this.sameAgency()) return true;
 
-    throw new Error( 'Unauthorized request to edit bolo: ' + this.bolo.id );
+    throw new Error('Unauthorized request to edit bolo: ' + this.bolo.id);
 };
 
-BoloAuthorize.prototype.authorizedToDelete  = function () {
-    if ( this.isRoot() ) return true;
-    if ( this.isAdmin() && this.sameAgency() ) return true;
-    if ( this.canSupervise() && this.sameAgency() ) return true;
+BoloAuthorize.prototype.authorizedToDelete = function () {
+    if (this.isRoot()) return true;
+    if (this.isAdmin() && this.sameAgency()) return true;
+    if (this.canSupervise() && this.sameAgency()) return true;
 
-    throw new Error( 'Unauthorized request to delete bolo: ' + this.bolo.id );
+    throw new Error('Unauthorized request to delete bolo: ' + this.bolo.id);
 };
 
 BoloAuthorize.prototype.authorizedToArchive = function () {
-    if ( this.isRoot() ) return true;
-    if ( this.isAdmin() && this.sameAgency() ) return true;
-    if ( this.canSupervise() && this.sameAgency() ) return true;
+    if (this.isRoot()) return true;
+    if (this.isAdmin() && this.sameAgency()) return true;
+    if (this.canSupervise() && this.sameAgency()) return true;
 
-    throw new Error( 'Unauthorized request to archive bolo: ' + this.bolo.id );
+    throw new Error('Unauthorized request to archive bolo: ' + this.bolo.id);
 };
 
 module.exports.BoloAuthorize = BoloAuthorize;

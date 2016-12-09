@@ -234,9 +234,6 @@ app.use(function (req, res, next) {
     }
 });
 
-
-
-
 app.use('/img', mainRoutes.img);
 app.use('/bolo', mainRoutes.bolo);
 app.use('/account', mainRoutes.account);
@@ -259,7 +256,6 @@ app.get('/admin', function (req, res) {
 app.use('/admin/category', adminRoutes.category);
 app.use('/admin/dataAnalysis', adminRoutes.dataAnalysis);
 app.use('/admin/edit', adminRoutes.edit);
-app.use('/admin/systemSetting', adminRoutes.systemSetting);
 app.use('/admin/user', adminRoutes.user);
 app.use('/admin/agency', adminRoutes.agency);
 

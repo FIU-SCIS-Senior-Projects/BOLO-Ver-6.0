@@ -13,9 +13,9 @@ var getErrorMessage = function (err) {
     return message;
 };
 
-exports.listCategories = function (req, res) {
+exports.listCategories = function (req, res, next) {
     Category.findAllCategories(function (err, listOfCategories) {
-        if (err) throw err;
+        if (err) next(err);
         res.render('admin-category', {categories: listOfCategories})
     })
 };
@@ -26,15 +26,12 @@ exports.getCategoryForm = function (req, res) {
 
 exports.getCategoryDetails = function (req, res) {
     Category.findCategoryByID(req.params.id, function (err, category) {
-
         if (err) {
             req.flash('error_msg', 'Could not get category details');
             res.redirect('/admin/category');
         } else {
             res.render('admin-category-details', {category: category});
         }
-
-        if (err) throw err;
     });
 };
 
@@ -83,22 +80,18 @@ exports.createNewCategory = function (req, res) {
 };
 
 exports.getEditCategoryForm = function (req, res) {
-
     Category.findCategoryByID(req.params.id, function (err, category) {
-
         if (err) {
             req.flash('error_msg', 'Could not get category details');
             res.redirect('/admin/category');
         } else {
             res.render('admin-category-edit', {category: category});
         }
-
-        if (err) throw err;
     });
 
 };
 
-exports.postEditCategory = function (req, res) {
+exports.postEditCategory = function (req, res, next) {
     var prevForm = {
         name1: req.body.name
     };
@@ -117,7 +110,7 @@ exports.postEditCategory = function (req, res) {
 
     else {
         Category.findCategoryByID(req.params.id, function (err, category) {
-            if (err) throw err;
+            if (err) next(err);
             console.log("I FOUND THE CATEGORY");
             //Update the category
             if (req.body.name) category.name = req.body.name;

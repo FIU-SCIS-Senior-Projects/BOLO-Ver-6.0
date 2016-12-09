@@ -228,7 +228,7 @@ exports.postCreateForm = function (req, res, next) {
             User.createUser(newUser, function (err, user) {
                 if (err) {
                     Agency.findAllAgencies(function (err1, listOfAgencies) {
-                        if (err1) next (err1);
+                        if (err1) next(err1);
                         else {
                             console.log(err);
                             var listOfAgencyNames = [];
@@ -255,20 +255,18 @@ exports.postCreateForm = function (req, res, next) {
 
 /**
  * Responds with a list of all system users.
- *
- * @todo implement sorting, filtering, and paging
  */
-exports.getList = function (req, res) {
+exports.getList = function (req, res, next) {
     if (req.user.tier === 'ROOT') {
         User.findAllUsers(function (err, listOfUsers) {
-            if (err) throw err;
+            if (err) next(err);
             res.render('admin-user', {
                 users: listOfUsers
             })
         });
     } else if (req.user.tier === 'ADMINISTRATOR') {
         User.findUsersByAgencyID(req.user.agency.id, function (err, listOfAgencyUsers) {
-            if (err) throw err;
+            if (err) next(err);
             res.render('admin-user', {
                 users: listOfAgencyUsers
             })
@@ -291,10 +289,10 @@ exports.getSortedList = function (req, res) {
 /**
  * Responds with account information for a specified user.
  */
-exports.getDetails = function (req, res) {
+exports.getDetails = function (req, res, next) {
     console.log(req.params.id);
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
+        if (err) next(err);
         console.log(user);
         res.render('admin-user-details', {user: user});
     });
@@ -317,9 +315,9 @@ exports.postPasswordReset = function (req, res) {
 /**
  * Responds with a form for editing a user's details.
  */
-exports.getEditDetails = function (req, res) {
+exports.getEditDetails = function (req, res, next) {
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
+        if (err) next(err);
         res.render('admin-user-edit', {user: user});
     });
 };
@@ -327,9 +325,9 @@ exports.getEditDetails = function (req, res) {
 /**
  * Process a request to update a user's details.
  */
-exports.postEditDetails = function (req, res) {
+exports.postEditDetails = function (req, res, next) {
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
+        if (err) next(err);
         if (
             (req.user.tier === 'ROOT') ||
             (req.user.tier === 'ADMINISTRATOR' && req.user.agency === user.agency && user.tier !== 'ADMINISTRATOR')
@@ -368,28 +366,30 @@ exports.postEditDetails = function (req, res) {
 /**
  * Renders the delete user page
  */
-exports.getDeleteUser = function (req, res) {
+exports.getDeleteUser = function (req, res, next) {
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
-        res.render('admin-user-delete', {user: user});
+        if (err) next(err);
+        else {
+            res.render('admin-user-delete', {user: user});
+        }
     })
 };
 
 /**
  * Attempts to delete user with the given id
  */
-exports.postDeleteUser = function (req, res) {
+exports.postDeleteUser = function (req, res, next) {
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
+        if (err) next(err);
         if (req.user.tier === 'ROOT' ||
             (req.user.tier === 'ADMINISTRATOR' && req.user.agency._id === user.agency._id)) {
             User.comparePassword(req.body.password, req.user.password, function (err, result) {
-                if (err) throw err;
+                if (err) next(err);
                 if (result) {
                     console.log(result);
                     //TODO should we remove all BOLOs associated with the agency?
                     User.removeUserByID(req.params.id, function (err, result) {
-                        if (err) throw err;
+                        if (err) next(err);
                         console.log(result);
                         req.flash('success_msg', 'User has been deleted');
                         res.redirect('/admin/user');
@@ -409,12 +409,12 @@ exports.postDeleteUser = function (req, res) {
 /**
  * Activate or deactivate Users
  */
-exports.activationUser = function (req, res) {
+exports.activationUser = function (req, res, next) {
     User.findUserByID(req.params.id, function (err, user) {
-        if (err) throw err;
+        if (err) next(err);
         user.isActive = !user.isActive;
         user.save(function (err) {
-            if (err) throw err;
+            if (err) next(err);
             var msg = user.isActive ? 'activated' : 'deactivated';
             req.flash('success_msg', 'User *' + user.username + '* is now ' + msg);
             res.redirect('/admin/user/edit/' + req.params.id);

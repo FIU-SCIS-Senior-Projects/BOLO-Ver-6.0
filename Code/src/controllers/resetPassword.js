@@ -87,7 +87,6 @@ exports.newPassword = function (req, res) {
     }
 };
 
-
 exports.renderResetPassword = function (req, res) {
     res.render('passwordReset', {user: req.user});
 };
@@ -125,6 +124,29 @@ exports.resetUserPass = function (req, res) {
 
 
 };
+
+/**
+ * Send an email when a user's password has been changed successfully.
+ * @todo Try to implement this function when the user has changed his/her password
+ */
+function sendPasswordChangedEmail(user) {
+    var message = util.format(
+        'Hello %s,\n\n' +
+        'This is just a friendly notification to let you know that ' +
+        'your account password has just been changed. Please contact your ' +
+        'agency administrator if you did not authorize this.\n\n' +
+        '-- BOLO Flier Creator Team',
+        user.fname
+    );
+    emailService.send({
+        'to': user.email,
+        'from': config.email.from,
+        'fromName': config.email.fromName,
+        'subject': 'BOLO Flier Creator - Account Update',
+        'text': message
+    });
+}
+
 function sendUserPassResetNotification(useremail, firstname, lastname, passwordToken, username) {
     return emailService.send({
         'to': useremail,

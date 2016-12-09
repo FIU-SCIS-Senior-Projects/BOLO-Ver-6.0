@@ -6,7 +6,7 @@ var fs = require('fs');
 var md = require("node-markdown").Markdown;
 
 /**
- * Displays the user guide for each individual teir.
+ * Displays the user guide for each individual tier.
  */
 exports.getUserGuide = function (req, res, next) {
     fs.readFile(__dirname + '/../public/UserGuide.md', function (err, data) {
