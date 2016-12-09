@@ -81,7 +81,7 @@ var User = module.exports = mongoose.model('user', Schema);
  */
 module.exports.createUser = function (newUser, callback) {
     bcrypt.genSalt(10, function (err, salt) {
-        if (err) throw (err);
+        if (err) console.log(err);
         bcrypt.hash(newUser.password, salt, null, function (err, hash) {
             if (err) throw (err);
             newUser.password = hash;
@@ -116,7 +116,7 @@ module.exports.removeUsersByAgencyID = function (agencyID, callback) {
 
 module.exports.comparePassword = function (passwordToCheck, userHash, callback) {
     bcrypt.compare(passwordToCheck, userHash, function (err, result) {
-        if (err) throw err;
+        if (err) console.log(err);
         callback(null, result);
     });
 };
