@@ -80,7 +80,7 @@ exports.multiUserCreate = function (req, res, next) {
                 var newUser = function (index) {
                     Agency.findAgencyByName(result[index].Agency, function (err, userAgency) {
                         if (err) {
-                            console.log(index + ' users have been created');
+                            console.log(index + ' has failed');
                             next(err);
                         }
                         else {
@@ -107,7 +107,7 @@ exports.multiUserCreate = function (req, res, next) {
                             //Save the user
                             User.createUser(newUser, function (err, user) {
                                 if (err) {
-                                    console.log(index + ' users have been created');
+                                    console.log(index + ' has failed');
                                     next(err);
                                 }
                                 //If no errors, user has been saved
@@ -123,7 +123,7 @@ exports.multiUserCreate = function (req, res, next) {
                 newUser(index);
                 index = index + 1;
             }
-            req.flash('success_msg', 'All Users Successfully Uploaded');
+            req.flash('success_msg', 'All Users Uploaded');
             res.redirect('/admin/user/multiple');
         });
     }
